@@ -18,12 +18,12 @@ def seed_users():
     db.session.commit()
 
 
-     # Now create the friendships
+    #  Friends table
     demo.friends.append(marnie)
     demo.friends.append(bobbie)
     marnie.friends.append(bobbie)
 
-    # Commit the friendships
+
     db.session.commit()
 
 # Uses a raw SQL query to TRUNCATE or DELETE the users table. SQLAlchemy doesn't
