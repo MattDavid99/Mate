@@ -1,20 +1,16 @@
 """empty message
 
-Revision ID: 5340b996a921
+Revision ID: 4670ceb78a05
 Revises:
-Create Date: 2023-06-18 19:47:45.377745
+Create Date: 2023-06-18 22:33:07.503252
 
 """
 from alembic import op
 import sqlalchemy as sa
 
-import os
-environment = os.getenv("FLASK_ENV")
-SCHEMA = os.environ.get("SCHEMA")
-
 
 # revision identifiers, used by Alembic.
-revision = '5340b996a921'
+revision = '4670ceb78a05'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -49,9 +45,7 @@ def upgrade():
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('friend_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['friend_id'], ['users.id'], ),
-    sa.ForeignKeyConstraint(['friend_id'], ['users.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('user_id', 'friend_id')
     )
     op.create_table('matches',
@@ -89,13 +83,6 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
-    if environment == "production":
-        op.execute(f"ALTER TABLE users SET SCHEMA {SCHEMA};")
-        op.execute(f"ALTER TABLE friend_requests SET SCHEMA {SCHEMA};")
-        op.execute(f"ALTER TABLE friends SET SCHEMA {SCHEMA};")
-        op.execute(f"ALTER TABLE matches SET SCHEMA {SCHEMA};")
-        op.execute(f"ALTER TABLE chats SET SCHEMA {SCHEMA};")
-        op.execute(f"ALTER TABLE histories SET SCHEMA {SCHEMA};")
 
 
 def downgrade():
