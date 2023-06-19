@@ -80,3 +80,17 @@ def unauthorized():
     Returns unauthorized JSON when flask-login authentication fails
     """
     return {'errors': ['Unauthorized']}, 401
+
+
+
+
+# class Friend(db.Model):
+#     __tablename__ = 'friends'
+
+#     if environment == "production":
+#         __table_args__ = {'schema': SCHEMA}
+
+#     user_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), primary_key=True)
+#     friend_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), primary_key=True)
+#     ForeignKeyConstraint(['user_id'], [add_prefix_for_prod('users.id')], ondelete='CASCADE'),
+#     ForeignKeyConstraint(['friend_id'], [add_prefix_for_prod('users.id')], ondelete='CASCADE')
