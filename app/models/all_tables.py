@@ -166,6 +166,7 @@ class History(db.Model):
     move = db.Column(db.String(50))
     turn = db.Column(db.String(100))
     total_moves = db.Column(db.Integer)
+    status = db.Column(db.String(50), default='In progress...')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -178,7 +179,7 @@ class History(db.Model):
             'move': self.move,
             'turn': self.turn,
             'totalMoves': self.total_moves,
-            'match': [m.to_dict() for m in self.match],
+            'status': self.status,
             'createdAt': self.created_at,
             'updatedAt': self.updated_at
         }

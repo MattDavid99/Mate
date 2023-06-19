@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 4670ceb78a05
-Revises:
-Create Date: 2023-06-18 22:33:07.503252
+Revision ID: c6e1e2e4224d
+Revises: 
+Create Date: 2023-06-19 09:03:35.949534
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '4670ceb78a05'
+revision = 'c6e1e2e4224d'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -54,6 +54,7 @@ def upgrade():
     sa.Column('black_player_id', sa.Integer(), nullable=False),
     sa.Column('status', sa.String(length=100), nullable=True),
     sa.Column('result', sa.String(length=40), nullable=True),
+    sa.Column('board_state', sa.Text(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['black_player_id'], ['users.id'], ),
@@ -77,6 +78,7 @@ def upgrade():
     sa.Column('move', sa.String(length=50), nullable=True),
     sa.Column('turn', sa.String(length=100), nullable=True),
     sa.Column('total_moves', sa.Integer(), nullable=True),
+    sa.Column('status', sa.String(length=50), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['match_id'], ['matches.id'], ),

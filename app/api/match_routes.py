@@ -92,7 +92,7 @@ def move(match_id):
         return jsonify({"error": "Illegal move"}), 400
 
     board.push(move)
-    match.board_state = board.fen()
+    match.board_state = board.fen() # <<-- board.fen() handles the current state of the chess game
 
 
     print("---------------------->Current board\n",board)
@@ -101,15 +101,28 @@ def move(match_id):
       # { "move": "e2e4" }   <---- White
       # { "move": "e7e5" }   <---- Black
       # { "move": "d1g4" }   <---- White
+      # { "move": "d7d6" }   <---- Black
+      # { "move": "g4d7" }   <---- White
+      # { "move": "d8d7" }   <---- Black   took the Queen, taking works
+      # { "move": "e1e2" }   <---- White
+      # { "move": "d6d5" }   <---- Black
+      # { "move": "a2a3" }   <---- White
+      # { "move": "d7g4" }   <---- Black
+      # { "move": "e2e1" }   <---- White
+      # { "move": "g4f3" }   <---- Black
+      # { "move": "a3a4" }   <---- White
+      # { "move": "c8g4" }   <---- Black
+      # { "move": "a4a5" }   <---- White
+      # { "move": "f3d1" }   <---- Black   # Checkmate #
 
-      # r n b q k b n r
-      # p p p p . p p p
+      # r n . . k b n r
+      # p p p . . p p p
       # . . . . . . . .
-      # . . . . p . . .
-      # . . . . P . Q .
+      # P . . p p . . .
+      # . . . . P . b .
       # . . . . . . . .
-      # P P P P . P P P
-      # R N B . K B N R
+      # . P P P . P P P
+      # R N B q K B N R
 
 
 
@@ -117,10 +130,24 @@ def move(match_id):
         match_id=match_id,
         move=uci_move,
         turn="white" if board.turn else "black",
-        total_moves=board.fullmove_number
+        total_moves=board.fullmove_number,
+        status=match.status
     )
 
     db.session.add(history)
     db.session.commit()
+
+
+        # check if game has ended
+    if board.is_checkmate():
+
+        match.status = "Checkmate"
+        print("???----------->>>,  Checkmate works")
+        db.session.commit()
+
+    elif board.is_stalemate() or board.is_insufficient_material() or board.is_seventyfive_moves() or board.is_fivefold_repetition() or board.is_variant_draw():
+
+        match.status = "Draw"
+        db.session.commit()
 
     return {"match": [match.to_dict()]}, 200
