@@ -82,8 +82,8 @@ class User(db.Model, UserMixin):
             'email': self.email,
             'username': self.username,
             'profilePicUrl': self.profile_pic_url,
-            'addedFriends': [friend.username for friend in self.added_friends],
-            'addedBy': [friend.username for friend in self.added_by]
+            'addedFriends': [friend.friend.username for friend in self.added_friends],
+            'addedBy': [friend.friend.username for friend in self.added_by]
         }
 
 
@@ -100,6 +100,7 @@ class Match(db.Model):
     black_player_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), nullable=False)
     status = db.Column(db.String(100))
     result = db.Column(db.String(40))
+    board_state = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -117,6 +118,7 @@ class Match(db.Model):
             'blackPlayerId': self.black_player_id,
             'status': self.status,
             'result': self.result,
+            'boardState': self.board_state,
             'chats': [chat.to_dict() for chat in self.chats],
             'createdAt': self.created_at,
             'updatedAt': self.updated_at

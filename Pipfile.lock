@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "bc8991365ab6aaf787a5285a576003bcfa0256e1274edbda0db42492a3d99b54"
+            "sha256": "bbdec254a103b9a41c60bcc9d1956f07c71595be7047bf5452bb433fa16d0e7b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -23,6 +23,14 @@
             ],
             "index": "pypi",
             "version": "==1.9.2"
+        },
+        "chess": {
+            "hashes": [
+                "sha256:44d471b1ba71a4287c1bb9af3d6b472df37f07686ec52d5d5feb982b0fcfad34",
+                "sha256:7f42d664f8975abe46e34bd7d131efd2bba65dc78bd1c226f554eb6ca4a9b381"
+            ],
+            "index": "pypi",
+            "version": "==1.9.4"
         },
         "click": {
             "hashes": [
@@ -156,11 +164,11 @@
         },
         "importlib-metadata": {
             "hashes": [
-                "sha256:43dd286a2cd8995d5eaef7fee2066340423b818ed3fd70adf0bad5f1fac53fed",
-                "sha256:92501cdf9cc66ebd3e612f1b4f0c0765dfa42f0fa38ffb319b6bd84dd675d705"
+                "sha256:1aaf550d4f73e5d6783e7acb77aec43d49da8017410afae93822cc9cca98c4d4",
+                "sha256:cb52082e659e97afc5dac71e79de97d8681de3aa07ff18578330904a9d18e5b5"
             ],
             "markers": "python_version < '3.10'",
-            "version": "==6.6.0"
+            "version": "==6.7.0"
         },
         "itsdangerous": {
             "hashes": [
@@ -242,6 +250,14 @@
             "index": "pypi",
             "version": "==2.1.2"
         },
+        "python-chess": {
+            "hashes": [
+                "sha256:8cad0388c42242d890ac6368ad64def15cd0165db033df0ad479492e266e5e6c",
+                "sha256:93b562f8f1124cb7bf56fb095e18743758e69dc6a028ccda0badcaa5c59d88c8"
+            ],
+            "index": "pypi",
+            "version": "==1.999"
+        },
         "python-dateutil": {
             "hashes": [
                 "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86",
@@ -271,11 +287,11 @@
         },
         "setuptools": {
             "hashes": [
-                "sha256:5df61bf30bb10c6f756eb19e7c9f3b473051f48db77fddbe06ff2ca307df9a6f",
-                "sha256:62642358adc77ffa87233bc4d2354c4b2682d214048f500964dbe760ccedf102"
+                "sha256:11e52c67415a381d10d6b462ced9cfb97066179f0e871399e006c4ab101fc85f",
+                "sha256:baf1fdb41c6da4cd2eae722e135500da913332ab3f2f5c7d33af9b492acb5235"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==67.8.0"
+            "version": "==68.0.0"
         },
         "six": {
             "hashes": [
