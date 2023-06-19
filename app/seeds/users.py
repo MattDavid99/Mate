@@ -1,4 +1,4 @@
-from app.models import db, User, Friends, environment, SCHEMA
+from app.models import db, User, Friend, environment, SCHEMA
 from sqlalchemy.sql import text
 
 
@@ -14,15 +14,6 @@ def seed_users():
     db.session.add(demo)
     db.session.add(marnie)
     db.session.add(bobbie)
-
-    db.session.commit()
-
-
-    #  Friends table
-    demo.friends.append(marnie)
-    demo.friends.append(bobbie)
-    marnie.friends.append(bobbie)
-
 
     db.session.commit()
 

@@ -6,14 +6,28 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 
 
-Friends = db.Table(
-    'friends',
-    db.Column('user_id', db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), primary_key=True),
-    db.Column('friend_id', db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), primary_key=True),
-    ForeignKeyConstraint(['user_id'], [add_prefix_for_prod('users.id')], ondelete='CASCADE'),
-    ForeignKeyConstraint(['friend_id'], [add_prefix_for_prod('users.id')], ondelete='CASCADE')
-)
+# Friends = db.Table(
+#     'friends',
+#     db.Column('user_id', db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), primary_key=True),
+#     db.Column('friend_id', db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), primary_key=True),
+#     ForeignKeyConstraint(['user_id'], [add_prefix_for_prod('users.id')], ondelete='CASCADE'),
+#     ForeignKeyConstraint(['friend_id'], [add_prefix_for_prod('users.id')], ondelete='CASCADE')
+# )
 
+class Friend(db.Model):
+    __tablename__ = 'friends'
+
+    if environment == "production":
+        __table_args__ = (
+            ForeignKeyConstraint(['user_id'], [add_prefix_for_prod('users.id')], name='user_id_fkey',ondelete='CASCADE'),
+            ForeignKeyConstraint(['friend_id'], [add_prefix_for_prod('users.id')], name='friend_id_fkey',ondelete='CASCADE'),
+            {'schema': SCHEMA}
+        )
+
+    user_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), primary_key=True)
+    friend_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), primary_key=True)
+    user = relationship('User', foreign_keys=[user_id], back_populates='added_friends')
+    friend = relationship('User', foreign_keys=[friend_id], back_populates='added_by')
 
 
 class User(db.Model, UserMixin):
@@ -31,19 +45,21 @@ class User(db.Model, UserMixin):
     profile_pic_url = db.Column(db.String(800), nullable=True)
 
 
+    added_friends = relationship(
+        'Friend',
+        primaryjoin='User.id==Friend.user_id',
+        back_populates='user'
+    )
+    added_by = relationship(
+        'Friend',
+        primaryjoin='User.id==Friend.friend_id',
+        back_populates='friend'
+    )
     matches_as_white = relationship('Match', back_populates='white_player', foreign_keys='Match.white_player_id')
     matches_as_black = relationship('Match', back_populates='black_player', foreign_keys='Match.black_player_id')
     chats = relationship('Chat', back_populates='user', foreign_keys='Chat.user_id')
     sent_requests = relationship('FriendRequest', back_populates='sender', foreign_keys='FriendRequest.sender_id')
     received_requests = relationship('FriendRequest', back_populates='receiver', foreign_keys='FriendRequest.receiver_id')
-
-    friends = relationship(
-        'User',
-        secondary=Friends,
-        primaryjoin='User.id==friends.c.user_id',
-        secondaryjoin='User.id==friends.c.friend_id'
-    )
-
 
 
     @property
@@ -66,7 +82,8 @@ class User(db.Model, UserMixin):
             'email': self.email,
             'username': self.username,
             'profilePicUrl': self.profile_pic_url,
-            'friends': [friend.username for friend in self.friends]
+            'addedFriends': [friend.username for friend in self.added_friends],
+            'addedBy': [friend.username for friend in self.added_by]
         }
 
 

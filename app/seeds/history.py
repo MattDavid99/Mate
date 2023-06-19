@@ -1,4 +1,4 @@
-from app.models import db, User, Friends, Chat, Match, History, environment, SCHEMA
+from app.models import db, User, Friend, Chat, Match, History, environment, SCHEMA
 from sqlalchemy.sql import text
 
 
