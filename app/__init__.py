@@ -10,6 +10,7 @@ from .api.auth_routes import auth_routes
 from .api.match_routes import match_routes
 from .api.friendrequest_routes import friendrequest_routes
 from .api.history_routes import history_routes
+from .api.chat_routes import chat_routes
 from .seeds import seed_commands
 from .config import Config
 
@@ -34,6 +35,7 @@ app.register_blueprint(auth_routes, url_prefix='/api/auth')
 app.register_blueprint(friendrequest_routes, url_prefix='/api/friend-request')
 app.register_blueprint(match_routes, url_prefix='/api/match')
 app.register_blueprint(history_routes, url_prefix='/api/history')
+app.register_blueprint(chat_routes, url_prefix='/api/chat')
 db.init_app(app)
 Migrate(app, db)
 

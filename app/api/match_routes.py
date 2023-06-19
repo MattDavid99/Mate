@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from flask_login import login_required
+from flask_login import login_required, current_user
 from app.models import  db, Match, History
 import chess
 
@@ -75,18 +75,18 @@ def move(match_id):
 
     # if move is illegal
     if not uci_move:
-        return jsonify({"error": "<-------- error at line 50 in match_routes"})
+        return jsonify({"error": "<-------- error at line 50 in match_routes"}), 404
 
     match = Match.query.get(match_id)
     if not match:
-        return jsonify({"error": "<--------- NO match found match_routes"})
+        return jsonify({"error": "<--------- NO match found match_routes"}), 404
 
     board = chess.Board(match.board_state)
 
     try:
         move = chess.Move.from_uci(uci_move)
     except:
-        return jsonify({"error": "<--------- invalid move format in match_routes def move(match_id)"})
+        return jsonify({"error": "<--------- invalid move format in match_routes def move(match_id)"}), 404
 
     if move not in board.legal_moves:
         return jsonify({"error": "Illegal move"}), 400
@@ -141,13 +141,37 @@ def move(match_id):
         # check if game has ended
     if board.is_checkmate():
 
+        winner = "black" if board.turn else "white"
         match.status = "Checkmate"
         print("???----------->>>,  Checkmate works")
+        match.result = winner + " wins"
         db.session.commit()
 
     elif board.is_stalemate() or board.is_insufficient_material() or board.is_seventyfive_moves() or board.is_fivefold_repetition() or board.is_variant_draw():
 
         match.status = "Draw"
+        match.result = "Draw"
         db.session.commit()
+
+    return {"match": [match.to_dict()]}, 200
+
+@match_routes.route('/<int:match_id>/resign', methods=['POST'])
+@login_required
+def handle_resign(match_id):
+    """
+    Resign from a chess match
+    """
+
+    current_user_id = current_user.id
+    match = Match.query.get(match_id)
+
+    if not match or (match.white_player_id != current_user_id and match.black_player_id != current_user_id):
+        return jsonify({"error": "@ handle_resign() line 169"}), 400
+
+
+    match.status = "Resigned"
+    match.result = "White wins" if match.black_player_id == current_user_id else "Black wins"
+
+    db.session.commit()
 
     return {"match": [match.to_dict()]}, 200
