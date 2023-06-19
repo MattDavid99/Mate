@@ -1,3 +1,3 @@
 from .db import db
-from .user import User
+from .all_tables import User, Friends, Match, Chat, History, FriendRequest
 from .db import environment, SCHEMA
