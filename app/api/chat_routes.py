@@ -75,3 +75,32 @@ def get_chats(match_id):
         return jsonify({'error': 'No chats found for this match'}), 404
 
     return jsonify({'chats': [chat.to_dict() for chat in chats]}), 200
+
+# {
+#     "chats": [
+#         {
+#             "createdAt": "Mon, 19 Jun 2023 17:29:07 GMT",
+#             "id": 3,
+#             "matchId": 2,
+#             "message": "yo",
+#             "updatedAt": "Mon, 19 Jun 2023 17:29:07 GMT",
+#             "userId": 1
+#         },
+#         {
+#             "createdAt": "Mon, 19 Jun 2023 17:30:00 GMT",
+#             "id": 4,
+#             "matchId": 2,
+#             "message": "This is a test!!",
+#             "updatedAt": "Mon, 19 Jun 2023 17:30:00 GMT",
+#             "userId": 2
+#         },
+#         {
+#             "createdAt": "Mon, 19 Jun 2023 17:30:30 GMT",
+#             "id": 5,
+#             "matchId": 2,
+#             "message": "Hi there",
+#             "updatedAt": "Mon, 19 Jun 2023 17:30:30 GMT",
+#             "userId": 1
+#         }
+#     ]
+# }
