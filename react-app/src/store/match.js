@@ -1,6 +1,7 @@
 // constants
 const CREATE_MATCH = "match/CREATE_MATCH";
-const MAKE_MOVES = "match/MAKE_MOVES"
+const MAKE_MOVES = "match/MAKE_MOVES";
+const RESIGN_MATCH = "match/RESIGN_MATCH";
 
 
 const startMatch = (match) => {
@@ -13,6 +14,13 @@ const startMatch = (match) => {
 const makeMoves = (match) => {
   return {
     type: MAKE_MOVES,
+    payload: match
+  }
+}
+
+const resignMatch = (match) => {
+  return {
+    type: RESIGN_MATCH,
     payload: match
   }
 }
@@ -73,6 +81,21 @@ export const postMove = (match_id, uci_move) => async (dispatch) => {
 }
 
 
+// @match_routes.route('/<int:match_id>/resign', methods=['POST'])
+export const postResign = (match_id) => async (dispatch) => {
+  const response = await fetch(`/api/match/${match_id}/resign`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+
+  if (response.ok) {
+    const data = await response.json()
+    dispatch(resignMatch(data.match[0]))
+  }
+}
+
 
 
 const initialState = { match: null };
@@ -87,6 +110,12 @@ export default function matchReducer(state = initialState, action) {
       }
 
     case MAKE_MOVES:
+      return {
+        ...state,
+        match: action.payload
+      }
+
+    case RESIGN_MATCH:
       return {
         ...state,
         match: action.payload
