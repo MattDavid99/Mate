@@ -2,6 +2,7 @@
 const CREATE_MATCH = "match/CREATE_MATCH";
 const MAKE_MOVES = "match/MAKE_MOVES";
 const RESIGN_MATCH = "match/RESIGN_MATCH";
+const GET_MATCH = "match/GET_MATCH";
 
 
 const startMatch = (match) => {
@@ -21,6 +22,13 @@ const makeMoves = (match) => {
 const resignMatch = (match) => {
   return {
     type: RESIGN_MATCH,
+    payload: match
+  }
+}
+
+const getMatch = (match) => {
+  return {
+    type: GET_MATCH,
     payload: match
   }
 }
@@ -97,6 +105,29 @@ export const postResign = (match_id) => async (dispatch) => {
 }
 
 
+// @match_routes.route('/<int:match_id>', methods=['GET'])
+export const fetchMatch = (match_id) => async (dispatch) => {
+  const response = await fetch(`/api/match/${match_id}`, {
+    method: "GET",
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+
+  if (response.ok) {
+    const data = await response.json()
+    dispatch(getMatch(data.match))
+
+  } else {
+    const data = await response.json()
+
+    if (data.errors) {
+      return data.errors
+    }
+  }
+}
+
+
 
 const initialState = { match: null };
 
@@ -116,6 +147,12 @@ export default function matchReducer(state = initialState, action) {
       }
 
     case RESIGN_MATCH:
+      return {
+        ...state,
+        match: action.payload
+      }
+
+    case GET_MATCH:
       return {
         ...state,
         match: action.payload

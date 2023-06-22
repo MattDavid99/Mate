@@ -14,7 +14,7 @@ def new_match():
     Start a new chess match
     """
 
-    # grabbing the two user(id)'s that we need
+    # grabbing the two user(id)'s that we need from the json body
     white_player_id = request.json.get('white_player_id')
     black_player_id = request.json.get('black_player_id')
 
@@ -175,3 +175,18 @@ def handle_resign(match_id):
     db.session.commit()
 
     return {"match": [match.to_dict()]}, 200
+
+
+@match_routes.route('/<int:match_id>', methods=['GET'])
+@login_required
+def get_match(match_id):
+    """
+    Get the state of an ongoing chess match
+    """
+
+    match = Match.query.get(match_id)
+
+    if not match:
+        return jsonify({'error': 'error in def get_match() in match_routes, cannot get specific match'}), 404
+
+    return {'match', [match.to_dict()]}, 200
