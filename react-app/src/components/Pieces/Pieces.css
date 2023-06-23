@@ -1,0 +1,88 @@
+.chessboard-tile {
+  width: 125px;
+  height: 125px;
+  border-radius: 2px;
+}
+
+.black-tile {
+  background-color: #146680;
+  display: grid;
+  place-content: center;
+}
+
+.white-tile {
+  background-color: #ebecd0;
+  display: grid;
+  place-content: center;
+}
+
+/* .black-tile .black-piece-img {
+  height: 85px;
+  width: 70px;
+}
+
+.white-tile .white-piece-img {
+  height: 85px;
+  width: 70px;
+} */
+
+/* .black-piece-img {
+  height: 100px;
+  width: 100px;
+}
+
+.white-piece-img {
+  height: 100px;
+  width: 100px;
+} */
+
+.piece.whitepawn {
+  height: 90px;
+  width: 70px;
+}
+.piece.whitebishop {
+  height: 120px;
+  width: 110px;
+}
+.piece.whiterook {
+  height: 108px;
+  width: 102px;
+}
+.piece.whiteking {
+  height: 100px;
+  width: 100px;
+}
+.piece.whitequeen {
+  height: 100px;
+  width: 100px;
+}
+.piece.whiteknight {
+  height: 90px;
+  width: 85px;
+}
+
+
+.piece.blackpawn {
+  height: 110px;
+  width: 110px;
+}
+.piece.blackbishop {
+  height: 90px;
+  width: 80px;
+}
+.piece.blackrook {
+  height: 108px;
+  width: 102px;
+}
+.piece.blackking {
+  height: 100px;
+  width: 100px;
+}
+.piece.blackqueen {
+  height: 100px;
+  width: 95px;
+}
+.piece.blackknight {
+  height: 100px;
+  width: 100px;
+}
