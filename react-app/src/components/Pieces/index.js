@@ -10,7 +10,8 @@ function Pieces({ number, image, type }) {
 
     return (
       <div className='black-tile'>
-        {image && <img src={image} className={pieceClass}/>}
+        {image && <div className={pieceClass} style={{backgroundImage: `url(${image})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center'}}></div>}
+        {/* {image && <img src={image} className={pieceClass}/>} */}
       </div>
     )
 
@@ -18,7 +19,8 @@ function Pieces({ number, image, type }) {
 
     return (
       <div className='white-tile'>
-        {image && <img src={image} className={pieceClass}/>}
+        {image && <div className={pieceClass} style={{backgroundImage: `url(${image})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center'}}></div>}
+        {/* {image && <img src={image} className={pieceClass}/>} */}
       </div>
     )
   }

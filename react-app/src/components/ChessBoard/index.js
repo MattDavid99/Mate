@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import './ChessBoard.css'
 import Pieces from '../Pieces'
 
 function ChessBoard() {
+
+  const [positionPieces, setPositionPieces] = useState([])
 
   const horizontalAxis = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
   const verticalAxis = ['1', '2', '3', '4', '5', '6', '7', '8']
@@ -77,10 +79,92 @@ function ChessBoard() {
     }
   }
 
+  const chessBoardRef = useRef(null)
+
+  let grabbedPiece = null;
+
+
+  const handleGrabbingPiece = (e) => {
+    const ele = e.target
+    if (ele.classList.contains("piece")){
+
+
+      const x = e.clientX - 50
+      const y = e.clientY - 50
+      ele.style.position = 'absolute'
+      ele.style.left = `${x}px`
+      ele.style.top = `${y}px`
+
+      grabbedPiece = ele
+
+    }
+  }
+
+  const handleMovingPiece = (e) => {
+
+    let chessboard = chessBoardRef.current
+
+    if (grabbedPiece && chessboard) {
+
+      const minX = chessboard.offsetLeft - 30
+      const minY = chessboard.offsetTop - 30
+      const maxX = chessboard.offsetLeft + chessboard.clientWidth - 80
+      const maxY = chessboard.offsetTop + chessboard.clientHeight - 80
+      const x = e.clientX - 50
+      const y = e.clientY - 50
+      // const maxX = chessboard.offsetLeft + chessboard.clientWidth - grabbedPiece.clientWidth;
+      // const maxY = chessboard.offsetTop + chessboard.clientHeight - grabbedPiece.clientHeight;
+      // const x = e.clientX - grabbedPiece.clientWidth / 2;
+      // const y = e.clientY - grabbedPiece.clientHeight / 2;
+      grabbedPiece.style.position = 'absolute'
+
+      // grabbedPiece.style.top = `${x}px`
+      // grabbedPiece.style.top = `${y}px`
+
+      // if (x < minX) {
+      //   grabbedPiece.style.left = `${minX}px`
+
+      // } else {
+      //   grabbedPiece.style.left = `${x}px`
+      // }
+
+      // X axis styling (so piece cannot exit board left to right)
+      if (x < minX) {
+        grabbedPiece.style.left = `${minX}px`
+
+      } else if (x > maxX) {
+        grabbedPiece.style.left = `${maxX}px`
+
+      } else {
+        grabbedPiece.style.left = `${x}px`
+      }
+
+      // Y axis styling (so piece cannot exit board top to bottom)
+      if (y < minY) {
+        grabbedPiece.style.top = `${minY}px`
+
+      } else if (y > maxY) {
+        grabbedPiece.style.top = `${maxY}px`
+
+      } else {
+        grabbedPiece.style.top = `${y}px`
+      }
+
+      // grabbedPiece.style.left = x < minX ? `${minX}px` : `${x}px`
+      // grabbedPiece.style.top = y < minY ? `${minY}px` : `${y}px`
+    }
+  }
+
+  const handleDroppingPiece = (e) => {
+    if (grabbedPiece) {
+      grabbedPiece = null
+    }
+  }
+
 
   return (
     <div className='chessboard-container'>
-      <div className='chessboard'>{board}</div>
+      <div onMouseUp={(e => handleDroppingPiece(e))} onMouseMove={(e => handleMovingPiece(e))} onMouseDown={(e => handleGrabbingPiece(e))} className='chessboard' ref={chessBoardRef}>{board}</div>
     </div>
   )
 }

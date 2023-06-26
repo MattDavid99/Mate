@@ -16,6 +16,22 @@
   place-content: center;
 }
 
+.black-tile-piece {
+  width: 100px;
+  height: 100px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 80px;
+}
+
+.white-tile-piece {
+  width: 100px;
+  height: 100px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 80px;
+}
+
 /* .black-tile .black-piece-img {
   height: 85px;
   width: 70px;
@@ -35,6 +51,8 @@
   height: 100px;
   width: 100px;
 } */
+
+/* ----------  (Standard piece styling)  ------------ */
 
 .piece.whitepawn {
   height: 90px;
@@ -85,4 +103,85 @@
 .piece.blackknight {
   height: 100px;
   width: 100px;
+}
+/* -----------  (Hover for each piece)  ------------- */
+
+.piece.whitepawn:hover {
+  cursor: grab;
+}
+.piece.whitebishop:hover {
+  cursor: grab;
+}
+.piece.whiterook:hover {
+  cursor: grab;
+}
+.piece.whiteking:hover {
+  cursor: grab;
+}
+.piece.whitequeen:hover {
+  cursor: grab;
+}
+.piece.whiteknight:hover {
+  cursor: grab;
+}
+
+
+.piece.blackpawn:hover {
+  cursor: grab;
+}
+.piece.blackbishop:hover {
+  cursor: grab;
+}
+.piece.blackrook:hover {
+  cursor: grab;
+}
+.piece.blackking:hover {
+  cursor: grab;
+}
+.piece.blackqueen:hover {
+  cursor: grab;
+}
+.piece.blackknight:hover {
+  cursor: grab;
+}
+
+/* -----------  (Action for each piece)  ------------- */
+
+.piece.whitepawn:active {
+  cursor: grabbing;
+}
+.piece.whitebishop:active {
+  cursor: grabbing;
+}
+.piece.whiterook:active {
+  cursor: grabbing;
+}
+.piece.whiteking:active {
+  cursor: grabbing;
+}
+.piece.whitequeen:active {
+  cursor: grabbing;
+}
+.piece.whiteknight:active {
+  cursor: grabbing;
+}
+
+
+.piece.blackpawn:active {
+  cursor: grabbing;
+}
+.piece.blackbishop:active {
+  cursor: grabbing;
+}
+.piece.blackrook:active {
+  cursor: grabbing;
+}
+.piece.blackking:active {
+  cursor: grabbing;
+}
+.piece.blackqueen:active {
+  cursor: grabbing;
+}
+.piece.blackknight:active {
+  cursor: grabbing;
 }
