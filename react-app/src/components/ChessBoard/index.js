@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { useDispatch } from "react-redux"
+import { createMatch } from '../../store/match'
 import './ChessBoard.css'
 import Pieces from '../Pieces'
+import MatchRef from '../ref/ref'
 
 // X and Y axis for chess board = [a8, b8, c8, d8, etc.]
 const horizontalAxis = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
@@ -8,36 +11,53 @@ const verticalAxis = ['1', '2', '3', '4', '5', '6', '7', '8']
 
 
 
-
-
 const initialBoardState = []
 
+
+export const Type = {
+  PAWN: 'PAWN',
+  BISHOP: 'BISHOP',
+  ROOK: 'ROOK',
+  KNIGHT: 'KNIGHT',
+  QUEEN: 'QUEEN',
+  KING: 'KING'
+}
+
+export const Team = {
+  BLACK: "BLACK",
+  WHITE: "WHITE"
+}
+
+
  for (let p = 0; p < 2; p++){
-   const type = p === 0 ? "black" : "white"
-   const y = p === 0 ? 7 : 0
+   const teamType = (p === 0) ? Team.BLACK : Team.WHITE
+   const type = (teamType === Team.BLACK) ? "black" : "white"
+   const y = (teamType === Team.BLACK) ? 7 : 0
    // rooks
-   initialBoardState.push({image: `../assets/images/${type}rook.png`, x:0, y})
-   initialBoardState.push({image: `../assets/images/${type}rook.png`, x:7, y})
+   initialBoardState.push({image: `../assets/images/${type}rook.png`, x:0, y, type: Type.ROOK, team: teamType})
+   initialBoardState.push({image: `../assets/images/${type}rook.png`, x:7, y, type: Type.ROOK, team: teamType})
    // knights
-   initialBoardState.push({image: `../assets/images/${type}knight.png`, x:1, y})
-   initialBoardState.push({image: `../assets/images/${type}knight.png`, x:6, y})
+   initialBoardState.push({image: `../assets/images/${type}knight.png`, x:1, y, type: Type.KNIGHT, team: teamType})
+   initialBoardState.push({image: `../assets/images/${type}knight.png`, x:6, y, type: Type.KNIGHT, team: teamType})
    // bishops
-   initialBoardState.push({image: `../assets/images/${type}bishop.png`, x:2, y})
-   initialBoardState.push({image: `../assets/images/${type}bishop.png`, x:5, y})
+   initialBoardState.push({image: `../assets/images/${type}bishop.png`, x:2, y, type: Type.BISHOP, team: teamType})
+   initialBoardState.push({image: `../assets/images/${type}bishop.png`, x:5, y, type: Type.BISHOP, team: teamType})
    // king and queen
-   initialBoardState.push({image: `../assets/images/${type}queen.png`, x:3, y})
-   initialBoardState.push({image: `../assets/images/${type}king.png`, x:4, y})
+   initialBoardState.push({image: `../assets/images/${type}queen.png`, x:3, y, type: Type.QUEEN, team: teamType})
+   initialBoardState.push({image: `../assets/images/${type}king.png`, x:4, y, type: Type.KING, team: teamType})
  }
 
   for (let i = 0; i < 8; i++) {
-    initialBoardState.push({image: "../assets/images/blackpawn.png", x:i, y:6})
+    initialBoardState.push({image: "../assets/images/blackpawn.png", x:i, y:6, type: Type.PAWN, team: Team.BLACK})
   }
 
   for (let i = 0; i < 8; i++) {
-    initialBoardState.push({image: "../assets/images/whitepawn.png", x:i, y:1})
+    initialBoardState.push({image: "../assets/images/whitepawn.png", x:i, y:1, type: Type.PAWN, team: Team.WHITE})
   }
 
-
+  function findPiece(x, y, pieces) {
+    return pieces.find(piece => piece.x === x && piece.y === y);
+  }
 
 
 function ChessBoard() {
@@ -47,6 +67,9 @@ function ChessBoard() {
   const [gridY, setGridY] = useState(0)
   const [pieces, setPieces] = useState(initialBoardState)
   const chessboardRef = useRef(null)
+  const Ref = new MatchRef()
+
+  const dispatch = useDispatch()
 
 
 
@@ -116,18 +139,28 @@ function ChessBoard() {
       const x = Math.floor((e.clientX - chessboard.offsetLeft) / 100)
       const y = Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 800) / 100))
 
-      console.log(x,y);
+      const pieceAtNewSquare = findPiece(x, y, pieces);
 
-      setPieces((value) => {
-        const pieces = value.map((p) => {
+      setPieces((prevState) => {
+        const newPieces = prevState.map((p) => {
           if (p.x === gridX && p.y === gridY) {
-            p.x = x
-            p.y = y
+            const IsValidMove = Ref.validMove(gridX, gridY, x, y, p.type, p.team, prevState)
+
+            if (IsValidMove && !pieceAtNewSquare) {
+              p.x = x
+              p.y = y
+
+            } else {
+              activePiece.style.position = 'relative'
+              activePiece.style.removeProperty('top')
+              activePiece.style.removeProperty('left')
+            }
+
           }
 
           return p
         })
-        return pieces
+        return newPieces
       })
 
       setActivePiece(null)
