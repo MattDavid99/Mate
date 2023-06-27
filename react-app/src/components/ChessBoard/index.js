@@ -11,6 +11,10 @@ function ChessBoard() {
 
   let board = []
 
+  const chessBoardRef = useRef(null)
+
+  let grabbedPiece = null;
+
   // const pieces = [
   //   {image: '../assets/images/whitepawn.png', x: 0, y: 0},
   //   {image: '../assets/images/whitebishop.png', x: 0, y: 0},
@@ -79,15 +83,13 @@ function ChessBoard() {
     }
   }
 
-  const chessBoardRef = useRef(null)
 
-  let grabbedPiece = null;
 
 
   const handleGrabbingPiece = (e) => {
     const ele = e.target
-    if (ele.classList.contains("piece")){
 
+    if (ele.classList.contains("piece")){
 
       const x = e.clientX - 50
       const y = e.clientY - 50
@@ -106,10 +108,10 @@ function ChessBoard() {
 
     if (grabbedPiece && chessboard) {
 
-      const minX = chessboard.offsetLeft - 30
-      const minY = chessboard.offsetTop - 30
-      const maxX = chessboard.offsetLeft + chessboard.clientWidth - 80
-      const maxY = chessboard.offsetTop + chessboard.clientHeight - 80
+      const minX = chessboard.offsetLeft - 5
+      const minY = chessboard.offsetTop - 5
+      const maxX = chessboard.offsetLeft + chessboard.clientWidth - 85
+      const maxY = chessboard.offsetTop + chessboard.clientHeight - 85
       const x = e.clientX - 50
       const y = e.clientY - 50
       // const maxX = chessboard.offsetLeft + chessboard.clientWidth - grabbedPiece.clientWidth;
