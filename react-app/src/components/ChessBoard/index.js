@@ -109,7 +109,6 @@ function ChessBoard() {
 
 
   function dropPiece(e) {
-    // However, be aware that if you want to access the event properties in an asynchronous way, you'll need to call event.persist()
     const chessboard = chessboardRef.current
 
     if(activePiece && chessboard){
