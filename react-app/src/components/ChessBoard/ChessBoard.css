@@ -1,13 +1,14 @@
 .chessboard-container {
   display: grid;
   place-content: center;
+  height: 100vh;
 }
 
 .chessboard {
   display: grid;
   grid-template-columns: repeat(8, 100px);
   grid-template-rows: repeat(8, 100px);
-  background-color: #00ffaa;
   width: 800px;
   height: 800px;
+  background-color: aquamarine;
 }

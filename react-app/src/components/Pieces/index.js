@@ -1,26 +1,21 @@
 import React from 'react'
 import "./Pieces.css"
 
-function Pieces({ number, image, type}) {
 
-  let pieceClass = type ? `piece ${type}` : 'piece';
 
+function Pieces({ number, image, type, id}) {
 
   if (number % 2 === 0) {
-
     return (
-      <div className='black-tile'>
-        {image && <div className={pieceClass} style={{backgroundImage: `url(${image})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center'}}></div>}
-        {/* {image && <img src={image} className={pieceClass}/>} */}
+      <div className='tile black-tile'>
+        {image && <div style={{backgroundImage: `url(${image})`}} className='chess-piece'></div>}
       </div>
     )
 
   } else {
-
     return (
-      <div className='white-tile'>
-        {image && <div className={pieceClass} style={{backgroundImage: `url(${image})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center'}}></div>}
-        {/* {image && <img src={image} className={pieceClass}/>} */}
+      <div className='tile white-tile'>
+        {image && <div style={{backgroundImage: `url(${image})`}} className='chess-piece'></div>}
       </div>
     )
   }
