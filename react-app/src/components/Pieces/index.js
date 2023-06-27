@@ -1,7 +1,7 @@
 import React from 'react'
 import "./Pieces.css"
 
-function Pieces({ number, image, type }) {
+function Pieces({ number, image, type}) {
 
   let pieceClass = type ? `piece ${type}` : 'piece';
 

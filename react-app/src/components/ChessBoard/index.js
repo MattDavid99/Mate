@@ -1,10 +1,46 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import './ChessBoard.css'
 import Pieces from '../Pieces'
 
 function ChessBoard() {
 
-  const [positionPieces, setPositionPieces] = useState([])
+  const initialBoardState = []
+  const [xAxis, setXAxis] = useState(0)
+  const [yAxis, setYAxis] = useState(0)
+  const [grabbedPiece, setGrabbedPiece] = useState(null) || null
+
+
+
+  for (let i = 0; i < 8; i++) {
+    initialBoardState.push({image: '../assets/images/blackpawn.png', x: 1, y: i, type: 'blackpawn'});
+  }
+
+  for (let i = 0; i < 8; i++) {
+    initialBoardState.push({image: '../assets/images/whitepawn.png', x: 6, y: i, type: 'whitepawn'});
+  }
+
+  // white pieces
+  initialBoardState.push({image: '../assets/images/whiterook.png', x: 7, y: 7, type: 'whiterook'})
+  initialBoardState.push({image: '../assets/images/whiterook.png', x: 7, y: 0, type: 'whiterook'})
+  initialBoardState.push({image: '../assets/images/whiteknight.png', x: 7, y: 1, type: 'whiteknight'})
+  initialBoardState.push({image: '../assets/images/whiteknight.png', x: 7, y: 6, type: 'whiteknight'})
+  initialBoardState.push({image: '../assets/images/whitebishop.png', x: 7, y: 2, type: 'whitebishop'})
+  initialBoardState.push({image: '../assets/images/whitebishop.png', x: 7, y: 5, type: 'whitebishop'})
+  initialBoardState.push({image: '../assets/images/whiteking.png', x: 7, y: 3, type: 'whiteking'})
+  initialBoardState.push({image: '../assets/images/whitequeen.png', x: 7, y: 4, type: 'whitequeen'})
+
+
+  // black pieces
+  initialBoardState.push({image: '../assets/images/blackrook.png', x: 0, y: 0, type: 'blackrook'});
+  initialBoardState.push({image: '../assets/images/blackrook.png', x: 0, y: 7, type: 'blackrook'});
+  initialBoardState.push({image: '../assets/images/blackknight.png', x: 0, y: 6, type: 'blackknight'});
+  initialBoardState.push({image: '../assets/images/blackknight.png', x: 0, y: 1, type: 'blackknight'});
+  initialBoardState.push({image: '../assets/images/blackbishop.png', x: 0, y: 2, type: 'blackbishop'});
+  initialBoardState.push({image: '../assets/images/blackbishop.png', x: 0, y: 5, type: 'blackbishop'});
+  initialBoardState.push({image: '../assets/images/blackqueen.png', x: 0, y: 4, type: 'blackqueen'});
+  initialBoardState.push({image: '../assets/images/blackking.png', x: 0, y: 3, type: 'blackking'});
+
+  const [pieces, setPieces] = useState(initialBoardState)
 
   const horizontalAxis = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
   const verticalAxis = ['1', '2', '3', '4', '5', '6', '7', '8']
@@ -13,155 +49,121 @@ function ChessBoard() {
 
   const chessBoardRef = useRef(null)
 
-  let grabbedPiece = null;
 
-  // const pieces = [
-  //   {image: '../assets/images/whitepawn.png', x: 0, y: 0},
-  //   {image: '../assets/images/whitebishop.png', x: 0, y: 0},
-  //   {image: '../assets/images/whiterook.png', x: 0, y: 0},
-  //   {image: '../assets/images/whiteknight.png', x: 0, y: 0},
-  //   {image: '../assets/images/whiteking.png', x: 0, y: 0},
-  //   {image: '../assets/images/whitequeen.png', x: 0, y: 0},
-  //   {image: '../assets/images/blackpawn.png', x: 0, y: 0},
-  //   {image: '../assets/images/blackbishop.png', x: 0, y: 0},
-  //   {image: '../assets/images/blackrook.png', x: 0, y: 0},
-  //   {image: '../assets/images/blackknight.png', x: 0, y: 0},
-  //   {image: '../assets/images/blackking.png', x: 0, y: 0},
-  //   {image: '../assets/images/blackqueen.png', x: 0, y: 0}
-  // ]
+    // grabPiece
+    const handleGrabbingPiece = (e) => {
+      const ele = e.target
 
-  // SETTING UP PIECES ⬇️⬇️⬇️
-  let pieces = []
+      if (ele.classList.contains("piece") && chessBoardRef.current){
 
-  for (let i = 0; i < 8; i++) {
-    pieces.push({image: '../assets/images/whitepawn.png', x: 1, y: i, type: 'whitepawn'});
-  }
+        setXAxis(Math.floor((e.clientX - chessBoardRef.current.offsetLeft) / 100))
+        setYAxis(7 - Math.floor((e.clientY - chessBoardRef.current.offsetTop) / 100))
 
-  for (let i = 0; i < 8; i++) {
-    pieces.push({image: '../assets/images/blackpawn.png', x: 6, y: i, type: 'blackpawn'});
-  }
+        const x = e.clientX - 50
+        const y = e.clientY - 50
+        ele.style.position = 'absolute'
+        ele.style.left = `${x}px`
+        ele.style.top = `${y}px`
 
-  // black pieces
-  pieces.push({image: '../assets/images/blackrook.png', x: 7, y: 7, type: 'blackrook'})
-  pieces.push({image: '../assets/images/blackrook.png', x: 7, y: 0, type: 'blackrook'})
-  pieces.push({image: '../assets/images/blackknight.png', x: 7, y: 1, type: 'blackknight'})
-  pieces.push({image: '../assets/images/blackknight.png', x: 7, y: 6, type: 'blackknight'})
-  pieces.push({image: '../assets/images/blackbishop.png', x: 7, y: 2, type: 'blackbishop'})
-  pieces.push({image: '../assets/images/blackbishop.png', x: 7, y: 5, type: 'blackbishop'})
-  pieces.push({image: '../assets/images/blackking.png', x: 7, y: 4, type: 'blackking'})
-  pieces.push({image: '../assets/images/blackqueen.png', x: 7, y: 3, type: 'blackqueen'})
+        setGrabbedPiece(ele)
+
+      }
+    }
+    // movePiece
+    const handleMovingPiece = (e) => {
+
+      let chessboard = chessBoardRef.current
+
+      if (grabbedPiece && chessboard) {
+
+        const minX = chessboard.offsetLeft - 5
+        const minY = chessboard.offsetTop - 5
+        const maxX = chessboard.offsetLeft + chessboard.clientWidth - 85
+        const maxY = chessboard.offsetTop + chessboard.clientHeight - 85
+        const x = e.clientX - 50
+        const y = e.clientY - 50
+
+        grabbedPiece.style.position = 'absolute'
 
 
-  // white pieces
-  pieces.push({image: '../assets/images/whiterook.png', x: 0, y: 0, type: 'whiterook'});
-  pieces.push({image: '../assets/images/whiterook.png', x: 0, y: 7, type: 'whiterook'});
-  pieces.push({image: '../assets/images/whiteknight.png', x: 0, y: 6, type: 'whiteknight'});
-  pieces.push({image: '../assets/images/whiteknight.png', x: 0, y: 1, type: 'whiteknight'});
-  pieces.push({image: '../assets/images/whitebishop.png', x: 0, y: 2, type: 'whitebishop'});
-  pieces.push({image: '../assets/images/whitebishop.png', x: 0, y: 5, type: 'whitebishop'});
-  pieces.push({image: '../assets/images/whitequeen.png', x: 0, y: 3, type: 'whitequeen'});
-  pieces.push({image: '../assets/images/whiteking.png', x: 0, y: 4, type: 'whiteking'});
+        // X axis styling (so piece cannot exit board left to right)
+        if (x < minX) {
+          grabbedPiece.style.left = `${minX}px`
 
+        } else if (x > maxX) {
+          grabbedPiece.style.left = `${maxX}px`
 
-
-  for (let i = verticalAxis.length - 1; i >= 0; i--){
-    for (let j = 0; j < horizontalAxis.length; j++){
-
-      const number = j + i + 2
-
-      let image = undefined
-      let type = undefined
-
-      pieces.forEach((p) => {
-        if (p.x === i && p.y === j) {
-          image = p.image
-          type = p.type
+        } else {
+          grabbedPiece.style.left = `${x}px`
         }
-      })
 
-      board.push(<Pieces key={`${i},${j}`} number={number} image={image} type={type}/>)
-    }
-  }
+        // Y axis styling (so piece cannot exit board top to bottom)
+        if (y < minY) {
+          grabbedPiece.style.top = `${minY}px`
+
+        } else if (y > maxY) {
+          grabbedPiece.style.top = `${maxY}px`
+
+        } else {
+          grabbedPiece.style.top = `${y}px`
+        }
 
 
-
-
-  const handleGrabbingPiece = (e) => {
-    const ele = e.target
-
-    if (ele.classList.contains("piece")){
-
-      const x = e.clientX - 50
-      const y = e.clientY - 50
-      ele.style.position = 'absolute'
-      ele.style.left = `${x}px`
-      ele.style.top = `${y}px`
-
-      grabbedPiece = ele
-
-    }
-  }
-
-  const handleMovingPiece = (e) => {
-
-    let chessboard = chessBoardRef.current
-
-    if (grabbedPiece && chessboard) {
-
-      const minX = chessboard.offsetLeft - 5
-      const minY = chessboard.offsetTop - 5
-      const maxX = chessboard.offsetLeft + chessboard.clientWidth - 85
-      const maxY = chessboard.offsetTop + chessboard.clientHeight - 85
-      const x = e.clientX - 50
-      const y = e.clientY - 50
-      // const maxX = chessboard.offsetLeft + chessboard.clientWidth - grabbedPiece.clientWidth;
-      // const maxY = chessboard.offsetTop + chessboard.clientHeight - grabbedPiece.clientHeight;
-      // const x = e.clientX - grabbedPiece.clientWidth / 2;
-      // const y = e.clientY - grabbedPiece.clientHeight / 2;
-      grabbedPiece.style.position = 'absolute'
-
-      // grabbedPiece.style.top = `${x}px`
-      // grabbedPiece.style.top = `${y}px`
-
-      // if (x < minX) {
-      //   grabbedPiece.style.left = `${minX}px`
-
-      // } else {
-      //   grabbedPiece.style.left = `${x}px`
-      // }
-
-      // X axis styling (so piece cannot exit board left to right)
-      if (x < minX) {
-        grabbedPiece.style.left = `${minX}px`
-
-      } else if (x > maxX) {
-        grabbedPiece.style.left = `${maxX}px`
-
-      } else {
-        grabbedPiece.style.left = `${x}px`
       }
+    }
 
-      // Y axis styling (so piece cannot exit board top to bottom)
-      if (y < minY) {
-        grabbedPiece.style.top = `${minY}px`
+    // dropPiece
+    const handleDroppingPiece = (e) => {
 
-      } else if (y > maxY) {
-        grabbedPiece.style.top = `${maxY}px`
+      if (grabbedPiece) {
 
-      } else {
-        grabbedPiece.style.top = `${y}px`
+        const squareSize = 100;
+        const x = Math.floor((e.clientX - chessBoardRef.current.offsetLeft) / squareSize);
+        const y = 7 - Math.floor((e.clientY - chessBoardRef.current.offsetTop) / squareSize);
+        console.log(x,y);
+
+        // Make pieces lock in place
+        const centerX = chessBoardRef.current.offsetLeft + x * squareSize + squareSize / 2;
+        const centerY = chessBoardRef.current.offsetTop + (7 - y) * squareSize + squareSize / 2;
+
+        grabbedPiece.style.left = `${centerX - grabbedPiece.clientWidth / 2}px`;
+        grabbedPiece.style.top = `${centerY - grabbedPiece.clientHeight / 2}px`;
+
+        setPieces(value => {
+          const pieces = value.map((p) => {
+            if (p.x == xAxis && p.y == yAxis){
+              p.x = x
+              p.y = y
+            }
+            return p
+          })
+          return pieces
+        })
+
+        setGrabbedPiece(null)
+
       }
-
-      // grabbedPiece.style.left = x < minX ? `${minX}px` : `${x}px`
-      // grabbedPiece.style.top = y < minY ? `${minY}px` : `${y}px`
     }
-  }
 
-  const handleDroppingPiece = (e) => {
-    if (grabbedPiece) {
-      grabbedPiece = null
+    for (let i = 0; i < horizontalAxis.length; i++){
+      for (let j = verticalAxis.length - 1; j >= 0; j--){
+
+        const number =  j + i + 2
+
+        let image = undefined
+        let type = undefined
+
+        pieces.forEach((p) => {
+          if (p.x === i && p.y === j) {
+            image = p.image
+            type = p.type
+          }
+        })
+
+        board.push(<Pieces key={`${i},${j}`} number={number} image={image} type={type}/>)
+      }
     }
-  }
+
 
 
   return (
