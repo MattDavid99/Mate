@@ -49,7 +49,7 @@ export default class MatchRef {
     console.log(`Current location: (${x},${y})`);
     console.log(`Team: ${team}`);
 
-    // Valid Moves for Pawn
+    // Valid Moves for Pawn   (PAWN⬇️)
     if (type === Type.PAWN) {
 
         const row = team == Team.WHITE ? 1 : 6
@@ -70,7 +70,86 @@ export default class MatchRef {
           else if (x - prevX == 1 && y - prevY == direction) {
             if (this.squareHasOpponent(x,y,boardState,team)) return true
           }
-    }
+
+          // (KNIGHT⬇️) (x === desiredPosition, prevX === initialPosition)
+      } else if (type == Type.KNIGHT) {
+
+        // Top Line
+        if (y - prevY == 2){
+          // KNIGHT TOP LEFT
+          if (x - prevX == -1) {
+            if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
+              // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
+              return true
+            }
+          }
+          // KNIGHT TOP RIGHT
+          if (x - prevX == 1) {
+            if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
+              // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
+              return true
+            }
+          }
+        }
+
+        // Right Line
+        if (x - prevX == 2) {
+          // KNIGHT RIGHT TOP
+          if (y - prevY == 1) {
+            if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
+              // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
+              return true
+            }
+          }
+          // KNIGHT LEFT TOP
+          if (y - prevY == -1) {
+            if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
+              // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
+              return true
+            }
+          }
+        }
+
+        // Bottom Line
+        if (y - prevY == -2){
+          // KNIGHT BOTTOM LEFT
+          if (x - prevX == -1) {
+            if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
+              // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
+              return true
+            }
+          }
+          // KNIGHT BOTTOM RIGHT
+          if (x - prevX == 1) {
+            if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
+              // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
+              return true
+            }
+          }
+        }
+
+        // Left Line
+        if (x - prevX == -2) {
+          // KNIGHT LEFT TOP
+          if (y - prevY == 1) {
+            if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
+              // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
+              return true
+            }
+          }
+          // KNIGHT LEFT BOTTOM
+          if (y - prevY == -1) {
+            if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
+              // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
+              return true
+            }
+          }
+        }
+
+
+      }
+
+
 
 
     return false
