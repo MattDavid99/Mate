@@ -187,7 +187,239 @@ export default class MatchRef {
 
           // Bottom Left
           if (x < prevX && y < prevY){
+
             let passedPosition =  {x: prevX - i, y: prevY - i}
+
+            if (passedPosition.x == x && passedPosition.y == y){
+
+              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                return true
+              }
+
+            } else {
+              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+                break
+              }
+            }
+          }
+
+          // Top Left
+          if (x < prevX && y > prevY){
+            let passedPosition =  {x: prevX - i, y: prevY + i}
+
+            if (passedPosition.x == x && passedPosition.y == y){
+
+              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                return true
+              }
+
+            } else {
+              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+                break
+              }
+            }
+          }
+        }
+
+        // (ROOK ⬇️⬇️⬇️⬇️⬇️⬇️) (x === desiredPosition, prevX === initialPosition)
+      } else if (type == Type.ROOK) {
+
+        // VERICAL MOVEMENT
+        if (prevX == x) {
+          // DOWN
+          if (y < prevY){
+            for (let i = 1; i < 8; i++) {
+
+               let passedPosition = {x: prevX, y: prevY - i}
+
+               if (passedPosition.x == x && passedPosition.y == y){
+
+                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                  return true
+                }
+              } else {
+                  if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+               }
+            }
+
+          } else if (y > prevY) {
+            // UP
+            for (let i = 1; i < 8; i++) {
+
+              let passedPosition = {x: prevX, y: prevY + i}
+
+              if (passedPosition.x == x && passedPosition.y == y){
+
+                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                  return true
+                }
+              } else {
+                  if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+               }
+           }
+          }
+        }
+
+        // HORIZONTAL MOVEMENT
+        if (prevY == y) {
+          // LEFT
+          if (x < prevX){
+
+            for (let i = 1; i < 8; i++) {
+
+               let passedPosition = {x: prevX - i, y: prevY}
+
+               if (passedPosition.x == x && passedPosition.y == y){
+
+                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                  return true
+                }
+
+              } else {
+                  if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+               }
+            }
+            // RIGHT
+          } else if (x > prevX) {
+
+            for (let i = 1; i < 8; i++) {
+
+              let passedPosition = {x: prevX + i, y: prevY}
+
+              if (passedPosition.x == x && passedPosition.y == y){
+
+                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                  return true
+                }
+
+              } else {
+                if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+               }
+           }
+          }
+        }
+
+
+        // (QUEEN ⬇️⬇️⬇️⬇️⬇️⬇️) (x === desiredPosition, prevX === initialPosition)
+      } else if (type == Type.QUEEN) {
+
+        // VERICAL MOVEMENT -----------------------------
+        if (prevX == x) {
+          // DOWN
+          if (y < prevY){
+            for (let i = 1; i < 8; i++) {
+
+               let passedPosition = {x: prevX, y: prevY - i}
+
+               if (passedPosition.x == x && passedPosition.y == y){
+
+                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                  return true
+                }
+              } else {
+                  if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+               }
+            }
+
+          } else if (y > prevY) {
+            // UP
+            for (let i = 1; i < 8; i++) {
+
+              let passedPosition = {x: prevX, y: prevY + i}
+
+              if (passedPosition.x == x && passedPosition.y == y){
+
+                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                  return true
+                }
+              } else {
+                  if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+               }
+           }
+          }
+        }
+
+        // HORIZONTAL MOVEMENT
+        if (prevY == y) {
+          // LEFT
+          if (x < prevX){
+
+            for (let i = 1; i < 8; i++) {
+
+               let passedPosition = {x: prevX - i, y: prevY}
+
+               if (passedPosition.x == x && passedPosition.y == y){
+
+                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                  return true
+                }
+
+              } else {
+                  if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+               }
+            }
+            // RIGHT
+          } else if (x > prevX) {
+
+            for (let i = 1; i < 8; i++) {
+
+              let passedPosition = {x: prevX + i, y: prevY}
+
+              if (passedPosition.x == x && passedPosition.y == y){
+
+                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                  return true
+                }
+
+              } else {
+                if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+               }
+           }
+          }
+        }
+
+        // DIAGONAL --------------------------------
+        for (let i = 1; i < 8; i++){
+
+          // Top Right Bishop
+          if (x > prevX && y > prevY) {
+            let passedPosition =  {x: prevX + i, y: prevY + i}
+
+            if (passedPosition.x == x && passedPosition.y == y){
+
+              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                return true
+              }
+
+            } else {
+              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+                break
+              }
+            }
+          }
+
+          // Bottom Right
+          if (x > prevX && y < prevY){
+            let passedPosition =  {x: prevX + i, y: prevY - i}
+
+            if (passedPosition.x == x && passedPosition.y == y){
+
+              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                return true
+              }
+
+            } else {
+              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+                break
+              }
+            }
+          }
+
+          // Bottom Left
+          if (x < prevX && y < prevY){
+
+            let passedPosition =  {x: prevX - i, y: prevY - i}
+
             if (passedPosition.x == x && passedPosition.y == y){
 
               if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
@@ -220,7 +452,159 @@ export default class MatchRef {
         }
 
 
-      } // <<-- End of Bishop
+
+      } else if (type == Type.KING) {
+
+        // VERICAL MOVEMENT -----------------------------
+        if (prevX == x) {
+          // DOWN
+          if (y < prevY){
+            for (let i = 1; i < 2; i++) {
+
+               let passedPosition = {x: prevX, y: prevY - i}
+
+               if (passedPosition.x == x && passedPosition.y == y){
+
+                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                  return true
+                }
+              } else {
+                  if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+               }
+            }
+
+          } else if (y > prevY) {
+            // UP
+            for (let i = 1; i < 2; i++) {
+
+              let passedPosition = {x: prevX, y: prevY + i}
+
+              if (passedPosition.x == x && passedPosition.y == y){
+
+                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                  return true
+                }
+              } else {
+                  if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+               }
+           }
+          }
+        }
+
+        // HORIZONTAL MOVEMENT
+        if (prevY == y) {
+          // LEFT
+          if (x < prevX){
+
+            for (let i = 1; i < 2; i++) {
+
+               let passedPosition = {x: prevX - i, y: prevY}
+
+               if (passedPosition.x == x && passedPosition.y == y){
+
+                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                  return true
+                }
+
+              } else {
+                  if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+               }
+            }
+            // RIGHT
+          } else if (x > prevX) {
+
+            for (let i = 1; i < 2; i++) {
+
+              let passedPosition = {x: prevX + i, y: prevY}
+
+              if (passedPosition.x == x && passedPosition.y == y){
+
+                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                  return true
+                }
+
+              } else {
+                if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+               }
+           }
+          }
+        }
+
+        // DIAGONAL --------------------------------
+        for (let i = 1; i < 2; i++){
+
+          // Top Right Bishop
+          if (x > prevX && y > prevY) {
+            let passedPosition =  {x: prevX + i, y: prevY + i}
+
+            if (passedPosition.x == x && passedPosition.y == y){
+
+              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                return true
+              }
+
+            } else {
+              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+                break
+              }
+            }
+          }
+
+          // Bottom Right
+          if (x > prevX && y < prevY){
+            let passedPosition =  {x: prevX + i, y: prevY - i}
+
+            if (passedPosition.x == x && passedPosition.y == y){
+
+              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                return true
+              }
+
+            } else {
+              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+                break
+              }
+            }
+          }
+
+          // Bottom Left
+          if (x < prevX && y < prevY){
+
+            let passedPosition =  {x: prevX - i, y: prevY - i}
+
+            if (passedPosition.x == x && passedPosition.y == y){
+
+              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                return true
+              }
+
+            } else {
+              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+                break
+              }
+            }
+          }
+
+          // Top Left
+          if (x < prevX && y > prevY){
+            let passedPosition =  {x: prevX - i, y: prevY + i}
+
+            if (passedPosition.x == x && passedPosition.y == y){
+
+              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                return true
+              }
+
+            } else {
+              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+                break
+              }
+            }
+          }
+        }
+
+
+      }
 
 
 

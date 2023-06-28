@@ -35,7 +35,7 @@ const enPassantProperty = null
    const teamType = (p === 0) ? Team.BLACK : Team.WHITE
    const type = (teamType === Team.BLACK) ? "black" : "white"
    const y = (teamType === Team.BLACK) ? 7 : 0
-   // rooks
+   // rooks                                                           x: 7, y
    initialBoardState.push({image: `../assets/images/${type}rook.png`, x:0, y, type: Type.ROOK, team: teamType})
    initialBoardState.push({image: `../assets/images/${type}rook.png`, x:7, y, type: Type.ROOK, team: teamType})
    // knights
