@@ -28,6 +28,8 @@ export const Team = {
   WHITE: "WHITE"
 }
 
+const enPassantProperty = null
+
 
  for (let p = 0; p < 2; p++){
    const teamType = (p === 0) ? Team.BLACK : Team.WHITE
@@ -48,11 +50,11 @@ export const Team = {
  }
 
   for (let i = 0; i < 8; i++) {
-    initialBoardState.push({image: "../assets/images/blackpawn.png", x:i, y:6, type: Type.PAWN, team: Team.BLACK})
+    initialBoardState.push({image: "../assets/images/blackpawn.png", x:i, y:6, type: Type.PAWN, team: Team.BLACK, enPassant: enPassantProperty})
   }
 
   for (let i = 0; i < 8; i++) {
-    initialBoardState.push({image: "../assets/images/whitepawn.png", x:i, y:1, type: Type.PAWN, team: Team.WHITE})
+    initialBoardState.push({image: "../assets/images/whitepawn.png", x:i, y:1, type: Type.PAWN, team: Team.WHITE, enPassant: enPassantProperty})
   }
 
   function findPiece(x, y, pieces) {
@@ -139,29 +141,118 @@ function ChessBoard() {
       const x = Math.floor((e.clientX - chessboard.offsetLeft) / 100)
       const y = Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 800) / 100))
 
-      const pieceAtNewSquare = findPiece(x, y, pieces);
+      const pieceAtNewSquare = findPiece(x, y, pieces); // <<-- you commented out a bunch of code below that used this, if app breaks this is the reason
 
-      setPieces((prevState) => {
-        const newPieces = prevState.map((p) => {
-          if (p.x === gridX && p.y === gridY) {
-            const IsValidMove = Ref.validMove(gridX, gridY, x, y, p.type, p.team, prevState)
+      const currentPiece = pieces.find((p) => p.x == gridX && p.y == gridY)
+      const attackedPiece = pieces.find((p) => p.x == x && p.y == y)
 
-            if (IsValidMove && !pieceAtNewSquare) {
-              p.x = x
-              p.y = y
 
-            } else {
-              activePiece.style.position = 'relative'
-              activePiece.style.removeProperty('top')
-              activePiece.style.removeProperty('left')
+
+      if (currentPiece){
+
+        const IsValidMove = Ref.validMove(gridX, gridY, x, y, currentPiece.type, currentPiece.team, pieces)
+
+        const isEnpassant = Ref.theEnPassant(gridX, gridY, x, y, currentPiece.type, currentPiece.team, pieces)
+
+        const direction = currentPiece.team == Team.WHITE ? 1 : -1
+
+
+        if (isEnpassant) {
+
+          const updatedPieces = pieces.reduce((arr, piece) => {
+
+            if (piece.x == gridX && piece.y == gridY){
+              piece.enPassant = false
+              piece.x = x
+              piece.y = y
+              arr.push(piece)
+
+            } else if (!(piece.x == x && piece.y == y - direction)) {
+              if (piece.type == Type.PAWN) {
+                piece.enPassant = false
+              }
+              arr.push(piece)
             }
 
-          }
+            return arr
+          }, [])
 
-          return p
-        })
-        return newPieces
-      })
+          setPieces(updatedPieces)
+
+        } else if (IsValidMove) {
+          const updatedPieces = pieces.reduce((arr, piece) => {
+            if (piece.x == gridX && piece.y == gridY){
+              if(Math.abs(gridY - y) == 2 && piece.type == Type.PAWN){
+                piece.enPassant = true
+              } else {
+                piece.enPassant = false
+              }
+
+              piece.x = x
+              piece.y = y
+              arr.push(piece)
+
+            } else if (!(piece.x == x && piece.y == y)){
+              if (piece.type == Type.PAWN) {
+                piece.enPassant = false
+              }
+              arr.push(piece)
+            }
+
+
+            return arr
+          }, [])
+
+          setPieces(updatedPieces)
+
+
+        // setPieces((prevState) => {
+        //   // const newPieces = prevState.reduce((arr, piece) => {
+        //   //   if (piece.x == currentPiece.x && piece.y == currentPiece.y){
+        //   //     piece.x = x
+        //   //     piece.y = y
+        //   //     arr.push(piece)
+
+        //   //   } else if (!(piece.x == x && piece.y == y)){
+        //   //     arr.push(piece)
+        //   //   }
+
+
+        //   //   return arr
+        //   // }, [])
+        //   return newPieces
+        // })
+
+       } else {
+        activePiece.style.position = 'relative'
+        activePiece.style.removeProperty('top')
+        activePiece.style.removeProperty('left')
+       }
+       setActivePiece(null)
+      }
+
+
+      // setPieces((prevState) => {
+      //   const newPieces = prevState.map((p) => {
+      //     if (p.x === gridX && p.y === gridY) {
+      //       const IsValidMove = Ref.validMove(gridX, gridY, x, y, p.type, p.team, prevState)
+
+      //       if (IsValidMove && !pieceAtNewSquare) {
+      //         p.x = x
+      //         p.y = y
+
+      //       } else {
+      //         activePiece.style.position = 'relative'
+      //         activePiece.style.removeProperty('top')
+      //         activePiece.style.removeProperty('left')
+      //       }
+
+      //     }
+
+      //     return p
+      //   })
+      //   return newPieces
+      // })
 
       setActivePiece(null)
     }
