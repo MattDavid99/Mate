@@ -49,7 +49,7 @@ export default class MatchRef {
     console.log(`Current location: (${x},${y})`);
     console.log(`Team: ${team}`);
 
-    // Valid Moves for Pawn   (PAWN⬇️)
+    // Valid Moves for Pawn   (PAWN ⬇️⬇️⬇️⬇️⬇️⬇️)
     if (type === Type.PAWN) {
 
         const row = team == Team.WHITE ? 1 : 6
@@ -71,7 +71,7 @@ export default class MatchRef {
             if (this.squareHasOpponent(x,y,boardState,team)) return true
           }
 
-          // (KNIGHT⬇️) (x === desiredPosition, prevX === initialPosition)
+          // (KNIGHT ⬇️⬇️⬇️⬇️⬇️⬇️) (x === desiredPosition, prevX === initialPosition)
       } else if (type == Type.KNIGHT) {
 
         // Top Line
@@ -146,8 +146,81 @@ export default class MatchRef {
           }
         }
 
+        // (BISHOP ⬇️⬇️⬇️⬇️⬇️⬇️) (x === desiredPosition, prevX === initialPosition)
+      } else if (type == Type.BISHOP) {
 
-      }
+        for (let i = 1; i < 8; i++){
+
+          // Top Right Bishop
+          if (x > prevX && y > prevY) {
+            let passedPosition =  {x: prevX + i, y: prevY + i}
+
+            if (passedPosition.x == x && passedPosition.y == y){
+
+              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                return true
+              }
+
+            } else {
+              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+                break
+              }
+            }
+          }
+
+          // Bottom Right
+          if (x > prevX && y < prevY){
+            let passedPosition =  {x: prevX + i, y: prevY - i}
+
+            if (passedPosition.x == x && passedPosition.y == y){
+
+              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                return true
+              }
+
+            } else {
+              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+                break
+              }
+            }
+          }
+
+          // Bottom Left
+          if (x < prevX && y < prevY){
+            let passedPosition =  {x: prevX - i, y: prevY - i}
+            if (passedPosition.x == x && passedPosition.y == y){
+
+              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                return true
+              }
+
+            } else {
+              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+                break
+              }
+            }
+          }
+
+          // Top Left
+          if (x < prevX && y > prevY){
+            let passedPosition =  {x: prevX - i, y: prevY + i}
+
+            if (passedPosition.x == x && passedPosition.y == y){
+
+              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+                return true
+              }
+
+            } else {
+              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+                break
+              }
+            }
+          }
+        }
+
+
+      } // <<-- End of Bishop
 
 
 
