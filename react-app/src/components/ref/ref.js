@@ -37,8 +37,6 @@ export default class MatchRef {
 
       }
     }
-
-
     return false
   }
 
@@ -452,7 +450,7 @@ export default class MatchRef {
         }
 
 
-
+        // (KING ⬇️⬇️⬇️⬇️⬇️⬇️) (x === desiredPosition, prevX === initialPosition)
       } else if (type == Type.KING) {
 
         // VERICAL MOVEMENT -----------------------------
@@ -612,42 +610,3 @@ export default class MatchRef {
     return false
   }
 }
-
-
-
-
-
-
-
-
-      //  if (team === Team.WHITE) {
-      //   if (prevY == 1) {
-      //     if (prevX == x && y - prevY == 1){
-      //       if(!this.squareHasPiece(x,y,boardState)) return true
-
-      //     } else if (prevX == x && y - prevY == 2) {
-      //       if(!this.squareHasPiece(x,y,boardState) && !this.squareHasPiece(x,y-1,boardState)) return true
-      //     }
-
-      //   } else {
-      //       if (prevX == x && y - prevY == 1) {
-      //         if (!this.squareHasPiece(x,y,boardState)) return true
-
-      //       }
-      //   }
-
-      //   // Valid Moves for Black Pawn
-      // } else {
-      //     if (prevY == 6) {
-      //       if (prevX == x && y - prevY == -1){
-      //         if (!this.squareHasPiece(x,y,boardState)) return true
-
-      //       } else if (prevX == x && y - prevY == -2) {
-      //         if (!this.squareHasPiece(x,y,boardState) && !this.squareHasPiece(x,y+1,boardState)) return true
-      //       }
-      //     } else {
-      //         if (prevX == x && y - prevY == -1){
-      //           if (!this.squareHasPiece(x,y,boardState)) return true
-      //         }
-      //     }
-      // }
