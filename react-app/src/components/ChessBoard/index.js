@@ -1,16 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom';
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { createMatch, postMove, postReset } from '../../store/match'
 import './ChessBoard.css'
 import Pieces from '../Pieces'
 import MatchRef from '../ref/ref'
+import CheckMateModal from '../CheckMateModal/CheckMateModal';
+import DrawModal from '../DrawModal/DrawModal';
 
 // X and Y axis for chess board = [a8, b8, c8, d8, etc.]
 const horizontalAxis = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 const verticalAxis = ['1', '2', '3', '4', '5', '6', '7', '8']
-
-
 
 
 export const Type = {
@@ -29,6 +29,8 @@ export const Team = {
 
 const enPassantProperty = null
 
+
+const createInitialBoardState = () => {
 const initialBoardState = []
 
 
@@ -58,7 +60,8 @@ const initialBoardState = []
      initialBoardState.push({image: "../assets/images/blackpawn.png", x:i, y:6, type: Type.PAWN, team: Team.BLACK, enPassant: enPassantProperty})
     }
 
-
+    return initialBoardState
+  }
 
 
   function findPiece(x, y, pieces) {
@@ -71,12 +74,16 @@ function ChessBoard() {
   const [activePiece, setActivePiece] = useState(null)
   const [gridX, setGridX] = useState(0)
   const [gridY, setGridY] = useState(0)
-  const [pieces, setPieces] = useState(initialBoardState)
+  const [pieces, setPieces] = useState(createInitialBoardState)
   const [currentTurn, setCurrentTurn] = useState(Team.WHITE);
   const [promotionPawn, setPromotionPawn] = useState()
+  const [isCheckmate, setIsCheckmate] = useState(false)
+  const [isDraw, setIsDraw] = useState(false)
   const modalRef = useRef(null)
   const chessboardRef = useRef(null)
   const Ref = new MatchRef()
+
+  const matchSelector = useSelector((state) => state.match.match)
 
   const { matchId } = useParams();
   const dispatch = useDispatch()
@@ -87,13 +94,24 @@ function ChessBoard() {
     const whitePlayerId = 1; // <<-- NEED TO UNHARDCODE
     const blackPlayerId = 2; // <<-- NEED TO UNHARDCODE
     dispatch(createMatch(whitePlayerId, blackPlayerId));
+
   }, []);
 
+  useEffect(() => {
 
-  const handleResetMatch = () => {
+   if (matchSelector && matchSelector.status == "Checkmate"){
+      setIsCheckmate(true)
+    } else if (matchSelector && matchSelector.status == "Draw") {
+      setIsDraw(true)
+   }
+
+  }, [matchSelector]);
+
+
+  const handleResetMatch = async () => {
     dispatch(postReset(matchId));
-    setPieces([...initialBoardState])
-  }
+    setPieces(createInitialBoardState());
+  };
 
   function grabPiece(e) {
     const element = e.target
@@ -151,6 +169,8 @@ function ChessBoard() {
     }
   }
 
+  const alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+
 
   async function dropPiece(e) {
     const chessboard = chessboardRef.current
@@ -160,7 +180,6 @@ function ChessBoard() {
       const x = Math.floor((e.clientX - chessboard.offsetLeft) / 100)
       const y = Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 800) / 100))
 
-      const alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
       const pieceAtNewSquare = findPiece(x, y, pieces); // <<-- you commented out a bunch of code below that used this, if app breaks this is the reason
 
@@ -201,6 +220,7 @@ function ChessBoard() {
               dispatch(postMove(matchId, uciMove));
 
 
+
             } else if (!(piece.x == x && piece.y == y - direction)) {
               if (piece.type == Type.PAWN) {
                 piece.enPassant = false
@@ -214,99 +234,72 @@ function ChessBoard() {
           }, [])
 
           setPieces(updatedPieces)
+          console.log("------> updatedPieces", updatedPieces);
           setCurrentTurn(currentTurn === Team.WHITE ? Team.BLACK : Team.WHITE);
 
         } else if (IsValidMove) {
 
-          // ---------------------------------------------------------------------------------------------- (NEW CODE)
+          let promotionRow = (currentPiece.team == Team.WHITE) ? 7 : 0;
+          if (y == promotionRow && currentPiece.type == Type.PAWN) {
+            modalRef.current.classList.remove("hide-modal")
+            setPromotionPawn({
+              piece: currentPiece,
+              from: [gridX, gridY],
+              to: [x, y],
+            })
+            console.log(promotionPawn, "<------Promotion Pawn");
 
-          let uciMove = `${alphabet[gridX]}${gridY+1}${alphabet[x]}${y+1}`;
-          console.log(matchId,uciMove, pieces);
-          try {
-            await dispatch(postMove(matchId, uciMove));
+          } else {
+            let uciMove = `${alphabet[gridX]}${gridY+1}${alphabet[x]}${y+1}`;
+            // await dispatch(postMove(matchId, uciMove));
+            try {
+              await dispatch(postMove(matchId, uciMove));
 
-            const updatedPieces = pieces.reduce((arr, piece) => {
-              if (piece.x == gridX && piece.y == gridY){
+              const updatedPieces = pieces.reduce((arr, piece) => {
+                if (piece.x == gridX && piece.y == gridY){
 
-                if(Math.abs(gridY - y) == 2 && piece.type == Type.PAWN){
-                  piece.enPassant = true
-                } else {
-                  piece.enPassant = false
+                  if(Math.abs(gridY - y) == 2 && piece.type == Type.PAWN){
+                    piece.enPassant = true
+                  } else {
+                    piece.enPassant = false
+                  }
+
+                  piece.x = x
+                  piece.y = y
+
+                  let promotionRow = (piece.team == Team.WHITE) ? 7 : 0;
+
+                  if (y == promotionRow && piece.type == Type.PAWN) {
+                    modalRef.current.classList.remove("hide-modal")
+                    setPromotionPawn(piece)
+                    console.log(promotionPawn, "<------Promotion Pawn");
+                  }
+
+                  arr.push(piece)
+
+                } else if (!(piece.x == x && piece.y == y)){
+                  if (piece.type == Type.PAWN) {
+                    piece.enPassant = false
+                  }
+                  arr.push(piece)
                 }
 
-                piece.x = x
-                piece.y = y
 
-                let promotionRow = (piece.team == Team.WHITE) ? 7 : 0;
+                return arr
+              }, [])
 
-                if (y == promotionRow && piece.type == Type.PAWN) {
-                  modalRef.current.classList.remove("hide-modal")
-                  setPromotionPawn(piece)
-                }
-
-                arr.push(piece)
-
-              } else if (!(piece.x == x && piece.y == y)){
-                if (piece.type == Type.PAWN) {
-                  piece.enPassant = false
-                }
-                arr.push(piece)
-              }
-
-
-              return arr
-            }, [])
-
-            setPieces(updatedPieces)
-            setCurrentTurn(currentTurn === Team.WHITE ? Team.BLACK : Team.WHITE);
-          } catch (err) {
-            console.error(err);
-            activePiece.style.position = 'relative'
-            activePiece.style.removeProperty('top')
-            activePiece.style.removeProperty('left')
-          } finally {
-            setActivePiece(null);
+              setPieces(updatedPieces)
+              console.log("------> updatedPieces", updatedPieces)
+              setCurrentTurn(currentTurn == Team.WHITE ? Team.BLACK : Team.WHITE);
+            } catch (err) {
+              console.error(err);
+              activePiece.style.position = 'relative'
+              activePiece.style.removeProperty('top')
+              activePiece.style.removeProperty('left')
+            } finally {
+              setActivePiece(null);
+            }
           }
-
-
-          // ---------------------------------------------------------------------------------------------- (NEW CODE)
-          //   const updatedPieces = pieces.reduce((arr, piece) => {
-          //   if (piece.x == gridX && piece.y == gridY){
-
-          //     if(Math.abs(gridY - y) == 2 && piece.type == Type.PAWN){
-          //       piece.enPassant = true
-          //     } else {
-          //       piece.enPassant = false
-          //     }
-
-          //     piece.x = x
-          //     piece.y = y
-
-          //     let promotionRow = (piece.team == Team.WHITE) ? 7 : 0;
-
-          //     if (y == promotionRow && piece.type == Type.PAWN) {
-          //       modalRef.current.classList.remove("hide-modal")
-          //       setPromotionPawn(piece)
-          //     }
-
-          //     arr.push(piece)
-          //     let uciMove = `${alphabet[gridX]}${gridY+1}${alphabet[x]}${y+1}`;
-          //     console.log(matchId,uciMove, pieces);
-          //     dispatch(postMove(matchId, uciMove));
-
-          //   } else if (!(piece.x == x && piece.y == y)){
-          //     if (piece.type == Type.PAWN) {
-          //       piece.enPassant = false
-          //     }
-          //     arr.push(piece)
-          //   }
-
-
-          //   return arr
-          // }, [])
-
-          // setPieces(updatedPieces)
-          // setCurrentTurn(currentTurn === Team.WHITE ? Team.BLACK : Team.WHITE);
 
 
        } else {
@@ -321,31 +314,55 @@ function ChessBoard() {
     }
   }
 
+
   // This must be above promotePawn() ⬇
   function promotionWhiteOrBlack() {
-    return (promotionPawn?.team === Team.WHITE) ? "white" : "black";
+    return (promotionPawn?.team == Team.WHITE) ? "white" : "black";
   }
 
 
-  function promotePawn(pieceType) {
+  const uciPromotionCodes = {
+    [Type.PAWN]: 'p',
+    [Type.ROOK]: 'r',
+    [Type.KNIGHT]: 'n',
+    [Type.BISHOP]: 'b',
+    [Type.QUEEN]: 'q',
+    [Type.KING]: 'k',
+  };
 
-    if (promotionPawn == undefined) return
 
-    const updatedPieces = pieces.reduce((arr, piece) => {
+  async function promotePawn(promotionType) {
 
-      if (piece.x == promotionPawn.x && piece.y == promotionPawn.y) {
+    if (!promotionPawn) return;
 
-        piece.type = pieceType
-        const teamType = (piece.team == Team.WHITE) ? "white" : "black";
-        piece.image = `../assets/images/${teamType}${pieceType.toLowerCase()}.png`
-      }
+      const [fromX, fromY] = promotionPawn.from;
+      const [toX, toY] = promotionPawn.to;
 
-      arr.push(piece)
-      return arr
-    }, [])
+      const updatedPieces = pieces.reduce((arr, piece) => {
+        if (piece.x == promotionPawn.piece.x && piece.y == promotionPawn.piece.y) {
+          piece.type = promotionType;
+          const teamType = promotionPawn.piece.team == Team.WHITE ? "white" : "black";
+          piece.image = `../assets/images/${teamType}${promotionType.toLowerCase()}.png`;
+          piece.x = toX;
+          piece.y = toY;
+        }
+        arr.push(piece);
+        return arr;
+      }, []);
 
-    setPieces(updatedPieces)
-    modalRef.current.classList.add("hide-modal")
+
+      setPieces(updatedPieces);
+
+      modalRef.current.classList.add("hide-modal");
+
+      const uciMove = `${alphabet[fromX]}${fromY+1}${alphabet[toX]}${toY+1}${uciPromotionCodes[promotionType]}`;
+      await dispatch(postMove(matchId, uciMove));
+      setCurrentTurn(currentTurn === Team.WHITE ? Team.BLACK : Team.WHITE);
+
+      setPromotionPawn(null);
+
+      console.log(promotionPawn, "<------Promotion Pawn");
+      console.log(promotionType, uciPromotionCodes[promotionType]);
   }
 
 
@@ -372,15 +389,20 @@ function ChessBoard() {
 
   return (
     <>
+
+      {isCheckmate && <CheckMateModal winner={matchSelector.result} onClose={() => setIsCheckmate(false)} />}
+      {isDraw && <DrawModal onClose={() => setIsDraw(false)} />}
+
       <div className='promotion-modal hide-modal' ref={modalRef}>
         <div className='modal-body'>
-          <img onClick={() => promotePawn(Type.ROOK)} src={`../assets/images/${promotionWhiteOrBlack()}rook.png`}
+          <img onClick={async () => await promotePawn(Type.ROOK)} src={`../assets/images/${promotionWhiteOrBlack()}rook.png`}
           className='promotion-image'/>
-          <img onClick={() => promotePawn(Type.KNIGHT)} src={`../assets/images/${promotionWhiteOrBlack()}knight.png`} className='promotion-image'/>
-          <img onClick={() => promotePawn(Type.QUEEN)} src={`../assets/images/${promotionWhiteOrBlack()}queen.png`} className='promotion-image'/>
-          <img onClick={() => promotePawn(Type.BISHOP)} src={`../assets/images/${promotionWhiteOrBlack()}bishop.png`} className='promotion-image'/>
+          <img onClick={async () => await promotePawn(Type.KNIGHT)} src={`../assets/images/${promotionWhiteOrBlack()}knight.png`} className='promotion-image'/>
+          <img onClick={async () => await promotePawn(Type.QUEEN)} src={`../assets/images/${promotionWhiteOrBlack()}queen.png`} className='promotion-image'/>
+          <img onClick={async () => await promotePawn(Type.BISHOP)} src={`../assets/images/${promotionWhiteOrBlack()}bishop.png`} className='promotion-image'/>
         </div>
       </div>
+
 
         <div className='chessboard-container'>
           <div className='chessboard'
@@ -400,3 +422,145 @@ function ChessBoard() {
 }
 
 export default ChessBoard
+
+
+
+// async function dropPiece(e) {
+  //   const chessboard = chessboardRef.current
+
+  //   if(activePiece && chessboard){
+
+  //     const x = Math.floor((e.clientX - chessboard.offsetLeft) / 100)
+  //     const y = Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 800) / 100))
+
+
+  //     const pieceAtNewSquare = findPiece(x, y, pieces); // <<-- you commented out a bunch of code below that used this, if app breaks this is the reason
+
+  //     const currentPiece = pieces.find((p) => p.x == gridX && p.y == gridY)
+  //     console.log(currentPiece);
+  //     const attackedPiece = pieces.find((p) => p.x == x && p.y == y)
+
+
+
+  //     if (currentPiece){
+
+  //       const IsValidMove = Ref.validMove(gridX, gridY, x, y, currentPiece.type, currentPiece.team, pieces)
+
+  //       const isEnpassant = Ref.theEnPassant(gridX, gridY, x, y, currentPiece.type, currentPiece.team, pieces)
+
+  //       const direction = currentPiece.team == Team.WHITE ? 1 : -1
+
+  //       if (currentPiece.team !== currentTurn) {
+  //         activePiece.style.position = 'relative'
+  //         activePiece.style.removeProperty('top')
+  //         activePiece.style.removeProperty('left')
+  //         setActivePiece(null)
+  //         return;
+  //       }
+
+
+  //       if (isEnpassant) {
+
+  //         const updatedPieces = pieces.reduce((arr, piece) => {
+
+  //           if (piece.x == gridX && piece.y == gridY){
+  //             piece.enPassant = false
+  //             piece.x = x
+  //             piece.y = y
+  //             arr.push(piece)
+  //             let uciMove = `${alphabet[gridX]}${gridY+1}${alphabet[x]}${y+1}`;
+  //             console.log(matchId,uciMove);
+  //             dispatch(postMove(matchId, uciMove));
+
+
+  //           } else if (!(piece.x == x && piece.y == y - direction)) {
+  //             if (piece.type == Type.PAWN) {
+  //               piece.enPassant = false
+  //             }
+
+  //             arr.push(piece)
+
+  //           }
+
+  //           return arr
+  //         }, [])
+
+  //         setPieces(updatedPieces)
+  //         console.log("------> updatedPieces", updatedPieces);
+  //         setCurrentTurn(currentTurn === Team.WHITE ? Team.BLACK : Team.WHITE);
+
+  //       } else if (IsValidMove) {
+
+  //         let promotionRow = (currentPiece.team == Team.WHITE) ? 7 : 0;
+  //         if (y == promotionRow && currentPiece.type == Type.PAWN) {
+  //           modalRef.current.classList.remove("hide-modal")
+  //           setPromotionPawn({
+  //             piece: currentPiece,
+  //             from: [gridX, gridY],
+  //             to: [x, y],
+  //           })
+  //           console.log(promotionPawn, "<------Promotion Pawn");
+  //         } else {
+  //           let uciMove = `${alphabet[gridX]}${gridY+1}${alphabet[x]}${y+1}`;
+  //           // await dispatch(postMove(matchId, uciMove));
+  //           try {
+  //             await dispatch(postMove(matchId, uciMove));
+
+  //             const updatedPieces = pieces.reduce((arr, piece) => {
+  //               if (piece.x == gridX && piece.y == gridY){
+
+  //                 if(Math.abs(gridY - y) == 2 && piece.type == Type.PAWN){
+  //                   piece.enPassant = true
+  //                 } else {
+  //                   piece.enPassant = false
+  //                 }
+
+  //                 piece.x = x
+  //                 piece.y = y
+
+  //                 let promotionRow = (piece.team == Team.WHITE) ? 7 : 0;
+
+  //                 if (y == promotionRow && piece.type == Type.PAWN) {
+  //                   modalRef.current.classList.remove("hide-modal")
+  //                   setPromotionPawn(piece)
+  //                   console.log(promotionPawn, "<------Promotion Pawn");
+  //                 }
+
+  //                 arr.push(piece)
+
+  //               } else if (!(piece.x == x && piece.y == y)){
+  //                 if (piece.type == Type.PAWN) {
+  //                   piece.enPassant = false
+  //                 }
+  //                 arr.push(piece)
+  //               }
+
+
+  //               return arr
+  //             }, [])
+
+  //             setPieces(updatedPieces)
+  //             console.log("------> updatedPieces", updatedPieces)
+  //             setCurrentTurn(currentTurn == Team.WHITE ? Team.BLACK : Team.WHITE);
+  //           } catch (err) {
+  //             console.error(err);
+  //             activePiece.style.position = 'relative'
+  //             activePiece.style.removeProperty('top')
+  //             activePiece.style.removeProperty('left')
+  //           } finally {
+  //             setActivePiece(null);
+  //           }
+  //         }
+
+
+  //      } else {
+  //       activePiece.style.position = 'relative'
+  //       activePiece.style.removeProperty('top')
+  //       activePiece.style.removeProperty('left')
+  //      }
+  //      setActivePiece(null)
+  //     }
+
+  //     // setActivePiece(null)
+  //   }
+  // }
