@@ -87,13 +87,14 @@ export const postMove = (match_id, uci_move) => async (dispatch) => {
     const data = await response.json()
     dispatch(makeMoves(data.match[0]))
 
-  } else if (response.status < 500) {
+  } else if (!response.ok) {
     const data = await response.json()
 
     if (data.errors) {
       console.log(data.errors);
       return data.errors
     }
+    throw new Error(`HTTP error! status: ${response.status}`);
   }
 }
 

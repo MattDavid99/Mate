@@ -152,7 +152,7 @@ function ChessBoard() {
   }
 
 
-  function dropPiece(e) {
+  async function dropPiece(e) {
     const chessboard = chessboardRef.current
 
     if(activePiece && chessboard){
@@ -217,43 +217,96 @@ function ChessBoard() {
           setCurrentTurn(currentTurn === Team.WHITE ? Team.BLACK : Team.WHITE);
 
         } else if (IsValidMove) {
+
+          // ---------------------------------------------------------------------------------------------- (NEW CODE)
+
+          let uciMove = `${alphabet[gridX]}${gridY+1}${alphabet[x]}${y+1}`;
+          console.log(matchId,uciMove, pieces);
+          try {
+            await dispatch(postMove(matchId, uciMove));
+
             const updatedPieces = pieces.reduce((arr, piece) => {
-            if (piece.x == gridX && piece.y == gridY){
+              if (piece.x == gridX && piece.y == gridY){
 
-              if(Math.abs(gridY - y) == 2 && piece.type == Type.PAWN){
-                piece.enPassant = true
-              } else {
-                piece.enPassant = false
+                if(Math.abs(gridY - y) == 2 && piece.type == Type.PAWN){
+                  piece.enPassant = true
+                } else {
+                  piece.enPassant = false
+                }
+
+                piece.x = x
+                piece.y = y
+
+                let promotionRow = (piece.team == Team.WHITE) ? 7 : 0;
+
+                if (y == promotionRow && piece.type == Type.PAWN) {
+                  modalRef.current.classList.remove("hide-modal")
+                  setPromotionPawn(piece)
+                }
+
+                arr.push(piece)
+
+              } else if (!(piece.x == x && piece.y == y)){
+                if (piece.type == Type.PAWN) {
+                  piece.enPassant = false
+                }
+                arr.push(piece)
               }
 
-              piece.x = x
-              piece.y = y
 
-              let promotionRow = (piece.team == Team.WHITE) ? 7 : 0;
+              return arr
+            }, [])
 
-              if (y == promotionRow && piece.type == Type.PAWN) {
-                modalRef.current.classList.remove("hide-modal")
-                setPromotionPawn(piece)
-              }
-
-              arr.push(piece)
-              let uciMove = `${alphabet[gridX]}${gridY+1}${alphabet[x]}${y+1}`;
-              console.log(matchId,uciMove, pieces);
-              dispatch(postMove(matchId, uciMove));
-
-            } else if (!(piece.x == x && piece.y == y)){
-              if (piece.type == Type.PAWN) {
-                piece.enPassant = false
-              }
-              arr.push(piece)
-            }
+            setPieces(updatedPieces)
+            setCurrentTurn(currentTurn === Team.WHITE ? Team.BLACK : Team.WHITE);
+          } catch (err) {
+            console.error(err);
+            activePiece.style.position = 'relative'
+            activePiece.style.removeProperty('top')
+            activePiece.style.removeProperty('left')
+          } finally {
+            setActivePiece(null);
+          }
 
 
-            return arr
-          }, [])
+          // ---------------------------------------------------------------------------------------------- (NEW CODE)
+          //   const updatedPieces = pieces.reduce((arr, piece) => {
+          //   if (piece.x == gridX && piece.y == gridY){
 
-          setPieces(updatedPieces)
-          setCurrentTurn(currentTurn === Team.WHITE ? Team.BLACK : Team.WHITE);
+          //     if(Math.abs(gridY - y) == 2 && piece.type == Type.PAWN){
+          //       piece.enPassant = true
+          //     } else {
+          //       piece.enPassant = false
+          //     }
+
+          //     piece.x = x
+          //     piece.y = y
+
+          //     let promotionRow = (piece.team == Team.WHITE) ? 7 : 0;
+
+          //     if (y == promotionRow && piece.type == Type.PAWN) {
+          //       modalRef.current.classList.remove("hide-modal")
+          //       setPromotionPawn(piece)
+          //     }
+
+          //     arr.push(piece)
+          //     let uciMove = `${alphabet[gridX]}${gridY+1}${alphabet[x]}${y+1}`;
+          //     console.log(matchId,uciMove, pieces);
+          //     dispatch(postMove(matchId, uciMove));
+
+          //   } else if (!(piece.x == x && piece.y == y)){
+          //     if (piece.type == Type.PAWN) {
+          //       piece.enPassant = false
+          //     }
+          //     arr.push(piece)
+          //   }
+
+
+          //   return arr
+          // }, [])
+
+          // setPieces(updatedPieces)
+          // setCurrentTurn(currentTurn === Team.WHITE ? Team.BLACK : Team.WHITE);
 
 
        } else {
