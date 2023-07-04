@@ -3,6 +3,7 @@ const CREATE_MATCH = "match/CREATE_MATCH";
 const MAKE_MOVES = "match/MAKE_MOVES";
 const RESIGN_MATCH = "match/RESIGN_MATCH";
 const GET_MATCH = "match/GET_MATCH";
+const RESET_MATCH = "match/RESET_MATCH";
 
 
 const startMatch = (match) => {
@@ -32,6 +33,13 @@ const getMatch = (match) => {
     payload: match
   }
 }
+
+const resetMatch = (match) => {
+  return {
+    type: RESET_MATCH,
+    payload: match,
+  }
+};
 
 
 
@@ -83,6 +91,7 @@ export const postMove = (match_id, uci_move) => async (dispatch) => {
     const data = await response.json()
 
     if (data.errors) {
+      console.log(data.errors);
       return data.errors
     }
   }
@@ -127,6 +136,21 @@ export const fetchMatch = (match_id) => async (dispatch) => {
   }
 }
 
+// @match_routes.route('/<int:match_id>/reset', methods=['POST'])
+export const postReset = (match_id) => async (dispatch) => {
+  const response = await fetch(`/api/match/${match_id}/reset`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+
+  if (response.ok) {
+    const data = await response.json()
+    dispatch(resetMatch(data.match[0]))
+  }
+}
+
 
 
 const initialState = { match: null };
@@ -153,6 +177,12 @@ export default function matchReducer(state = initialState, action) {
       }
 
     case GET_MATCH:
+      return {
+        ...state,
+        match: action.payload
+      }
+
+    case RESET_MATCH:
       return {
         ...state,
         match: action.payload

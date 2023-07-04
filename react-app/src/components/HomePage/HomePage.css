@@ -1,0 +1,18 @@
+.homepage-container {
+  width: 1000px;
+  height: 100vh;
+  background-color: #777;
+  margin: 0 auto;
+}
+
+.homepage-startmatch {
+  height: 200px;
+  width: 400px;
+  background-color: aqua;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  left: 300px;
+  top: 200px;
+}

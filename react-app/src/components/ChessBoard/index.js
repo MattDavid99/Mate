@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { useParams } from 'react-router-dom';
 import { useDispatch } from "react-redux"
-import { createMatch } from '../../store/match'
+import { createMatch, postMove, postReset } from '../../store/match'
 import './ChessBoard.css'
 import Pieces from '../Pieces'
 import MatchRef from '../ref/ref'
@@ -10,8 +11,6 @@ const horizontalAxis = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 const verticalAxis = ['1', '2', '3', '4', '5', '6', '7', '8']
 
 
-
-const initialBoardState = []
 
 
 export const Type = {
@@ -30,32 +29,37 @@ export const Team = {
 
 const enPassantProperty = null
 
+const initialBoardState = []
 
- for (let p = 0; p < 2; p++){
-   const teamType = (p === 0) ? Team.BLACK : Team.WHITE
-   const type = (teamType === Team.BLACK) ? "black" : "white"
-   const y = (teamType === Team.BLACK) ? 7 : 0
-   // rooks                                                           x: 7, y
-   initialBoardState.push({image: `../assets/images/${type}rook.png`, x:0, y, type: Type.ROOK, team: teamType})
-   initialBoardState.push({image: `../assets/images/${type}rook.png`, x:7, y, type: Type.ROOK, team: teamType})
-   // knights
-   initialBoardState.push({image: `../assets/images/${type}knight.png`, x:1, y, type: Type.KNIGHT, team: teamType})
-   initialBoardState.push({image: `../assets/images/${type}knight.png`, x:6, y, type: Type.KNIGHT, team: teamType})
-   // bishops
-   initialBoardState.push({image: `../assets/images/${type}bishop.png`, x:2, y, type: Type.BISHOP, team: teamType})
-   initialBoardState.push({image: `../assets/images/${type}bishop.png`, x:5, y, type: Type.BISHOP, team: teamType})
-   // king and queen
-   initialBoardState.push({image: `../assets/images/${type}queen.png`, x:3, y, type: Type.QUEEN, team: teamType})
-   initialBoardState.push({image: `../assets/images/${type}king.png`, x:4, y, type: Type.KING, team: teamType})
- }
 
-  for (let i = 0; i < 8; i++) {
-    initialBoardState.push({image: "../assets/images/blackpawn.png", x:i, y:6, type: Type.PAWN, team: Team.BLACK, enPassant: enPassantProperty})
-  }
+   for (let p = 0; p < 2; p++){
+     const teamType = (p === 0) ? Team.BLACK : Team.WHITE
+     const type = (teamType === Team.BLACK) ? "black" : "white"
+     const y = (teamType === Team.BLACK) ? 7 : 0
+     // rooks                                                           x: 7, y
+     initialBoardState.push({image: `../assets/images/${type}rook.png`, x:0, y, type: Type.ROOK, team: teamType})
+     initialBoardState.push({image: `../assets/images/${type}rook.png`, x:7, y, type: Type.ROOK, team: teamType})
+     // knights
+     initialBoardState.push({image: `../assets/images/${type}knight.png`, x:1, y, type: Type.KNIGHT, team: teamType})
+     initialBoardState.push({image: `../assets/images/${type}knight.png`, x:6, y, type: Type.KNIGHT, team: teamType})
+     // bishops
+     initialBoardState.push({image: `../assets/images/${type}bishop.png`, x:2, y, type: Type.BISHOP, team: teamType})
+     initialBoardState.push({image: `../assets/images/${type}bishop.png`, x:5, y, type: Type.BISHOP, team: teamType})
+     // king and queen
+     initialBoardState.push({image: `../assets/images/${type}queen.png`, x:3, y, type: Type.QUEEN, team: teamType})
+     initialBoardState.push({image: `../assets/images/${type}king.png`, x:4, y, type: Type.KING, team: teamType})
+   }
 
-  for (let i = 0; i < 8; i++) {
-    initialBoardState.push({image: "../assets/images/whitepawn.png", x:i, y:1, type: Type.PAWN, team: Team.WHITE, enPassant: enPassantProperty})
-  }
+   for (let i = 0; i < 8; i++) {
+     initialBoardState.push({image: "../assets/images/whitepawn.png", x:i, y:1, type: Type.PAWN, team: Team.WHITE, enPassant: enPassantProperty})
+   }
+
+   for (let i = 0; i < 8; i++) {
+     initialBoardState.push({image: "../assets/images/blackpawn.png", x:i, y:6, type: Type.PAWN, team: Team.BLACK, enPassant: enPassantProperty})
+    }
+
+
+
 
   function findPiece(x, y, pieces) {
     return pieces.find(piece => piece.x === x && piece.y === y);
@@ -68,21 +72,34 @@ function ChessBoard() {
   const [gridX, setGridX] = useState(0)
   const [gridY, setGridY] = useState(0)
   const [pieces, setPieces] = useState(initialBoardState)
+  const [currentTurn, setCurrentTurn] = useState(Team.WHITE);
   const [promotionPawn, setPromotionPawn] = useState()
   const modalRef = useRef(null)
   const chessboardRef = useRef(null)
   const Ref = new MatchRef()
 
+  const { matchId } = useParams();
   const dispatch = useDispatch()
 
 
+  useEffect(() => {
+
+    const whitePlayerId = 1; // <<-- NEED TO UNHARDCODE
+    const blackPlayerId = 2; // <<-- NEED TO UNHARDCODE
+    dispatch(createMatch(whitePlayerId, blackPlayerId));
+  }, []);
+
+
+  const handleResetMatch = () => {
+    dispatch(postReset(matchId));
+    setPieces([...initialBoardState])
+  }
 
   function grabPiece(e) {
     const element = e.target
     const chessboard = chessboardRef.current
 
     if (element.classList.contains("chess-piece") && chessboard){
-
 
       setGridX(Math.floor((e.clientX - chessboard.offsetLeft) / 100))
       setGridY(Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 800) / 100)))
@@ -143,9 +160,12 @@ function ChessBoard() {
       const x = Math.floor((e.clientX - chessboard.offsetLeft) / 100)
       const y = Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 800) / 100))
 
+      const alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+
       const pieceAtNewSquare = findPiece(x, y, pieces); // <<-- you commented out a bunch of code below that used this, if app breaks this is the reason
 
       const currentPiece = pieces.find((p) => p.x == gridX && p.y == gridY)
+      console.log(currentPiece);
       const attackedPiece = pieces.find((p) => p.x == x && p.y == y)
 
 
@@ -158,6 +178,14 @@ function ChessBoard() {
 
         const direction = currentPiece.team == Team.WHITE ? 1 : -1
 
+        if (currentPiece.team !== currentTurn) {
+          activePiece.style.position = 'relative'
+          activePiece.style.removeProperty('top')
+          activePiece.style.removeProperty('left')
+          setActivePiece(null)
+          return;
+        }
+
 
         if (isEnpassant) {
 
@@ -168,23 +196,29 @@ function ChessBoard() {
               piece.x = x
               piece.y = y
               arr.push(piece)
+              let uciMove = `${alphabet[gridX]}${gridY+1}${alphabet[x]}${y+1}`;
+              console.log(matchId,uciMove);
+              dispatch(postMove(matchId, uciMove));
+
 
             } else if (!(piece.x == x && piece.y == y - direction)) {
               if (piece.type == Type.PAWN) {
                 piece.enPassant = false
               }
+
               arr.push(piece)
+
             }
 
             return arr
           }, [])
 
           setPieces(updatedPieces)
+          setCurrentTurn(currentTurn === Team.WHITE ? Team.BLACK : Team.WHITE);
 
         } else if (IsValidMove) {
-          const updatedPieces = pieces.reduce((arr, piece) => {
+            const updatedPieces = pieces.reduce((arr, piece) => {
             if (piece.x == gridX && piece.y == gridY){
-
 
               if(Math.abs(gridY - y) == 2 && piece.type == Type.PAWN){
                 piece.enPassant = true
@@ -203,6 +237,9 @@ function ChessBoard() {
               }
 
               arr.push(piece)
+              let uciMove = `${alphabet[gridX]}${gridY+1}${alphabet[x]}${y+1}`;
+              console.log(matchId,uciMove, pieces);
+              dispatch(postMove(matchId, uciMove));
 
             } else if (!(piece.x == x && piece.y == y)){
               if (piece.type == Type.PAWN) {
@@ -216,6 +253,7 @@ function ChessBoard() {
           }, [])
 
           setPieces(updatedPieces)
+          setCurrentTurn(currentTurn === Team.WHITE ? Team.BLACK : Team.WHITE);
 
 
        } else {
@@ -300,6 +338,7 @@ function ChessBoard() {
 
           >{board}
           </div>
+        <button onClick={handleResetMatch}>Reset Match</button>
         </div>
     </>
   )

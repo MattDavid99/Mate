@@ -1,3 +1,625 @@
+// import { Type } from "../ChessBoard";
+// import { Team } from "../ChessBoard";
+
+// export default class MatchRef {
+
+//   squareHasPiece(x, y, boardState) {
+//     const piece = boardState.find((i) => i.x == x && i.y == y)
+
+//     if (piece) {
+//       console.log("----This square already has a piece");
+//       return true
+//     } else {
+//       return false
+//     }
+//   }
+
+//   squareHasOpponent(x,y,boardState, team) {
+//     const piece = boardState.find((i) => i.x == x && i.y == y && i.team != team)
+
+//     if (piece) {
+//       return true
+
+//     } else {
+//       return false
+//     }
+//   }
+
+//   theEnPassant(prevX, prevY, x, y, type, team, boardState) {
+//     const direction = team == Team.WHITE ? 1 : -1
+
+//     if (type == Type.PAWN) {
+
+//       if ((x - prevX == -1 || x - prevX == 1) && y - prevY == direction) {
+//         const piece = boardState.find((i) => i.x == x && i.y == y - direction && i.enPassant)
+
+//         if (piece) return true
+
+//       }
+//     }
+//     return false
+//   }
+
+//   checkingMoves(prevX, prevY, x, y, type, team, boardState) {
+
+//     // const currentBoardState = boardState
+//   }
+
+
+
+//   validMove(prevX, prevY, x, y, type, team, boardState) {
+//     console.log(`Ref is checking the move for ${type}...`);
+//     console.log(`Previous location: (${prevX},${prevY})`);
+//     console.log(`Current location: (${x},${y})`);
+//     console.log(`Team: ${team}`);
+//     console.log(boardState);
+
+//     // Valid Moves for Pawn   (PAWN ⬇️⬇️⬇️⬇️⬇️⬇️)
+//     if (type === Type.PAWN) {
+
+//         const row = team == Team.WHITE ? 1 : 6
+//         const direction = team == Team.WHITE ? 1 : -1
+
+//         if (prevX == x && prevY == row && y - prevY == 2 * direction) {
+//           if (!this.squareHasPiece(x,y,boardState) && !this.squareHasPiece(x, y - direction, boardState)) return true
+
+//         } else if (prevX == x && y - prevY == direction) {
+//               if (!this.squareHasPiece(x,y,boardState)) return true
+//           }
+
+//           // Taking Piece: Pawn
+//           else if (x - prevX == -1 && y - prevY == direction) {
+//             if (this.squareHasOpponent(x,y,boardState,team)) return true
+//           }
+
+//           else if (x - prevX == 1 && y - prevY == direction) {
+//             if (this.squareHasOpponent(x,y,boardState,team)) return true
+//           }
+
+//           // (KNIGHT ⬇️⬇️⬇️⬇️⬇️⬇️) (x === desiredPosition, prevX === initialPosition)
+//       } else if (type == Type.KNIGHT) {
+
+//         // Top Line
+//         if (y - prevY == 2){
+//           // KNIGHT TOP LEFT
+//           if (x - prevX == -1) {
+//             if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
+//               // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
+//               return true
+//             }
+//           }
+//           // KNIGHT TOP RIGHT
+//           if (x - prevX == 1) {
+//             if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
+//               // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
+//               return true
+//             }
+//           }
+//         }
+
+//         // Right Line
+//         if (x - prevX == 2) {
+//           // KNIGHT RIGHT TOP
+//           if (y - prevY == 1) {
+//             if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
+//               // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
+//               return true
+//             }
+//           }
+//           // KNIGHT LEFT TOP
+//           if (y - prevY == -1) {
+//             if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
+//               // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
+//               return true
+//             }
+//           }
+//         }
+
+//         // Bottom Line
+//         if (y - prevY == -2){
+//           // KNIGHT BOTTOM LEFT
+//           if (x - prevX == -1) {
+//             if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
+//               // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
+//               return true
+//             }
+//           }
+//           // KNIGHT BOTTOM RIGHT
+//           if (x - prevX == 1) {
+//             if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
+//               // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
+//               return true
+//             }
+//           }
+//         }
+
+//         // Left Line
+//         if (x - prevX == -2) {
+//           // KNIGHT LEFT TOP
+//           if (y - prevY == 1) {
+//             if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
+//               // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
+//               return true
+//             }
+//           }
+//           // KNIGHT LEFT BOTTOM
+//           if (y - prevY == -1) {
+//             if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
+//               // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
+//               return true
+//             }
+//           }
+//         }
+
+//         // (BISHOP ⬇️⬇️⬇️⬇️⬇️⬇️) (x === desiredPosition, prevX === initialPosition)
+//       } else if (type == Type.BISHOP) {
+
+//         for (let i = 1; i < 8; i++){
+
+//           // Top Right Bishop
+//           if (x > prevX && y > prevY) {
+//             let passedPosition =  {x: prevX + i, y: prevY + i}
+
+//             if (passedPosition.x == x && passedPosition.y == y){
+
+//               if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                 return true
+//               }
+
+//             } else {
+//               if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+//                 break
+//               }
+//             }
+//           }
+
+//           // Bottom Right
+//           if (x > prevX && y < prevY){
+//             let passedPosition =  {x: prevX + i, y: prevY - i}
+
+//             if (passedPosition.x == x && passedPosition.y == y){
+
+//               if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                 return true
+//               }
+
+//             } else {
+//               if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+//                 break
+//               }
+//             }
+//           }
+
+//           // Bottom Left
+//           if (x < prevX && y < prevY){
+
+//             let passedPosition =  {x: prevX - i, y: prevY - i}
+
+//             if (passedPosition.x == x && passedPosition.y == y){
+
+//               if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                 return true
+//               }
+
+//             } else {
+//               if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+//                 break
+//               }
+//             }
+//           }
+
+//           // Top Left
+//           if (x < prevX && y > prevY){
+//             let passedPosition =  {x: prevX - i, y: prevY + i}
+
+//             if (passedPosition.x == x && passedPosition.y == y){
+
+//               if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                 return true
+//               }
+
+//             } else {
+//               if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+//                 break
+//               }
+//             }
+//           }
+//         }
+
+//         // (ROOK ⬇️⬇️⬇️⬇️⬇️⬇️) (x === desiredPosition, prevX === initialPosition)
+//       } else if (type == Type.ROOK) {
+
+//         // VERICAL MOVEMENT
+//         if (prevX == x) {
+//           // DOWN
+//           if (y < prevY){
+//             for (let i = 1; i < 8; i++) {
+
+//                let passedPosition = {x: prevX, y: prevY - i}
+
+//                if (passedPosition.x == x && passedPosition.y == y){
+
+//                 if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                   return true
+//                 }
+//               } else {
+//                   if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+//                }
+//             }
+
+//           } else if (y > prevY) {
+//             // UP
+//             for (let i = 1; i < 8; i++) {
+
+//               let passedPosition = {x: prevX, y: prevY + i}
+
+//               if (passedPosition.x == x && passedPosition.y == y){
+
+//                 if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                   return true
+//                 }
+//               } else {
+//                   if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+//                }
+//            }
+//           }
+//         }
+
+//         // HORIZONTAL MOVEMENT
+//         if (prevY == y) {
+//           // LEFT
+//           if (x < prevX){
+
+//             for (let i = 1; i < 8; i++) {
+
+//                let passedPosition = {x: prevX - i, y: prevY}
+
+//                if (passedPosition.x == x && passedPosition.y == y){
+
+//                 if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                   return true
+//                 }
+
+//               } else {
+//                   if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+//                }
+//             }
+//             // RIGHT
+//           } else if (x > prevX) {
+
+//             for (let i = 1; i < 8; i++) {
+
+//               let passedPosition = {x: prevX + i, y: prevY}
+
+//               if (passedPosition.x == x && passedPosition.y == y){
+
+//                 if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                   return true
+//                 }
+
+//               } else {
+//                 if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+//                }
+//            }
+//           }
+//         }
+
+
+//         // (QUEEN ⬇️⬇️⬇️⬇️⬇️⬇️) (x === desiredPosition, prevX === initialPosition)
+//       } else if (type == Type.QUEEN) {
+
+//         // VERICAL MOVEMENT -----------------------------
+//         if (prevX == x) {
+//           // DOWN
+//           if (y < prevY){
+//             for (let i = 1; i < 8; i++) {
+
+//                let passedPosition = {x: prevX, y: prevY - i}
+
+//                if (passedPosition.x == x && passedPosition.y == y){
+
+//                 if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                   return true
+//                 }
+//               } else {
+//                   if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+//                }
+//             }
+
+//           } else if (y > prevY) {
+//             // UP
+//             for (let i = 1; i < 8; i++) {
+
+//               let passedPosition = {x: prevX, y: prevY + i}
+
+//               if (passedPosition.x == x && passedPosition.y == y){
+
+//                 if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                   return true
+//                 }
+//               } else {
+//                   if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+//                }
+//            }
+//           }
+//         }
+
+//         // HORIZONTAL MOVEMENT
+//         if (prevY == y) {
+//           // LEFT
+//           if (x < prevX){
+
+//             for (let i = 1; i < 8; i++) {
+
+//                let passedPosition = {x: prevX - i, y: prevY}
+
+//                if (passedPosition.x == x && passedPosition.y == y){
+
+//                 if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                   return true
+//                 }
+
+//               } else {
+//                   if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+//                }
+//             }
+//             // RIGHT
+//           } else if (x > prevX) {
+
+//             for (let i = 1; i < 8; i++) {
+
+//               let passedPosition = {x: prevX + i, y: prevY}
+
+//               if (passedPosition.x == x && passedPosition.y == y){
+
+//                 if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                   return true
+//                 }
+
+//               } else {
+//                 if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+//                }
+//            }
+//           }
+//         }
+
+//         // DIAGONAL --------------------------------
+//         for (let i = 1; i < 8; i++){
+
+//           // Top Right Bishop
+//           if (x > prevX && y > prevY) {
+//             let passedPosition =  {x: prevX + i, y: prevY + i}
+
+//             if (passedPosition.x == x && passedPosition.y == y){
+
+//               if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                 return true
+//               }
+
+//             } else {
+//               if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+//                 break
+//               }
+//             }
+//           }
+
+//           // Bottom Right
+//           if (x > prevX && y < prevY){
+//             let passedPosition =  {x: prevX + i, y: prevY - i}
+
+//             if (passedPosition.x == x && passedPosition.y == y){
+
+//               if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                 return true
+//               }
+
+//             } else {
+//               if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+//                 break
+//               }
+//             }
+//           }
+
+//           // Bottom Left
+//           if (x < prevX && y < prevY){
+
+//             let passedPosition =  {x: prevX - i, y: prevY - i}
+
+//             if (passedPosition.x == x && passedPosition.y == y){
+
+//               if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                 return true
+//               }
+
+//             } else {
+//               if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+//                 break
+//               }
+//             }
+//           }
+
+//           // Top Left
+//           if (x < prevX && y > prevY){
+//             let passedPosition =  {x: prevX - i, y: prevY + i}
+
+//             if (passedPosition.x == x && passedPosition.y == y){
+
+//               if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                 return true
+//               }
+
+//             } else {
+//               if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+//                 break
+//               }
+//             }
+//           }
+//         }
+
+
+//         // (KING ⬇️⬇️⬇️⬇️⬇️⬇️) (x === desiredPosition, prevX === initialPosition)
+//       } else if (type == Type.KING) {
+
+//         // VERICAL MOVEMENT -----------------------------
+//         if (prevX == x) {
+//           // DOWN
+//           if (y < prevY){
+//             for (let i = 1; i < 2; i++) {
+
+//                let passedPosition = {x: prevX, y: prevY - i}
+
+//                if (passedPosition.x == x && passedPosition.y == y){
+
+//                 if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                   return true
+//                 }
+//               } else {
+//                   if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+//                }
+//             }
+
+//           } else if (y > prevY) {
+//             // UP
+//             for (let i = 1; i < 2; i++) {
+
+//               let passedPosition = {x: prevX, y: prevY + i}
+
+//               if (passedPosition.x == x && passedPosition.y == y){
+
+//                 if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                   return true
+//                 }
+//               } else {
+//                   if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+//                }
+//            }
+//           }
+//         }
+
+//         // HORIZONTAL MOVEMENT
+//         if (prevY == y) {
+//           // LEFT
+//           if (x < prevX){
+
+//             for (let i = 1; i < 2; i++) {
+
+//                let passedPosition = {x: prevX - i, y: prevY}
+
+//                if (passedPosition.x == x && passedPosition.y == y){
+
+//                 if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                   return true
+//                 }
+
+//               } else {
+//                   if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+//                }
+//             }
+//             // RIGHT
+//           } else if (x > prevX) {
+
+//             for (let i = 1; i < 2; i++) {
+
+//               let passedPosition = {x: prevX + i, y: prevY}
+
+//               if (passedPosition.x == x && passedPosition.y == y){
+
+//                 if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                   return true
+//                 }
+
+//               } else {
+//                 if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+//                }
+//            }
+//           }
+//         }
+
+//         // DIAGONAL --------------------------------
+//         for (let i = 1; i < 2; i++){
+
+//           // Top Right Bishop
+//           if (x > prevX && y > prevY) {
+//             let passedPosition =  {x: prevX + i, y: prevY + i}
+
+//             if (passedPosition.x == x && passedPosition.y == y){
+
+//               if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                 return true
+//               }
+
+//             } else {
+//               if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+//                 break
+//               }
+//             }
+//           }
+
+//           // Bottom Right
+//           if (x > prevX && y < prevY){
+//             let passedPosition =  {x: prevX + i, y: prevY - i}
+
+//             if (passedPosition.x == x && passedPosition.y == y){
+
+//               if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                 return true
+//               }
+
+//             } else {
+//               if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+//                 break
+//               }
+//             }
+//           }
+
+//           // Bottom Left
+//           if (x < prevX && y < prevY){
+
+//             let passedPosition =  {x: prevX - i, y: prevY - i}
+
+//             if (passedPosition.x == x && passedPosition.y == y){
+
+//               if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                 return true
+//               }
+
+//             } else {
+//               if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+//                 break
+//               }
+//             }
+//           }
+
+//           // Top Left
+//           if (x < prevX && y > prevY){
+//             let passedPosition =  {x: prevX - i, y: prevY + i}
+
+//             if (passedPosition.x == x && passedPosition.y == y){
+
+//               if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
+//                 return true
+//               }
+
+//             } else {
+//               if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
+//                 break
+//               }
+//             }
+//           }
+//         }
+
+
+//       }
+
+
+
+
+//     return false
+//   }
+// }
+
+
+// -------------------------------------------------------------------------- (King moving to dangerous square not working)
 import { Type } from "../ChessBoard";
 import { Team } from "../ChessBoard";
 
@@ -41,572 +663,428 @@ export default class MatchRef {
   }
 
 
-  validMove(prevX, prevY, x, y, type, team, boardState) {
-    console.log(`Ref is checking the move for ${type}...`);
-    console.log(`Previous location: (${prevX},${prevY})`);
-    console.log(`Current location: (${x},${y})`);
-    console.log(`Team: ${team}`);
+  canAttackPawn(prevX, prevY, x, y, team, boardState) {
 
-    // Valid Moves for Pawn   (PAWN ⬇️⬇️⬇️⬇️⬇️⬇️)
-    if (type === Type.PAWN) {
+  const direction = team == Team.WHITE ? 1 : -1;
 
-        const row = team == Team.WHITE ? 1 : 6
-        const direction = team == Team.WHITE ? 1 : -1
+  if (x - prevX == -1 && y - prevY == direction) {
+        return true;
+    }
 
-        if (prevX == x && prevY == row && y - prevY == 2 * direction) {
-          if (!this.squareHasPiece(x,y,boardState) && !this.squareHasPiece(x, y - direction, boardState)) return true
+    if (x - prevX == 1 && y - prevY == direction) {
+        return true;
+    }
 
-        } else if (prevX == x && y - prevY == direction) {
-              if (!this.squareHasPiece(x,y,boardState)) return true
-          }
+  // Pawn can only attack diagonally
+  if ((x - prevX == -1 || x - prevX == 1) && y - prevY == direction) {
+    if (this.squareHasOpponent(x, y, boardState, team)) return true
+  }
 
-          // Taking Piece: Pawn
-          else if (x - prevX == -1 && y - prevY == direction) {
-            if (this.squareHasOpponent(x,y,boardState,team)) return true
-          }
+  return false;
+}
 
-          else if (x - prevX == 1 && y - prevY == direction) {
-            if (this.squareHasOpponent(x,y,boardState,team)) return true
-          }
+ validMovePawn(prevX, prevY, x, y, team, boardState) {
+  const row = team == Team.WHITE ? 1 : 6;
+  const direction = team == Team.WHITE ? 1 : -1;
 
-          // (KNIGHT ⬇️⬇️⬇️⬇️⬇️⬇️) (x === desiredPosition, prevX === initialPosition)
-      } else if (type == Type.KNIGHT) {
+  // The pawn is moving straight forward
+  if (prevX == x && prevY == row && y - prevY == 2 * direction) {
+    if (!this.squareHasPiece(x, y, boardState) && !this.squareHasPiece(x, y - direction, boardState)) return true
+  }
 
-        // Top Line
-        if (y - prevY == 2){
-          // KNIGHT TOP LEFT
-          if (x - prevX == -1) {
-            if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
-              // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
-              return true
-            }
-          }
-          // KNIGHT TOP RIGHT
-          if (x - prevX == 1) {
-            if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
-              // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
-              return true
-            }
-          }
-        }
+  // The pawn is moving one square forward
+  if (prevX == x && y - prevY == direction) {
+    if (!this.squareHasPiece(x, y, boardState)) return true
+  }
 
-        // Right Line
-        if (x - prevX == 2) {
-          // KNIGHT RIGHT TOP
-          if (y - prevY == 1) {
-            if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
-              // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
-              return true
-            }
-          }
-          // KNIGHT LEFT TOP
-          if (y - prevY == -1) {
-            if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
-              // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
-              return true
-            }
-          }
-        }
+  // The pawn is moving diagonally to capture an opponent's piece
+  if ((x - prevX == -1 || x - prevX == 1) && y - prevY == direction) {
+    if (this.squareHasOpponent(x, y, boardState, team)) return true
+  }
 
-        // Bottom Line
-        if (y - prevY == -2){
-          // KNIGHT BOTTOM LEFT
-          if (x - prevX == -1) {
-            if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
-              // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
-              return true
-            }
-          }
-          // KNIGHT BOTTOM RIGHT
-          if (x - prevX == 1) {
-            if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
-              // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
-              return true
-            }
-          }
-        }
+  return false;
+}
 
-        // Left Line
-        if (x - prevX == -2) {
-          // KNIGHT LEFT TOP
-          if (y - prevY == 1) {
-            if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
-              // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
-              return true
-            }
-          }
-          // KNIGHT LEFT BOTTOM
-          if (y - prevY == -1) {
-            if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)){
-              // ⬆️ same as this.tileIsEmptyOrOccupiedByOpponent(desiredPosition, boardState, team)
-              return true
-            }
-          }
-        }
+canAttackKnight(prevX, prevY, x, y, team, boardState) {
+  // Top Line
+  if (y - prevY == 2 && Math.abs(x - prevX) == 1) {
+      return true;
+  }
 
-        // (BISHOP ⬇️⬇️⬇️⬇️⬇️⬇️) (x === desiredPosition, prevX === initialPosition)
-      } else if (type == Type.BISHOP) {
+  // Right Line
+  if (x - prevX == 2 && Math.abs(y - prevY) == 1) {
+      return true;
+  }
 
-        for (let i = 1; i < 8; i++){
+  // Bottom Line
+  if (y - prevY == -2 && Math.abs(x - prevX) == 1) {
+      return true;
+  }
 
-          // Top Right Bishop
-          if (x > prevX && y > prevY) {
-            let passedPosition =  {x: prevX + i, y: prevY + i}
+  // Left Line
+  if (x - prevX == -2 && Math.abs(y - prevY) == 1) {
+      return true;
+  }
 
-            if (passedPosition.x == x && passedPosition.y == y){
+  return false;
+}
 
-              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                return true
-              }
+validMoveKnight(prevX, prevY, x, y, team, boardState) {
+  // Top Line
+  if (y - prevY == 2 && Math.abs(x - prevX) == 1) {
+      if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)) {
+          return true;
+      }
+  }
 
-            } else {
-              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
-                break
-              }
-            }
-          }
+  // Right Line
+  if (x - prevX == 2 && Math.abs(y - prevY) == 1) {
+      if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)) {
+          return true;
+      }
+  }
 
-          // Bottom Right
-          if (x > prevX && y < prevY){
-            let passedPosition =  {x: prevX + i, y: prevY - i}
+  // Bottom Line
+  if (y - prevY == -2 && Math.abs(x - prevX) == 1) {
+      if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)) {
+          return true;
+      }
+  }
 
-            if (passedPosition.x == x && passedPosition.y == y){
+  // Left Line
+  if (x - prevX == -2 && Math.abs(y - prevY) == 1) {
+      if (!this.squareHasPiece(x, y, boardState) || this.squareHasOpponent(x, y, boardState, team)) {
+          return true;
+      }
+  }
 
-              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                return true
-              }
+  return false;
+}
 
-            } else {
-              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
-                break
-              }
-            }
-          }
+canAttackBishop(prevX, prevY, x, y, team, boardState) {
+   // Four directions to check: top-right, top-left, bottom-right, bottom-left
+   let directions = [[1, 1], [-1, 1], [1, -1], [-1, -1]];
+   let moveIsPossible = false;
 
-          // Bottom Left
-          if (x < prevX && y < prevY){
+   for (let direction of directions) {
+       for (let i = 1; i < 8; i++) {
+           let checkX = prevX + i * direction[0];
+           let checkY = prevY + i * direction[1];
 
-            let passedPosition =  {x: prevX - i, y: prevY - i}
-
-            if (passedPosition.x == x && passedPosition.y == y){
-
-              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                return true
-              }
-
-            } else {
-              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
-                break
-              }
-            }
-          }
-
-          // Top Left
-          if (x < prevX && y > prevY){
-            let passedPosition =  {x: prevX - i, y: prevY + i}
-
-            if (passedPosition.x == x && passedPosition.y == y){
-
-              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                return true
-              }
-
-            } else {
-              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
-                break
-              }
-            }
-          }
-        }
-
-        // (ROOK ⬇️⬇️⬇️⬇️⬇️⬇️) (x === desiredPosition, prevX === initialPosition)
-      } else if (type == Type.ROOK) {
-
-        // VERICAL MOVEMENT
-        if (prevX == x) {
-          // DOWN
-          if (y < prevY){
-            for (let i = 1; i < 8; i++) {
-
-               let passedPosition = {x: prevX, y: prevY - i}
-
-               if (passedPosition.x == x && passedPosition.y == y){
-
-                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                  return true
-                }
-              } else {
-                  if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
+           // If this is the position we are checking
+           if (checkX == x && checkY == y) {
+               if(this.squareHasPiece(checkX, checkY, boardState)) {
+                   moveIsPossible = this.squareHasOpponent(checkX, checkY, boardState, team) ? true : false;
+               } else {
+                   moveIsPossible = true;
                }
-            }
-
-          } else if (y > prevY) {
-            // UP
-            for (let i = 1; i < 8; i++) {
-
-              let passedPosition = {x: prevX, y: prevY + i}
-
-              if (passedPosition.x == x && passedPosition.y == y){
-
-                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                  return true
-                }
-              } else {
-                  if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
-               }
+               break;
            }
-          }
-        }
 
-        // HORIZONTAL MOVEMENT
-        if (prevY == y) {
-          // LEFT
-          if (x < prevX){
-
-            for (let i = 1; i < 8; i++) {
-
-               let passedPosition = {x: prevX - i, y: prevY}
-
-               if (passedPosition.x == x && passedPosition.y == y){
-
-                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                  return true
-                }
-
-              } else {
-                  if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
-               }
-            }
-            // RIGHT
-          } else if (x > prevX) {
-
-            for (let i = 1; i < 8; i++) {
-
-              let passedPosition = {x: prevX + i, y: prevY}
-
-              if (passedPosition.x == x && passedPosition.y == y){
-
-                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                  return true
-                }
-
-              } else {
-                if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
-               }
+           // If the checked position has a piece, we can't go further in this direction
+           if (this.squareHasPiece(checkX, checkY, boardState)) {
+               moveIsPossible = false;
+               break;
            }
+       }
+       if (moveIsPossible) {
+           break;
+       }
+   }
+
+   return moveIsPossible;
+}
+
+validMoveBishop(prevX, prevY, x, y, team, boardState) {
+  return this.canAttackBishop(prevX, prevY, x, y, team, boardState);
+}
+
+
+canAttackRook(prevX, prevY, x, y, team, boardState) {
+  let directions = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+  let moveIsPossible = false;
+
+  for (let direction of directions) {
+      for (let i = 1; i < 8; i++) {
+          let checkX = prevX + i * direction[0];
+          let checkY = prevY + i * direction[1];
+
+          if (checkX == x && checkY == y) {
+              if(this.squareHasPiece(checkX, checkY, boardState)) {
+                  moveIsPossible = this.squareHasOpponent(checkX, checkY, boardState, team) ? true : false;
+              } else {
+                  moveIsPossible = true;
+              }
+              break;
           }
+
+          if (this.squareHasPiece(checkX, checkY, boardState)) {
+              moveIsPossible = false;
+              break;
+          }
+      }
+      if (moveIsPossible) {
+          break;
+      }
+  }
+
+  return moveIsPossible;
+}
+
+validMoveRook(prevX, prevY, x, y, team, boardState) {
+return this.canAttackRook(prevX, prevY, x, y, team, boardState);
+}
+
+
+canAttackQueen(prevX, prevY, x, y, team, boardState) {
+  // Eight directions to check: top, bottom, left, right, top-right, top-left, bottom-right, bottom-left
+  let directions = [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [-1, 1], [1, -1], [-1, -1]];
+  let moveIsPossible = false;
+
+  for (let direction of directions) {
+    for (let i = 1; i < 8; i++) {
+      let checkX = prevX + i * direction[0];
+      let checkY = prevY + i * direction[1];
+
+      // If this is the position we are checking
+      if (checkX == x && checkY == y) {
+        if(this.squareHasPiece(checkX, checkY, boardState)) {
+          moveIsPossible = this.squareHasOpponent(checkX, checkY, boardState, team) ? true : false;
+        } else {
+          moveIsPossible = true;
         }
-
-
-        // (QUEEN ⬇️⬇️⬇️⬇️⬇️⬇️) (x === desiredPosition, prevX === initialPosition)
-      } else if (type == Type.QUEEN) {
-
-        // VERICAL MOVEMENT -----------------------------
-        if (prevX == x) {
-          // DOWN
-          if (y < prevY){
-            for (let i = 1; i < 8; i++) {
-
-               let passedPosition = {x: prevX, y: prevY - i}
-
-               if (passedPosition.x == x && passedPosition.y == y){
-
-                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                  return true
-                }
-              } else {
-                  if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
-               }
-            }
-
-          } else if (y > prevY) {
-            // UP
-            for (let i = 1; i < 8; i++) {
-
-              let passedPosition = {x: prevX, y: prevY + i}
-
-              if (passedPosition.x == x && passedPosition.y == y){
-
-                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                  return true
-                }
-              } else {
-                  if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
-               }
-           }
-          }
-        }
-
-        // HORIZONTAL MOVEMENT
-        if (prevY == y) {
-          // LEFT
-          if (x < prevX){
-
-            for (let i = 1; i < 8; i++) {
-
-               let passedPosition = {x: prevX - i, y: prevY}
-
-               if (passedPosition.x == x && passedPosition.y == y){
-
-                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                  return true
-                }
-
-              } else {
-                  if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
-               }
-            }
-            // RIGHT
-          } else if (x > prevX) {
-
-            for (let i = 1; i < 8; i++) {
-
-              let passedPosition = {x: prevX + i, y: prevY}
-
-              if (passedPosition.x == x && passedPosition.y == y){
-
-                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                  return true
-                }
-
-              } else {
-                if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
-               }
-           }
-          }
-        }
-
-        // DIAGONAL --------------------------------
-        for (let i = 1; i < 8; i++){
-
-          // Top Right Bishop
-          if (x > prevX && y > prevY) {
-            let passedPosition =  {x: prevX + i, y: prevY + i}
-
-            if (passedPosition.x == x && passedPosition.y == y){
-
-              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                return true
-              }
-
-            } else {
-              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
-                break
-              }
-            }
-          }
-
-          // Bottom Right
-          if (x > prevX && y < prevY){
-            let passedPosition =  {x: prevX + i, y: prevY - i}
-
-            if (passedPosition.x == x && passedPosition.y == y){
-
-              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                return true
-              }
-
-            } else {
-              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
-                break
-              }
-            }
-          }
-
-          // Bottom Left
-          if (x < prevX && y < prevY){
-
-            let passedPosition =  {x: prevX - i, y: prevY - i}
-
-            if (passedPosition.x == x && passedPosition.y == y){
-
-              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                return true
-              }
-
-            } else {
-              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
-                break
-              }
-            }
-          }
-
-          // Top Left
-          if (x < prevX && y > prevY){
-            let passedPosition =  {x: prevX - i, y: prevY + i}
-
-            if (passedPosition.x == x && passedPosition.y == y){
-
-              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                return true
-              }
-
-            } else {
-              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
-                break
-              }
-            }
-          }
-        }
-
-
-        // (KING ⬇️⬇️⬇️⬇️⬇️⬇️) (x === desiredPosition, prevX === initialPosition)
-      } else if (type == Type.KING) {
-
-        // VERICAL MOVEMENT -----------------------------
-        if (prevX == x) {
-          // DOWN
-          if (y < prevY){
-            for (let i = 1; i < 2; i++) {
-
-               let passedPosition = {x: prevX, y: prevY - i}
-
-               if (passedPosition.x == x && passedPosition.y == y){
-
-                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                  return true
-                }
-              } else {
-                  if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
-               }
-            }
-
-          } else if (y > prevY) {
-            // UP
-            for (let i = 1; i < 2; i++) {
-
-              let passedPosition = {x: prevX, y: prevY + i}
-
-              if (passedPosition.x == x && passedPosition.y == y){
-
-                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                  return true
-                }
-              } else {
-                  if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
-               }
-           }
-          }
-        }
-
-        // HORIZONTAL MOVEMENT
-        if (prevY == y) {
-          // LEFT
-          if (x < prevX){
-
-            for (let i = 1; i < 2; i++) {
-
-               let passedPosition = {x: prevX - i, y: prevY}
-
-               if (passedPosition.x == x && passedPosition.y == y){
-
-                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                  return true
-                }
-
-              } else {
-                  if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
-               }
-            }
-            // RIGHT
-          } else if (x > prevX) {
-
-            for (let i = 1; i < 2; i++) {
-
-              let passedPosition = {x: prevX + i, y: prevY}
-
-              if (passedPosition.x == x && passedPosition.y == y){
-
-                if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                  return true
-                }
-
-              } else {
-                if (this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) break
-               }
-           }
-          }
-        }
-
-        // DIAGONAL --------------------------------
-        for (let i = 1; i < 2; i++){
-
-          // Top Right Bishop
-          if (x > prevX && y > prevY) {
-            let passedPosition =  {x: prevX + i, y: prevY + i}
-
-            if (passedPosition.x == x && passedPosition.y == y){
-
-              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                return true
-              }
-
-            } else {
-              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
-                break
-              }
-            }
-          }
-
-          // Bottom Right
-          if (x > prevX && y < prevY){
-            let passedPosition =  {x: prevX + i, y: prevY - i}
-
-            if (passedPosition.x == x && passedPosition.y == y){
-
-              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                return true
-              }
-
-            } else {
-              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
-                break
-              }
-            }
-          }
-
-          // Bottom Left
-          if (x < prevX && y < prevY){
-
-            let passedPosition =  {x: prevX - i, y: prevY - i}
-
-            if (passedPosition.x == x && passedPosition.y == y){
-
-              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                return true
-              }
-
-            } else {
-              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
-                break
-              }
-            }
-          }
-
-          // Top Left
-          if (x < prevX && y > prevY){
-            let passedPosition =  {x: prevX - i, y: prevY + i}
-
-            if (passedPosition.x == x && passedPosition.y == y){
-
-              if (!this.squareHasPiece(passedPosition.x, passedPosition.y, boardState) || this.squareHasOpponent(passedPosition.x, passedPosition.y, boardState, team)){
-                return true
-              }
-
-            } else {
-              if(this.squareHasPiece(passedPosition.x, passedPosition.y, boardState)) {
-                break
-              }
-            }
-          }
-        }
-
-
+        break;
       }
 
+      // If the checked position has a piece, we can't go further in this direction
+      if (this.squareHasPiece(checkX, checkY, boardState)) {
+        moveIsPossible = false;
+        break;
+      }
+    }
+    if (moveIsPossible) {
+      break;
+    }
+  }
 
+  return moveIsPossible;
+}
+
+validMoveQueen(prevX, prevY, x, y, team, boardState) {
+  return this.canAttackQueen(prevX, prevY, x, y, team, boardState);
+}
+
+
+canAttackKing(prevX, prevY, x, y, team, boardState, fromIsSquareUnderAttack = false) {
+    // Eight directions to check: top, bottom, left, right, top-right, top-left, bottom-right, bottom-left
+  let directions = [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [-1, 1], [1, -1], [-1, -1]];
+  let moveIsPossible = false;
+
+  for (let direction of directions) {
+    for (let i = 1; i < 2; i++) {
+      let checkX = prevX + i * direction[0];
+      let checkY = prevY + i * direction[1];
+
+      // If this is the position we are checking
+      if (checkX == x && checkY == y) {
+        if(fromIsSquareUnderAttack) {
+          moveIsPossible = this.squareHasOpponent(checkX, checkY, boardState, team);
+          break;
+        } else {
+          // If the square is being attacked by the enemy, the king can't move there
+          if(this.isSquareUnderAttack(x, y, team, boardState)) {
+            moveIsPossible = false;
+            break;
+          }
+          // If the square is occupied by a piece from the same team, the king can't move there
+          else if(this.squareHasPiece(checkX, checkY, boardState) && !this.squareHasOpponent(checkX, checkY, boardState, team)) {
+            moveIsPossible = false;
+            break;
+          } else {
+            moveIsPossible = true;
+            break;
+          }
+        }
+      }
+
+      // If the checked position has a piece, we can't go further in this direction
+      if (this.squareHasPiece(checkX, checkY, boardState)) {
+        moveIsPossible = false;
+        break;
+      }
+    }
+    if (moveIsPossible) {
+      break;
+    }
+  }
+
+  return moveIsPossible;
+
+
+}
+
+validMoveKing(prevX, prevY, x, y, team, boardState) {
+  // check if the square is attacked
+
+  console.log(boardState);
+
+  // If the square is not in the boundaries of the chess board
+  if (x < 0 || y < 0 || x > 7 || y > 7) {
+    return false;
+  }
+
+  // If the square is occupied by a piece from the same team
+  if (this.squareHasPiece(x, y, boardState) && !this.squareHasOpponent(x, y, boardState, team)) {
+    return false;
+  }
+
+  // If the move is not in the King's move set (one square in any direction)
+  if (Math.abs(prevX - x) > 1 || Math.abs(prevY - y) > 1) {
+    return false;
+  }
+
+  // If the square is under attack by an enemy piece
+  if (this.isSquareUnderAttack(x, y, team, boardState)) {
+    return false;
+  }
+
+  return true;
+
+}
+
+
+
+canAttack(prevX, prevY, x, y, type, team, boardState) {
+  if (type == Type.PAWN) {
+      return this.canAttackPawn(prevX, prevY, x, y, team, boardState);
+  }
+
+  if (type == Type.KNIGHT) {
+      return this.canAttackKnight(prevX, prevY, x, y, team, boardState);
+  }
+
+  if (type == Type.BISHOP) {
+    return this.canAttackBishop(prevX, prevY, x, y, team, boardState);
+  }
+
+  if (type == Type.ROOK) {
+    return this.canAttackRook(prevX, prevY, x, y, team, boardState);
+  }
+
+  if (type == Type.QUEEN) {
+    return this.canAttackQueen(prevX, prevY, x, y, team, boardState);
+  }
+
+  if (type == Type.KING) {
+    return this.canAttackKing(prevX, prevY, x, y, team, boardState);
+  }
+
+
+  //... similar for other types
+
+  // If type is not recognized
+  return false;
+}
+
+isSquareUnderAttack(x, y, team, boardState) {
+
+  const enemyTeam = team == Team.WHITE ? Team.BLACK : Team.WHITE;
+
+  for (const piece of boardState) {
+    if (piece.team == enemyTeam && piece.type != Type.KING && this.canAttack(piece.x, piece.y, x, y, piece.type, piece.team, boardState)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+  // ------------------------------------------------------------------------------------------------------
+
+  isKingUnderAttack(boardState, team) {
+    // Determine the position of the King
+    console.log(boardState);
+    let kingPosition = boardState.find((i) => i.team == team && i.type == Type.KING);
+
+    // If King is not on the board (should not happen in a normal game)
+    if (!kingPosition) {
+      return false;
+    }
+
+    // Check if any square around the King is under attack
+    return this.isSquareUnderAttack(kingPosition.x, kingPosition.y, team, boardState);
+  }
+
+  isCheckmate(boardState, team) {
+    // If the King is not under attack, it can't be checkmate
+    console.log(boardState);
+    if (!this.isKingUnderAttack(boardState, team)) {
+      return false;
+    }
+
+    // If there are any valid moves left, it's not checkmate
+    for (let piece of boardState) {
+      if (piece.team == team) {
+        for (let dx = -1; dx <= 1; dx++) {
+          for (let dy = -1; dy <= 1; dy++) {
+            let newX = piece.x + dx;
+            let newY = piece.y + dy;
+            if (this.validMove(piece.x, piece.y, newX, newY, piece.type, team, boardState)) {
+              // There's at least one valid move, hence it's not checkmate
+              console.log("CHECK!!!!!!!");
+              return false;
+            }
+          }
+        }
+      }
+    }
+
+    // If we haven't returned yet, there are no valid moves left and the King is under attack, so it's checkmate
+    console.log("CHECKMATE!!!!!!!!!!!!!!!!!!!!");
+    return true;
+  }
+
+
+
+
+  // ------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+validMove(prevX, prevY, x, y, type, team, boardState) {
+
+    // Valid Moves for PAWN   (PAWN ⬇️⬇️⬇️⬇️⬇️⬇️)
+      if (type === Type.PAWN) {
+
+      return this.validMovePawn(prevX, prevY, x, y, team, boardState);
+
+      } else if (type == Type.KNIGHT) {
+
+        return this.validMoveKnight(prevX, prevY, x, y, team, boardState);
+
+      } else if (type == Type.BISHOP) {
+
+          return this.validMoveBishop(prevX, prevY, x, y, team, boardState);
+
+      } else if (type == Type.ROOK) {
+
+        return this.validMoveRook(prevX, prevY, x, y, team, boardState);
+
+      } else if (type == Type.QUEEN) {
+
+        return this.validMoveQueen(prevX, prevY, x, y, team, boardState);
+
+      } else if (type == Type.KING) {
+
+        return this.validMoveKing(prevX, prevY, x, y, team, boardState); // not moving into danger, so it is a valid move
+
+      }
 
 
     return false
   }
 }
+// -------------------------------------------------------------------------- (King moving to dangerous square not working)

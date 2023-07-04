@@ -73,18 +73,23 @@ def move(match_id):
 
     uci_move = request.json.get('move')
 
+    print("DEBUG: Got move:", uci_move)
+
     # if move is illegal
     if not uci_move:
         return jsonify({"error": "<-------- error at line 50 in match_routes"}), 404
 
     match = Match.query.get(match_id)
+    print("DEBUG: Got match:", match)
     if not match:
         return jsonify({"error": "<--------- NO match found match_routes"}), 404
 
     board = chess.Board(match.board_state)
+    print("DEBUG: Created board:", board)
 
     try:
         move = chess.Move.from_uci(uci_move)
+        print("DEBUG: Created move:", move)
     except:
         return jsonify({"error": "<--------- invalid move format in match_routes def move(match_id)"}), 404
 
@@ -93,6 +98,7 @@ def move(match_id):
 
     board.push(move)
     match.board_state = board.fen() # <<-- board.fen() handles the current state of the chess game
+    print("DEBUG: Updated board state:", match.board_state)
 
 
     print("---------------------->Current board\n",board)
@@ -183,10 +189,34 @@ def get_match(match_id):
     """
     Get the state of an ongoing chess match
     """
-
+    print(f"Accessing match with ID: {match_id}")
     match = Match.query.get(match_id)
 
     if not match:
         return jsonify({'error': 'error in def get_match() in match_routes, cannot get specific match'}), 404
 
     return {'match', [match.to_dict()]}, 200
+
+
+@match_routes.route('/<int:match_id>/reset', methods=['POST'])
+@login_required
+def reset_match(match_id):
+    """
+    Reset a chess match
+    """
+
+    match = Match.query.get(match_id)
+
+    current_user_id = current_user.id
+    if not match or (match.white_player_id != current_user_id and match.black_player_id != current_user_id):
+        return jsonify({"error": "Match not found or user not part of the match"}), 404
+
+    board = chess.Board()
+
+    match.board_state = board.fen()
+    match.status = "In Progress"
+    match.result = None
+
+    db.session.commit()
+
+    return {"match": [match.to_dict()]}, 200
