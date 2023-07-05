@@ -211,3 +211,24 @@ class FriendRequest(db.Model):
             'createdAt': self.created_at,
             'updatedAt': self.updated_at
         }
+
+
+class Lobby(db.Model):
+    __tablename__ = 'lobbies'
+
+    if environment == "production":
+        __table_args__ = {'schema': SCHEMA}
+
+    id = db.Column(db.Integer, primary_key=True)
+    user1_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')))
+    user2_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')))
+
+    user1 = relationship('User', foreign_keys=[user1_id])
+    user2 = relationship('User', foreign_keys=[user2_id])
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user1Id': self.user1_id,
+            'user2Id': self.user2_id,
+        }

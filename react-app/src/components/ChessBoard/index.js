@@ -84,18 +84,27 @@ function ChessBoard() {
   const Ref = new MatchRef()
 
   const matchSelector = useSelector((state) => state.match.match)
+  const currentUser = useSelector((state) => state.session.user)
 
   const { matchId } = useParams();
   const dispatch = useDispatch()
 
 
+  // useEffect(() => {
+
+  //   const whitePlayerId = 1; // <<-- NEED TO UNHARDCODE
+  //   const blackPlayerId = 2; // <<-- NEED TO UNHARDCODE
+  //   dispatch(createMatch(whitePlayerId, blackPlayerId));
+
+  // }, []);
+
   useEffect(() => {
+    if (matchSelector) {
+      console.log("White player ID: ", matchSelector.whitePlayerId);
+      console.log("Black player ID: ", matchSelector.blackPlayerId);
+    }
+  }, [matchSelector]);
 
-    const whitePlayerId = 1; // <<-- NEED TO UNHARDCODE
-    const blackPlayerId = 2; // <<-- NEED TO UNHARDCODE
-    dispatch(createMatch(whitePlayerId, blackPlayerId));
-
-  }, []);
 
   useEffect(() => {
 
@@ -317,7 +326,8 @@ function ChessBoard() {
 
   // This must be above promotePawn() ⬇
   function promotionWhiteOrBlack() {
-    return (promotionPawn?.team == Team.WHITE) ? "white" : "black";
+    // return (promotionPawn?.team == Team.WHITE) ? "white" : "black";
+    return currentTurn == Team.WHITE ? "white" : "black";
   }
 
 
@@ -422,145 +432,3 @@ function ChessBoard() {
 }
 
 export default ChessBoard
-
-
-
-// async function dropPiece(e) {
-  //   const chessboard = chessboardRef.current
-
-  //   if(activePiece && chessboard){
-
-  //     const x = Math.floor((e.clientX - chessboard.offsetLeft) / 100)
-  //     const y = Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 800) / 100))
-
-
-  //     const pieceAtNewSquare = findPiece(x, y, pieces); // <<-- you commented out a bunch of code below that used this, if app breaks this is the reason
-
-  //     const currentPiece = pieces.find((p) => p.x == gridX && p.y == gridY)
-  //     console.log(currentPiece);
-  //     const attackedPiece = pieces.find((p) => p.x == x && p.y == y)
-
-
-
-  //     if (currentPiece){
-
-  //       const IsValidMove = Ref.validMove(gridX, gridY, x, y, currentPiece.type, currentPiece.team, pieces)
-
-  //       const isEnpassant = Ref.theEnPassant(gridX, gridY, x, y, currentPiece.type, currentPiece.team, pieces)
-
-  //       const direction = currentPiece.team == Team.WHITE ? 1 : -1
-
-  //       if (currentPiece.team !== currentTurn) {
-  //         activePiece.style.position = 'relative'
-  //         activePiece.style.removeProperty('top')
-  //         activePiece.style.removeProperty('left')
-  //         setActivePiece(null)
-  //         return;
-  //       }
-
-
-  //       if (isEnpassant) {
-
-  //         const updatedPieces = pieces.reduce((arr, piece) => {
-
-  //           if (piece.x == gridX && piece.y == gridY){
-  //             piece.enPassant = false
-  //             piece.x = x
-  //             piece.y = y
-  //             arr.push(piece)
-  //             let uciMove = `${alphabet[gridX]}${gridY+1}${alphabet[x]}${y+1}`;
-  //             console.log(matchId,uciMove);
-  //             dispatch(postMove(matchId, uciMove));
-
-
-  //           } else if (!(piece.x == x && piece.y == y - direction)) {
-  //             if (piece.type == Type.PAWN) {
-  //               piece.enPassant = false
-  //             }
-
-  //             arr.push(piece)
-
-  //           }
-
-  //           return arr
-  //         }, [])
-
-  //         setPieces(updatedPieces)
-  //         console.log("------> updatedPieces", updatedPieces);
-  //         setCurrentTurn(currentTurn === Team.WHITE ? Team.BLACK : Team.WHITE);
-
-  //       } else if (IsValidMove) {
-
-  //         let promotionRow = (currentPiece.team == Team.WHITE) ? 7 : 0;
-  //         if (y == promotionRow && currentPiece.type == Type.PAWN) {
-  //           modalRef.current.classList.remove("hide-modal")
-  //           setPromotionPawn({
-  //             piece: currentPiece,
-  //             from: [gridX, gridY],
-  //             to: [x, y],
-  //           })
-  //           console.log(promotionPawn, "<------Promotion Pawn");
-  //         } else {
-  //           let uciMove = `${alphabet[gridX]}${gridY+1}${alphabet[x]}${y+1}`;
-  //           // await dispatch(postMove(matchId, uciMove));
-  //           try {
-  //             await dispatch(postMove(matchId, uciMove));
-
-  //             const updatedPieces = pieces.reduce((arr, piece) => {
-  //               if (piece.x == gridX && piece.y == gridY){
-
-  //                 if(Math.abs(gridY - y) == 2 && piece.type == Type.PAWN){
-  //                   piece.enPassant = true
-  //                 } else {
-  //                   piece.enPassant = false
-  //                 }
-
-  //                 piece.x = x
-  //                 piece.y = y
-
-  //                 let promotionRow = (piece.team == Team.WHITE) ? 7 : 0;
-
-  //                 if (y == promotionRow && piece.type == Type.PAWN) {
-  //                   modalRef.current.classList.remove("hide-modal")
-  //                   setPromotionPawn(piece)
-  //                   console.log(promotionPawn, "<------Promotion Pawn");
-  //                 }
-
-  //                 arr.push(piece)
-
-  //               } else if (!(piece.x == x && piece.y == y)){
-  //                 if (piece.type == Type.PAWN) {
-  //                   piece.enPassant = false
-  //                 }
-  //                 arr.push(piece)
-  //               }
-
-
-  //               return arr
-  //             }, [])
-
-  //             setPieces(updatedPieces)
-  //             console.log("------> updatedPieces", updatedPieces)
-  //             setCurrentTurn(currentTurn == Team.WHITE ? Team.BLACK : Team.WHITE);
-  //           } catch (err) {
-  //             console.error(err);
-  //             activePiece.style.position = 'relative'
-  //             activePiece.style.removeProperty('top')
-  //             activePiece.style.removeProperty('left')
-  //           } finally {
-  //             setActivePiece(null);
-  //           }
-  //         }
-
-
-  //      } else {
-  //       activePiece.style.position = 'relative'
-  //       activePiece.style.removeProperty('top')
-  //       activePiece.style.removeProperty('left')
-  //      }
-  //      setActivePiece(null)
-  //     }
-
-  //     // setActivePiece(null)
-  //   }
-  // }

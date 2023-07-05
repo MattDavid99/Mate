@@ -672,7 +672,6 @@ export default class MatchRef {
         return true;
     }
 
-  // Pawn can only attack diagonally
   if ((x - prevX == -1 || x - prevX == 1) && y - prevY == direction) {
     if (this.squareHasOpponent(x, y, boardState, team)) return true
   }
@@ -684,17 +683,14 @@ export default class MatchRef {
   const row = team == Team.WHITE ? 1 : 6;
   const direction = team == Team.WHITE ? 1 : -1;
 
-  // The pawn is moving straight forward
   if (prevX == x && prevY == row && y - prevY == 2 * direction) {
     if (!this.squareHasPiece(x, y, boardState) && !this.squareHasPiece(x, y - direction, boardState)) return true
   }
 
-  // The pawn is moving one square forward
   if (prevX == x && y - prevY == direction) {
     if (!this.squareHasPiece(x, y, boardState)) return true
   }
 
-  // The pawn is moving diagonally to capture an opponent's piece
   if ((x - prevX == -1 || x - prevX == 1) && y - prevY == direction) {
     if (this.squareHasOpponent(x, y, boardState, team)) return true
   }
@@ -768,7 +764,6 @@ canAttackBishop(prevX, prevY, x, y, team, boardState) {
            let checkX = prevX + i * direction[0];
            let checkY = prevY + i * direction[1];
 
-           // If this is the position we are checking
            if (checkX == x && checkY == y) {
                if(this.squareHasPiece(checkX, checkY, boardState)) {
                    moveIsPossible = this.squareHasOpponent(checkX, checkY, boardState, team) ? true : false;
@@ -778,7 +773,6 @@ canAttackBishop(prevX, prevY, x, y, team, boardState) {
                break;
            }
 
-           // If the checked position has a piece, we can't go further in this direction
            if (this.squareHasPiece(checkX, checkY, boardState)) {
                moveIsPossible = false;
                break;
@@ -834,7 +828,6 @@ return this.canAttackRook(prevX, prevY, x, y, team, boardState);
 
 
 canAttackQueen(prevX, prevY, x, y, team, boardState) {
-  // Eight directions to check: top, bottom, left, right, top-right, top-left, bottom-right, bottom-left
   let directions = [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [-1, 1], [1, -1], [-1, -1]];
   let moveIsPossible = false;
 
@@ -843,7 +836,6 @@ canAttackQueen(prevX, prevY, x, y, team, boardState) {
       let checkX = prevX + i * direction[0];
       let checkY = prevY + i * direction[1];
 
-      // If this is the position we are checking
       if (checkX == x && checkY == y) {
         if(this.squareHasPiece(checkX, checkY, boardState)) {
           moveIsPossible = this.squareHasOpponent(checkX, checkY, boardState, team) ? true : false;
@@ -853,7 +845,6 @@ canAttackQueen(prevX, prevY, x, y, team, boardState) {
         break;
       }
 
-      // If the checked position has a piece, we can't go further in this direction
       if (this.squareHasPiece(checkX, checkY, boardState)) {
         moveIsPossible = false;
         break;
@@ -873,7 +864,6 @@ validMoveQueen(prevX, prevY, x, y, team, boardState) {
 
 
 canAttackKing(prevX, prevY, x, y, team, boardState, fromIsSquareUnderAttack = false) {
-    // Eight directions to check: top, bottom, left, right, top-right, top-left, bottom-right, bottom-left
   let directions = [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [-1, 1], [1, -1], [-1, -1]];
   let moveIsPossible = false;
 
@@ -882,18 +872,15 @@ canAttackKing(prevX, prevY, x, y, team, boardState, fromIsSquareUnderAttack = fa
       let checkX = prevX + i * direction[0];
       let checkY = prevY + i * direction[1];
 
-      // If this is the position we are checking
       if (checkX == x && checkY == y) {
         if(fromIsSquareUnderAttack) {
           moveIsPossible = this.squareHasOpponent(checkX, checkY, boardState, team);
           break;
         } else {
-          // If the square is being attacked by the enemy, the king can't move there
           if(this.isSquareUnderAttack(x, y, team, boardState)) {
             moveIsPossible = false;
             break;
           }
-          // If the square is occupied by a piece from the same team, the king can't move there
           else if(this.squareHasPiece(checkX, checkY, boardState) && !this.squareHasOpponent(checkX, checkY, boardState, team)) {
             moveIsPossible = false;
             break;
@@ -904,7 +891,6 @@ canAttackKing(prevX, prevY, x, y, team, boardState, fromIsSquareUnderAttack = fa
         }
       }
 
-      // If the checked position has a piece, we can't go further in this direction
       if (this.squareHasPiece(checkX, checkY, boardState)) {
         moveIsPossible = false;
         break;
@@ -921,26 +907,21 @@ canAttackKing(prevX, prevY, x, y, team, boardState, fromIsSquareUnderAttack = fa
 }
 
 validMoveKing(prevX, prevY, x, y, team, boardState) {
-  // check if the square is attacked
 
   console.log(boardState);
 
-  // If the square is not in the boundaries of the chess board
   if (x < 0 || y < 0 || x > 7 || y > 7) {
     return false;
   }
 
-  // If the square is occupied by a piece from the same team
   if (this.squareHasPiece(x, y, boardState) && !this.squareHasOpponent(x, y, boardState, team)) {
     return false;
   }
 
-  // If the move is not in the King's move set (one square in any direction)
   if (Math.abs(prevX - x) > 1 || Math.abs(prevY - y) > 1) {
     return false;
   }
 
-  // If the square is under attack by an enemy piece
   if (this.isSquareUnderAttack(x, y, team, boardState)) {
     return false;
   }
@@ -977,9 +958,6 @@ canAttack(prevX, prevY, x, y, type, team, boardState) {
   }
 
 
-  //... similar for other types
-
-  // If type is not recognized
   return false;
 }
 
@@ -999,27 +977,22 @@ isSquareUnderAttack(x, y, team, boardState) {
   // ------------------------------------------------------------------------------------------------------
 
   isKingUnderAttack(boardState, team) {
-    // Determine the position of the King
     console.log(boardState);
     let kingPosition = boardState.find((i) => i.team == team && i.type == Type.KING);
 
-    // If King is not on the board (should not happen in a normal game)
     if (!kingPosition) {
       return false;
     }
 
-    // Check if any square around the King is under attack
     return this.isSquareUnderAttack(kingPosition.x, kingPosition.y, team, boardState);
   }
 
   isCheckmate(boardState, team) {
-    // If the King is not under attack, it can't be checkmate
     console.log(boardState);
     if (!this.isKingUnderAttack(boardState, team)) {
       return false;
     }
 
-    // If there are any valid moves left, it's not checkmate
     for (let piece of boardState) {
       if (piece.team == team) {
         for (let dx = -1; dx <= 1; dx++) {
@@ -1027,7 +1000,6 @@ isSquareUnderAttack(x, y, team, boardState) {
             let newX = piece.x + dx;
             let newY = piece.y + dy;
             if (this.validMove(piece.x, piece.y, newX, newY, piece.type, team, boardState)) {
-              // There's at least one valid move, hence it's not checkmate
               console.log("CHECK!!!!!!!");
               return false;
             }
@@ -1036,7 +1008,6 @@ isSquareUnderAttack(x, y, team, boardState) {
       }
     }
 
-    // If we haven't returned yet, there are no valid moves left and the King is under attack, so it's checkmate
     console.log("CHECKMATE!!!!!!!!!!!!!!!!!!!!");
     return true;
   }

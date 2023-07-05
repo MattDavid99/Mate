@@ -1,15 +1,21 @@
 from flask import Blueprint, jsonify, request
 from flask_login import login_required, current_user
-from app.models import  db, Match, History
+from app.models import  db, Match, History, Lobby
 import chess
 
 
 match_routes = Blueprint('match', __name__)
 
 
+lobby = []
+
+
 @match_routes.route('/', methods=['POST'])
 @login_required
 def new_match():
+
+
+    #---------------------------------------------------------------------------------------------------
     """
     Start a new chess match
     """
@@ -40,8 +46,13 @@ def new_match():
         board_state=board.fen()
     )
 
-    db.session.add(match)
-    db.session.commit()
+    try:
+        db.session.add(match)
+        db.session.commit()
+
+    except Exception as e:
+        print(e)  # Or use a logging system
+        return jsonify({"error": "Database error at new_match: " + str(e)}), 500
 
 
     # ⬇️ Returns
@@ -62,6 +73,7 @@ def new_match():
 # }
 
     return {"match": [match.to_dict()]}, 201
+# -----------------------------------------------------------------------------------------------
 
 
 @match_routes.route('/<int:match_id>/move', methods=['POST'])
@@ -144,7 +156,6 @@ def move(match_id):
     db.session.commit()
 
 
-        # check if game has ended
     if board.is_checkmate():
 
         winner = "black" if board.turn else "white"
@@ -220,3 +231,76 @@ def reset_match(match_id):
     db.session.commit()
 
     return {"match": [match.to_dict()]}, 200
+
+
+@match_routes.route('/lobby', methods=['GET'])
+def get_lobby():
+    """
+    Get a list of all ongoing matches
+    """
+
+    matches_in_progress = Match.query.filter_by(status="In Progress").all()
+
+    if not matches_in_progress:
+        return jsonify({'error': 'No matches currently in progress'}), 404
+
+    matches_in_progress = [match.to_dict() for match in matches_in_progress]
+
+    return {'matches': matches_in_progress}, 200
+
+
+
+@match_routes.route('/lobby', methods=['POST'])
+def join_lobby():
+
+    current_user_id = current_user.id
+
+    if not current_user_id:
+        return jsonify({"error": "User must be logged in"}), 400
+
+    existing_lobby = Lobby.query.filter_by(user2_id=None).first()
+
+    if existing_lobby:
+        existing_lobby.user2_id = current_user_id
+        try:
+            db.session.commit()
+
+            board = chess.Board()
+            match = Match(
+                white_player_id=existing_lobby.user1_id,
+                black_player_id=current_user_id,
+                status="In Progress",
+                board_state=board.fen()
+            )
+            db.session.add(match)
+            db.session.commit()
+
+            db.session.delete(existing_lobby)
+            db.session.commit()
+
+            return jsonify({"success": "Match started"}), 200
+        except Exception as e:
+            print(e)
+            return jsonify({"error": "Database error at join_lobby: " + str(e)}), 500
+    else:
+        new_lobby = Lobby(user1_id=current_user_id)
+        try:
+            db.session.add(new_lobby)
+            db.session.commit()
+            return jsonify({"message": "Waiting for opponent"}), 200
+        except Exception as e:
+            print(e)
+            return jsonify({"error": "Database error at join_lobby: " + str(e)}), 500
+
+
+
+@match_routes.route('/status', methods=['GET'])
+def check_match_status():
+    current_user_id = current_user.id
+
+    match = Match.query.filter((Match.white_player_id == current_user_id) | (Match.black_player_id == current_user_id)).filter_by(status="In Progress").first()
+
+    if match:
+        return {"match": match.to_dict()}, 200
+    else:
+        return {"message": "Waiting for match"}, 200

@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: c6e1e2e4224d
+Revision ID: cbb735e4fcd1
 Revises: 
-Create Date: 2023-06-19 09:03:35.949534
+Create Date: 2023-07-04 21:57:02.310651
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'c6e1e2e4224d'
+revision = 'cbb735e4fcd1'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -47,6 +47,14 @@ def upgrade():
     sa.ForeignKeyConstraint(['friend_id'], ['users.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('user_id', 'friend_id')
+    )
+    op.create_table('lobbies',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('user1_id', sa.Integer(), nullable=True),
+    sa.Column('user2_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['user1_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['user2_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('matches',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -92,6 +100,7 @@ def downgrade():
     op.drop_table('histories')
     op.drop_table('chats')
     op.drop_table('matches')
+    op.drop_table('lobbies')
     op.drop_table('friends')
     op.drop_table('friend_requests')
     op.drop_table('users')
