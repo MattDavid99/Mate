@@ -2,6 +2,8 @@ import { socket } from "../socket";
 // constants
 const SEND_MESSAGE = "chat/SEND_MESSAGE";
 const GET_CHATS = "chat/GET_CHATS"
+const EDIT_MESSAGE = "chat/EDIT_MESSAGE";
+const DELETE_MESSAGE = "chat/DELETE_MESSAGE";
 
 
 export const sendMessage = (message) => {
@@ -17,6 +19,20 @@ const getChat = (chats) => {
     payload: chats
   }
 }
+
+export const editMessage = (message) => {
+  return {
+    type: EDIT_MESSAGE,
+    payload: message,
+  }
+};
+
+export const deleteMessage = (messageId) => {
+  return {
+    type: DELETE_MESSAGE,
+    payload: messageId,
+  }
+};
 
 
 // @chat_routes.route('/<int:match_id>', methods=['POST'])
@@ -69,6 +85,18 @@ export default function chatReducer(state = initialState, action) {
       return {
         ...state,
         chat: action.payload
+      }
+
+    case EDIT_MESSAGE:
+      return {
+        ...state,
+        chat: state.chat.map(chatMessage => chatMessage.id === action.payload.id ? action.payload : chatMessage)
+      }
+
+    case DELETE_MESSAGE:
+      return {
+        ...state,
+        chat: state.chat.filter(chatMessage => chatMessage.id !== action.payload)
       }
 
 		default:

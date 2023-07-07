@@ -223,8 +223,8 @@ class FriendRequest(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'senderId': self.sender_id,
-            'receiverId': self.receiver_id,
+            'sender': self.sender.to_dict_simple() if self.sender else None,
+            'receiver': self.receiver.to_dict_simple() if self.receiver else None,
             'status': self.status,
             'createdAt': self.created_at,
             'updatedAt': self.updated_at

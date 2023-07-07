@@ -59,6 +59,62 @@ def handle_receive_message(data):
     else:
         print("Received incomplete message data:", data)
 
+# ------------------------------------------------------------ (edit and delete for chat)
+@socketio.on('edit_message')
+def handle_edit_message(data):
+    if 'message_id' in data and 'new_message' in data:
+        chat = Chat.query.get(data['message_id'])
+        if chat:
+            chat.message = data['new_message']
+            db.session.commit()
+            emit('message_edited', chat.to_dict(), broadcast=True)
+        else:
+            print("Chat message not found:", data['message_id'])
+
+@socketio.on('delete_message')
+def handle_delete_message(data):
+    if 'message_id' in data:
+        chat = Chat.query.get(data['message_id'])
+        if chat:
+            db.session.delete(chat)
+            db.session.commit()
+            emit('message_deleted', {'message_id': data['message_id']}, broadcast=True)
+        else:
+            print("Chat message not found:", data['message_id'])
+
+
+
+
+@chat_routes.route('/<int:message_id>', methods=['PUT'])
+@login_required
+def edit_message(message_id):
+    """
+    Edit a chat message
+    """
+    message = request.json.get('message')
+    chat = Chat.query.get(message_id)
+    if chat and chat.user_id == current_user.id:
+        chat.message = message
+        db.session.commit()
+        return chat.to_dict()
+    else:
+        return jsonify({'error': 'Message not found or user not authorized'}), 404
+
+@chat_routes.route('/<int:message_id>', methods=['DELETE'])
+@login_required
+def delete_message(message_id):
+    """
+    Delete a chat message
+    """
+    chat = Chat.query.get(message_id)
+    if chat and chat.user_id == current_user.id:
+        db.session.delete(chat)
+        db.session.commit()
+        return {'message_id': message_id}
+    else:
+        return jsonify({'error': 'Message not found or user not authorized'}), 404
+
+# ------------------------------------------------------------------------------------------
 
 
 @chat_routes.route('/<int:match_id>', methods=['GET'])

@@ -2,10 +2,40 @@ from flask import Blueprint, jsonify
 from flask_login import login_required, current_user
 from app.models import db, FriendRequest, Friend, User
 from datetime import datetime
+from sqlalchemy import or_, and_
 import chess
 
 
 friendrequest_routes = Blueprint('friend-request', __name__)
+
+
+@friendrequest_routes.route('/requests', methods=['GET'])
+@login_required
+def get_friend_requests():
+    """
+    Get all friend requests of the current user
+    """
+    friend_requests = FriendRequest.query.filter_by(receiver_id=current_user.id).all()
+
+    return jsonify({"friend_requests": [request.to_dict() for request in friend_requests]}), 200
+
+
+@friendrequest_routes.route('/<int:request_id>/decline', methods=['POST'])
+@login_required
+def decline_friend_request(request_id):
+    """
+    Decline a friend request
+    """
+    friend_request = FriendRequest.query.get(request_id)
+
+    if friend_request is None or friend_request.receiver_id != current_user.id:
+        return jsonify({'error': 'error at friendrequest_routes def decline_friend_request()'})
+
+    friend_request.status = 'Declined'
+
+    db.session.commit()
+
+    return {'friend_requests': [friend_request.to_dict()]}
 
 
 @friendrequest_routes.route('/<int:friend_id>/add', methods=['POST'])
@@ -46,7 +76,7 @@ def send_friend_request(receiver_id):
     return jsonify({'message': 'Friend request sent'}), 201
 
 
-@friendrequest_routes.route('/<int:request_id>/accept', methods=['POST']) # ⭐⭐⭐ Might need to add addictional info in Friend and FriendRequest to_dict()
+@friendrequest_routes.route('/<int:request_id>/accept', methods=['POST'])
 @login_required
 def accept_friend_request(request_id):
     """
@@ -59,18 +89,25 @@ def accept_friend_request(request_id):
         return jsonify({'error': 'error at friendrequest_routes def accept_friend_request()'})
 
 
-    friend = Friend(
+    friend1 = Friend(
         user_id=friend_request.sender_id,
         friend_id=friend_request.receiver_id
     )
+    friend2 = Friend(
+        user_id=friend_request.receiver_id,
+        friend_id=friend_request.sender_id
+    )
 
-    db.session.add(friend)
+    db.session.add(friend1)
+    db.session.add(friend2)
 
     friend_request.status = 'Accepted'
 
+    db.session.delete(friend_request)
     db.session.commit()
 
-    return {'friend_requests': [friend_request.to_dict()]}
+
+    return {friend1.to_dict(), friend2.to_dict()}
 
 
 @friendrequest_routes.route('/<int:friend_id>/remove', methods=['DELETE'])

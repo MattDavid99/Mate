@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { fetchUserById } from '../../store/session';
-import { deleteFriend, getAllFriends } from '../../store/friendrequest';
+import { deleteFriend, getAllFriends, getFriendRequests, postDeclineFriendRequest, postAcceptFriendRequest } from '../../store/friendrequest';
 import { useDispatch, useSelector } from "react-redux";
 import "./AddedFriends.css"
 
@@ -10,34 +10,20 @@ function AddedFriends() {
   const allFriends = useSelector(state => state.friendrequest.friends)
   const dispatch = useDispatch()
 
-  useEffect(() => {
+
+ useEffect(() => {
     if (sessionUser){
       dispatch(fetchUserById(sessionUser.id));
     }
 }, [dispatch]);
 
-  useEffect(() => {
-      dispatch(getAllFriends());
-
+ useEffect(() => {
+     dispatch(getAllFriends());
 }, [dispatch]);
 
-
-  useEffect(() => {
-    console.log(allFriends);
-    /*
-    allFriends = [
-        {
-          email: 'bobbie@aa.io',
-          firstName: 'Bobbie',
-          id: 3,
-          lastName: 'davis',
-          profilePicUrl: null,
-          username: 'bobbie'
-        }
-      ]
-
-    */
-}, [dispatch]);
+ useEffect(() => {
+  console.log(allFriends);
+ }, [allFriends])
 
 
 
@@ -56,6 +42,7 @@ function AddedFriends() {
   }
 		*/
 }, [dispatch,sessionUser]);
+
 
 const handleRemoveFriend = (friend_id) => {
   dispatch(deleteFriend(friend_id));

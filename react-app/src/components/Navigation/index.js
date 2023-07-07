@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useHistory } from 'react-router-dom';
 import ProfileButton from './ProfileButton';
 import { getAllUsers, getUserById } from '../../store/user';
-import { deleteFriend, getAllFriends, postAcceptFriendRequest, addFriend } from '../../store/friendrequest';
+import { deleteFriend, getAllFriends, postAcceptFriendRequest, addFriend, sendFriendRequest } from '../../store/friendrequest';
 import './Navigation.css';
 
 function Navigation({ isLoaded }){
@@ -65,9 +65,8 @@ const handleSearch = (e) => {
 };
 
 	const handleAddFriend = async (userId) => {
-		await dispatch(addFriend(userId));
-		// dispatch(getAllFriends(sessionUser.id));
-		history.push("/added-friends");
+	  await dispatch(sendFriendRequest(userId));
+	  history.push("/added-friends");
 	}
 
 	useEffect(() => {
@@ -108,8 +107,8 @@ const handleSearch = (e) => {
         						      >
         						        <p className="search-title">{i.username}</p>
         						      </NavLink>
-        						      {!sessionUser.addedFriends.includes(i.id) && (
-        						        <button type="button" onClick={() => handleAddFriend(i.id)}>Add Friend</button>
+        						      {!sessionUser?.addedFriends?.includes(i.id) && (
+        						        <button type="button" onClick={() => handleAddFriend(i.id)}>Send Request</button>
         						      )}
         						    </li>
         						  ))}

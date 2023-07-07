@@ -8,6 +8,7 @@ import Navigation from "./components/Navigation";
 import ChessBoard from "./components/ChessBoard";
 import AddedFriends from "./components/AddedFriends";
 import HomePage from "./components/HomePage";
+import FriendRequests from "./components/FriendRequests";
 
 function App() {
   const dispatch = useDispatch();
@@ -32,6 +33,9 @@ function App() {
           </Route>
           <Route path="/match/:matchId">
             <ChessBoard />
+          </Route>
+          <Route path="/friend-requests">
+            <FriendRequests />
           </Route>
           <Route path="/added-friends">
             <AddedFriends />

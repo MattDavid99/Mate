@@ -20,7 +20,7 @@ function ProfileButton({ user }) {
     if (!showMenu) return;
 
     const closeMenu = (e) => {
-      if (!ulRef.current.contains(e.target)) {
+      if (ulRef && !ulRef.current.contains(e.target)) {
         setShowMenu(false);
       }
     };
@@ -48,7 +48,8 @@ function ProfileButton({ user }) {
           <>
             <li>{user.username}</li>
             <li>{user.email}</li>
-            <li><NavLink exact to="/added-friends">added friends</NavLink></li>
+            <li><NavLink exact to="/added-friends">Added Friends</NavLink></li>
+            <li><NavLink exact to="/friend-requests">Manage Request</NavLink></li>
             <li>
               <button onClick={handleLogout}>Log Out</button>
             </li>
