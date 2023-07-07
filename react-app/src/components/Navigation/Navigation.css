@@ -5,3 +5,9 @@
 .hidden {
   display: none;
 }
+.search-results {
+  max-height: 100px;
+  overflow-y: auto;
+  background-color: aliceblue;
+  max-width: 300px;
+}

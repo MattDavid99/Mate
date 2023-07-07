@@ -18,6 +18,10 @@ def seed_users():
         first_name="Bryce", last_name="foggin", username='bryce', email='bryce@aa.io', password='password')
     brit = User(
         first_name="Brit", last_name="lewis", username='brit', email='brit@aa.io', password='password')
+    mom = User(
+        first_name="Mom", last_name="dav", username='mom', email='mom@aa.io', password='password')
+    dad = User(
+        first_name="Dad", last_name="dav", username='dad', email='dad@aa.io', password='password')
 
 
     db.session.add(demo)
@@ -27,6 +31,8 @@ def seed_users():
     db.session.add(steve)
     db.session.add(bryce)
     db.session.add(brit)
+    db.session.add(mom)
+    db.session.add(dad)
 
     db.session.commit()
 

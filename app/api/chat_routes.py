@@ -2,56 +2,63 @@ from flask import Blueprint, jsonify, request
 from flask_login import login_required, current_user
 from app.models import db, FriendRequest, Friend, Match, User, Chat
 from datetime import datetime
+from app.socket import socketio
+from flask_socketio import join_room, leave_room, emit
 import chess
 
 
 chat_routes = Blueprint('chat', __name__)
 
 
-@chat_routes.route('/<int:match_id>', methods=['POST'])
-@login_required
-def chat(match_id):
-    """
-    Chat during match
-    """
+@socketio.on('connect')
+def on_connect():
+    print('User connected')
 
-    match = Match.query.get(match_id)
-
-    if not match:
-      return jsonify({'error': 'chat_routes def chat() match not found'}), 404
+@socketio.on('disconnect')
+def on_disconnect():
+    print('User disconnected')
 
 
-    if current_user.id not in [match.white_player_id, match.black_player_id]:
-       return jsonify({'error': 'chat_routes def chat() current player is not in the specific match'}), 403
 
-    message = request.json.get('message')
+@socketio.on('send_message')
+def handle_send_message(data):
+  print("----------------->", data)
 
-    if not message:
-       return jsonify({'error': 'provide a message to hit this route'}), 400
-
+  if 'match_id' in data and 'user_id' in data and 'message' in data:
     chat = Chat(
-       match_id=match_id,
-       user_id=current_user.id,
-       message=message
+      match_id=data['match_id'],
+      user_id=data['user_id'],
+      message=data['message']
     )
 
     db.session.add(chat)
     db.session.commit()
 
-    #    {
-    #     "chat": [
-    #         {
-    #             "createdAt": "Mon, 19 Jun 2023 17:29:07 GMT",
-    #             "id": 3,
-    #             "matchId": 2,
-    #             "message": "yo",
-    #             "updatedAt": "Mon, 19 Jun 2023 17:29:07 GMT",
-    #             "userId": 1
-    #         }
-    #     ]
-    #   }
+    emit('new_message', chat.to_dict(), broadcast=True)
+  else:
+    print("Received incomplete message data:", data)
 
-    return {'chat': [chat.to_dict()]}, 201
+
+
+@socketio.on('receive_message')
+def handle_receive_message(data):
+    print("Received message:", data)
+
+    if 'match_id' in data and 'user_id' in data and 'message' in data:
+        print(f"Message from user {data['user_id']} in match {data['match_id']}: {data['message']}")
+        chat = Chat(
+            match_id=data['match_id'],
+            user_id=data['user_id'],
+            message=data['message']
+        )
+
+        db.session.add(chat)
+        db.session.commit()
+        emit('receive_message', chat.to_dict(), room=data['match_id'])
+        # Handle received message here, e.g. store it in a database or send it to other users
+    else:
+        print("Received incomplete message data:", data)
+
 
 
 @chat_routes.route('/<int:match_id>', methods=['GET'])
@@ -104,3 +111,49 @@ def get_chats(match_id):
 #         }
 #     ]
 # }
+
+
+# @chat_routes.route('/<int:match_id>', methods=['POST'])
+# @login_required
+# def chat(match_id):
+#     """
+#     Chat during match
+#     """
+
+#     match = Match.query.get(match_id)
+
+#     if not match:
+#       return jsonify({'error': 'chat_routes def chat() match not found'}), 404
+
+
+#     if current_user.id not in [match.white_player_id, match.black_player_id]:
+#        return jsonify({'error': 'chat_routes def chat() current player is not in the specific match'}), 403
+
+#     message = request.json.get('message')
+
+#     if not message:
+#        return jsonify({'error': 'provide a message to hit this route'}), 400
+
+#     chat = Chat(
+#        match_id=match_id,
+#        user_id=current_user.id,
+#        message=message
+#     )
+
+#     db.session.add(chat)
+#     db.session.commit()
+
+#     #    {
+#     #     "chat": [
+#     #         {
+#     #             "createdAt": "Mon, 19 Jun 2023 17:29:07 GMT",
+#     #             "id": 3,
+#     #             "matchId": 2,
+#     #             "message": "yo",
+#     #             "updatedAt": "Mon, 19 Jun 2023 17:29:07 GMT",
+#     #             "userId": 1
+#     #         }
+#     #     ]
+#     #   }
+
+#     return {'chat': [chat.to_dict()]}, 201

@@ -6,6 +6,7 @@ import LoginFormPage from "./components/LoginFormPage";
 import { authenticate } from "./store/session";
 import Navigation from "./components/Navigation";
 import ChessBoard from "./components/ChessBoard";
+import AddedFriends from "./components/AddedFriends";
 import HomePage from "./components/HomePage";
 
 function App() {
@@ -31,6 +32,9 @@ function App() {
           </Route>
           <Route path="/match/:matchId">
             <ChessBoard />
+          </Route>
+          <Route path="/added-friends">
+            <AddedFriends />
           </Route>
         </Switch>
       )}

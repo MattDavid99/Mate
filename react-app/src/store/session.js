@@ -1,6 +1,7 @@
 // constants
 const SET_USER = "session/SET_USER";
 const REMOVE_USER = "session/REMOVE_USER";
+const SET_TARGET_USER = "session/SET_TARGET_USER";
 
 const setUser = (user) => ({
 	type: SET_USER,
@@ -9,6 +10,11 @@ const setUser = (user) => ({
 
 const removeUser = () => ({
 	type: REMOVE_USER,
+});
+
+const setTargetUser = (user) => ({
+	type: SET_TARGET_USER,
+	payload: user,
 });
 
 const initialState = { user: null };
@@ -95,12 +101,27 @@ export const signUp = (username, email, password) => async (dispatch) => {
 	}
 };
 
+export const fetchUserById = (id) => async (dispatch) => {
+	const response = await fetch(`/api/users/${id}`);
+
+	if (response.ok) {
+		const user = await response.json();
+		dispatch(setTargetUser(user));
+		return user;
+	} else {
+		console.log("Could not fetch user with ID:", id);
+		return null;
+	}
+};
+
 export default function reducer(state = initialState, action) {
 	switch (action.type) {
 		case SET_USER:
 			return { user: action.payload };
 		case REMOVE_USER:
 			return { user: null };
+		case SET_TARGET_USER:
+			return {user: action.payload}
 		default:
 			return state;
 	}

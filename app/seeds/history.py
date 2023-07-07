@@ -5,7 +5,7 @@ from sqlalchemy.sql import text
 # Adds a demo user, you can add other users here if you want
 def seed_history():
 
-    history1 = History(match_id=1, move="pc4", turn="white", total_moves=1)
+    history1 = History(match_id=1, move="e2e3", turn="white", total_moves=1)
 
 
     db.session.add(history1)

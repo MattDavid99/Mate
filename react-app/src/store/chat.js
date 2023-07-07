@@ -1,9 +1,10 @@
+import { socket } from "../socket";
 // constants
 const SEND_MESSAGE = "chat/SEND_MESSAGE";
 const GET_CHATS = "chat/GET_CHATS"
 
 
-const sendMessage = (message) => {
+export const sendMessage = (message) => {
   return {
     type: SEND_MESSAGE,
     payload: message,
@@ -19,28 +20,12 @@ const getChat = (chats) => {
 
 
 // @chat_routes.route('/<int:match_id>', methods=['POST'])
-export const postMessage = (match_id, message) => async (dispatch) => {
-  const response = await fetch(`/api/chat/${match_id}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      message: message
-    })
-  })
+export const postChatMessage = (match_id, user_id, message) => async (dispatch) => {
+  socket.emit('send_message', {match_id, user_id, message})
+};
 
-  if (response.ok) {
-    const data = await response.json();
-    dispatch(sendMessage(data.chat[0]))
-
-  } else {
-    const data = await response.json();
-
-    if (data.errors) {
-      return data.errors
-    }
-  }
+export const receiveChatMessage = (match_id, user_id, message) => async (dispatch) => {
+  socket.emit('receive_message', {match_id, user_id, message})
 };
 
 // @chat_routes.route('/<int:match_id>', methods=['GET'])
@@ -54,6 +39,7 @@ export const fetchChats = (match_id) => async (dispatch) => {
 
   if (response.ok) {
     const data = await response.json()
+    console.log(data);
     dispatch(getChat(data.chats))
 
   } else {

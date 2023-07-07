@@ -1,12 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux"
-import { createMatch, postMove, postReset } from '../../store/match'
+import { postMove, postReset, createMatch, startMatch, makeMoves, loadExistingMatch, loadMatch, fetchMatch } from '../../store/match'
+import { postChatMessage, fetchChats, listenForNewMessage, receiveChatMessage, sendMessage } from '../../store/chat'
+import { fetchUserById } from '../../store/session'
 import './ChessBoard.css'
 import Pieces from '../Pieces'
 import MatchRef from '../ref/ref'
 import CheckMateModal from '../CheckMateModal/CheckMateModal';
 import DrawModal from '../DrawModal/DrawModal';
+import { v4 as uuidv4 } from 'uuid';
+import { socket } from '../../socket';
+import Chat from '../Chat';
 
 // X and Y axis for chess board = [a8, b8, c8, d8, etc.]
 const horizontalAxis = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
@@ -30,6 +35,7 @@ export const Team = {
 const enPassantProperty = null
 
 
+
 const createInitialBoardState = () => {
 const initialBoardState = []
 
@@ -39,25 +45,25 @@ const initialBoardState = []
      const type = (teamType === Team.BLACK) ? "black" : "white"
      const y = (teamType === Team.BLACK) ? 7 : 0
      // rooks                                                           x: 7, y
-     initialBoardState.push({image: `../assets/images/${type}rook.png`, x:0, y, type: Type.ROOK, team: teamType})
-     initialBoardState.push({image: `../assets/images/${type}rook.png`, x:7, y, type: Type.ROOK, team: teamType})
+     initialBoardState.push({image: `../assets/images/${type}rook.png`, x:0, y, type: Type.ROOK, team: teamType, id: uuidv4()})
+     initialBoardState.push({image: `../assets/images/${type}rook.png`, x:7, y, type: Type.ROOK, team: teamType, id: uuidv4()})
      // knights
-     initialBoardState.push({image: `../assets/images/${type}knight.png`, x:1, y, type: Type.KNIGHT, team: teamType})
-     initialBoardState.push({image: `../assets/images/${type}knight.png`, x:6, y, type: Type.KNIGHT, team: teamType})
+     initialBoardState.push({image: `../assets/images/${type}knight.png`, x:1, y, type: Type.KNIGHT, team: teamType, id: uuidv4()})
+     initialBoardState.push({image: `../assets/images/${type}knight.png`, x:6, y, type: Type.KNIGHT, team: teamType, id: uuidv4()})
      // bishops
-     initialBoardState.push({image: `../assets/images/${type}bishop.png`, x:2, y, type: Type.BISHOP, team: teamType})
-     initialBoardState.push({image: `../assets/images/${type}bishop.png`, x:5, y, type: Type.BISHOP, team: teamType})
+     initialBoardState.push({image: `../assets/images/${type}bishop.png`, x:2, y, type: Type.BISHOP, team: teamType, id: uuidv4()})
+     initialBoardState.push({image: `../assets/images/${type}bishop.png`, x:5, y, type: Type.BISHOP, team: teamType, id: uuidv4()})
      // king and queen
-     initialBoardState.push({image: `../assets/images/${type}queen.png`, x:3, y, type: Type.QUEEN, team: teamType})
-     initialBoardState.push({image: `../assets/images/${type}king.png`, x:4, y, type: Type.KING, team: teamType})
+     initialBoardState.push({image: `../assets/images/${type}queen.png`, x:3, y, type: Type.QUEEN, team: teamType, id: uuidv4()})
+     initialBoardState.push({image: `../assets/images/${type}king.png`, x:4, y, type: Type.KING, team: teamType, id: uuidv4()})
    }
 
    for (let i = 0; i < 8; i++) {
-     initialBoardState.push({image: "../assets/images/whitepawn.png", x:i, y:1, type: Type.PAWN, team: Team.WHITE, enPassant: enPassantProperty})
+     initialBoardState.push({image: "../assets/images/whitepawn.png", x:i, y:1, type: Type.PAWN, team: Team.WHITE, enPassant: enPassantProperty, id: uuidv4()})
    }
 
    for (let i = 0; i < 8; i++) {
-     initialBoardState.push({image: "../assets/images/blackpawn.png", x:i, y:6, type: Type.PAWN, team: Team.BLACK, enPassant: enPassantProperty})
+     initialBoardState.push({image: "../assets/images/blackpawn.png", x:i, y:6, type: Type.PAWN, team: Team.BLACK, enPassant: enPassantProperty, id: uuidv4()})
     }
 
     return initialBoardState
@@ -79,24 +85,116 @@ function ChessBoard() {
   const [promotionPawn, setPromotionPawn] = useState()
   const [isCheckmate, setIsCheckmate] = useState(false)
   const [isDraw, setIsDraw] = useState(false)
+  const [prevX, setPrevX] = useState(null);
+  const [prevY, setPrevY] = useState(null);
   const modalRef = useRef(null)
   const chessboardRef = useRef(null)
   const Ref = new MatchRef()
 
-  const matchSelector = useSelector((state) => state.match.match)
-  const currentUser = useSelector((state) => state.session.user)
-
   const { matchId } = useParams();
+  const matchSelector = useSelector((state) => state.match.match)
+  const user = useSelector((state) => state.session.user)
+
   const dispatch = useDispatch()
+  console.log(matchSelector);
+  console.log(user);
+
+  const [userId, setUserId] = useState(user ? user.id : null);
+
+  /*
+  matchSelector = [
+    {
+      id: 14,
+      whitePlayerId: 1,
+      blackPlayerId: 2,
+      status: 'In Progress',
+      result: null,
+      boardState: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+      chats: [],
+      createdAt: '2023-07-06T06:58:59.408144',
+      updatedAt: '2023-07-06T06:58:59.408188'
+    }
+  ]
+  */
+
+ // const onPieceClick = (piece) => {
+ //   if (currentTurn === Team.WHITE && userId === matchSelector.whitePlayerId) {
+ //     // Allow move
+ //   } else if (currentTurn === Team.BLACK && userId === matchSelector.blackPlayerId) {
+ //     // Allow move
+ //   } else {
+ //     // Not this user's turn
+ //   }
+ // }
 
 
-  // useEffect(() => {
+  useEffect(() => {
+    if (user) setUserId(user.id);
+  }, [user]);
 
-  //   const whitePlayerId = 1; // <<-- NEED TO UNHARDCODE
-  //   const blackPlayerId = 2; // <<-- NEED TO UNHARDCODE
-  //   dispatch(createMatch(whitePlayerId, blackPlayerId));
 
-  // }, []);
+  useEffect(() => {
+
+    dispatch(fetchMatch(matchId));
+
+  }, []);
+
+
+  useEffect(() => {
+    socket.on('move', (data) => {
+      console.log(data);
+        let alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+        let fromX = alphabet.indexOf(data.move[0]);
+        let fromY = parseInt(data.move[1]) - 1;
+        let toX = alphabet.indexOf(data.move[2]);
+        let toY = parseInt(data.move[3]) - 1;
+
+        let movedPiece = pieces.find((p) => p.x === fromX && p.y === fromY);
+        if (movedPiece) {
+            setPrevX(movedPiece.x);
+            setPrevY(movedPiece.y);
+
+            movedPiece.x = toX;
+            movedPiece.y = toY;
+
+            setPieces([...pieces]);
+
+            let match_id = data.match[0].id;
+            dispatch(makeMoves(match_id));
+            setCurrentTurn(currentTurn === Team.WHITE ? Team.BLACK : Team.WHITE);
+        }
+    });
+
+    return () => {
+        socket.off('move');
+    }
+}, [pieces, currentTurn]);
+
+
+  useEffect(() => {
+    socket.on('error', (data) => {
+        console.log('Illegal move detected:', data);
+        console.log(data);
+
+        let alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+        let toX = alphabet.indexOf(data.move[0]);
+        let toY = parseInt(data.move[1]) - 1;
+
+        let movedPiece = pieces.find((p) => p.x === toX && p.y === toY);
+        if (movedPiece) {
+            movedPiece.x = prevX;
+            movedPiece.y = prevY;
+
+            setPieces([...pieces]);
+        }
+    });
+
+    return () => {
+        socket.off('error');
+    }
+}, [pieces, prevX, prevY]);
+
+
 
   useEffect(() => {
     if (matchSelector) {
@@ -108,19 +206,32 @@ function ChessBoard() {
 
   useEffect(() => {
 
-   if (matchSelector && matchSelector.status == "Checkmate"){
-      setIsCheckmate(true)
-    } else if (matchSelector && matchSelector.status == "Draw") {
-      setIsDraw(true)
-   }
+    if (matchSelector) {
+      if (matchSelector.status === "Checkmate"){
+        setIsCheckmate(true)
+      } else if (matchSelector.status === "Draw") {
+        setIsDraw(true)
+      }
+    }
+
 
   }, [matchSelector]);
+
 
 
   const handleResetMatch = async () => {
     dispatch(postReset(matchId));
     setPieces(createInitialBoardState());
   };
+
+// ------------------------------------------------------------------------------ (CHAT)
+
+
+// ------------------------------------------------------------------------------ (CHAT)
+
+
+
+
 
   function grabPiece(e) {
     const element = e.target
@@ -138,11 +249,13 @@ function ChessBoard() {
       element.style.top = `${y}px`
 
       setActivePiece(element)
+
     }
   }
 
   function movePiece(e) {
     const chessboard = chessboardRef.current
+
 
     if (activePiece && chessboard) {
       const minX = chessboard.offsetLeft - 25;
@@ -196,7 +309,13 @@ function ChessBoard() {
       console.log(currentPiece);
       const attackedPiece = pieces.find((p) => p.x == x && p.y == y)
 
-
+      if (currentPiece && currentPiece.team != currentTurn) {
+        activePiece.style.position = 'relative'
+        activePiece.style.removeProperty('top')
+        activePiece.style.removeProperty('left')
+        setActivePiece(null)
+        return;
+      }
 
       if (currentPiece){
 
@@ -226,8 +345,9 @@ function ChessBoard() {
               arr.push(piece)
               let uciMove = `${alphabet[gridX]}${gridY+1}${alphabet[x]}${y+1}`;
               console.log(matchId,uciMove);
+              socket.emit('move', { room: matchId, move: uciMove });
+              setCurrentTurn(currentTurn === Team.WHITE ? Team.BLACK : Team.WHITE);
               dispatch(postMove(matchId, uciMove));
-
 
 
             } else if (!(piece.x == x && piece.y == y - direction)) {
@@ -262,8 +382,9 @@ function ChessBoard() {
             let uciMove = `${alphabet[gridX]}${gridY+1}${alphabet[x]}${y+1}`;
             // await dispatch(postMove(matchId, uciMove));
             try {
+              socket.emit('move', { room: matchId, move: uciMove });
               await dispatch(postMove(matchId, uciMove));
-
+              setCurrentTurn(currentTurn === Team.WHITE ? Team.BLACK : Team.WHITE);
               const updatedPieces = pieces.reduce((arr, piece) => {
                 if (piece.x == gridX && piece.y == gridY){
 
@@ -320,14 +441,15 @@ function ChessBoard() {
       }
 
       setActivePiece(null)
+
+
     }
   }
 
 
   // This must be above promotePawn() ⬇
   function promotionWhiteOrBlack() {
-    // return (promotionPawn?.team == Team.WHITE) ? "white" : "black";
-    return currentTurn == Team.WHITE ? "white" : "black";
+    return (promotionPawn?.team == Team.WHITE) ? "white" : "black";
   }
 
 
@@ -368,12 +490,16 @@ function ChessBoard() {
       const uciMove = `${alphabet[fromX]}${fromY+1}${alphabet[toX]}${toY+1}${uciPromotionCodes[promotionType]}`;
       await dispatch(postMove(matchId, uciMove));
       setCurrentTurn(currentTurn === Team.WHITE ? Team.BLACK : Team.WHITE);
+      socket.emit('move', { room: matchId, move: uciMove });
 
       setPromotionPawn(null);
 
       console.log(promotionPawn, "<------Promotion Pawn");
       console.log(promotionType, uciPromotionCodes[promotionType]);
   }
+
+
+
 
 
   let board = []
@@ -400,6 +526,8 @@ function ChessBoard() {
   return (
     <>
 
+      <Chat matchId={matchId}/>
+
       {isCheckmate && <CheckMateModal winner={matchSelector.result} onClose={() => setIsCheckmate(false)} />}
       {isDraw && <DrawModal onClose={() => setIsDraw(false)} />}
 
@@ -420,11 +548,12 @@ function ChessBoard() {
                onMouseMove={e => movePiece(e)}
                onMouseUp={e => dropPiece(e)}
                ref={chessboardRef}
-
-          >{board}
+              >{board}
           </div>
-        <button onClick={handleResetMatch}>Reset Match</button>
+          <button onClick={handleResetMatch}>Reset Match</button>
         </div>
+
+
     </>
   )
 

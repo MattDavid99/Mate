@@ -29,6 +29,14 @@ class Friend(db.Model):
     user = relationship('User', foreign_keys=[user_id], back_populates='added_friends')
     friend = relationship('User', foreign_keys=[friend_id], back_populates='added_by')
 
+    def to_dict(self):
+     return {
+         'userId': self.user_id,
+         'friendId': self.friend_id,
+         'user': self.user.to_dict_simple() if self.user else None,
+         'friend': self.friend.to_dict() if self.friend else None
+     }
+
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -82,8 +90,18 @@ class User(db.Model, UserMixin):
             'email': self.email,
             'username': self.username,
             'profilePicUrl': self.profile_pic_url,
-            'addedFriends': [friend.friend.username for friend in self.added_friends],
-            'addedBy': [friend.friend.username for friend in self.added_by]
+            'addedFriends': [friend.friend.id for friend in self.added_friends],
+            'addedBy': [friend.friend.id for friend in self.added_by]
+        }
+
+    def to_dict_simple(self):
+        return {
+            'id': self.id,
+            'firstName': self.first_name,
+            'lastName': self.last_name,
+            'email': self.email,
+            'username': self.username,
+            'profilePicUrl': self.profile_pic_url,
         }
 
 
@@ -120,8 +138,8 @@ class Match(db.Model):
             'result': self.result,
             'boardState': self.board_state,
             'chats': [chat.to_dict() for chat in self.chats],
-            'createdAt': self.created_at,
-            'updatedAt': self.updated_at
+            'createdAt': self.created_at.isoformat() if self.created_at else None,
+            'updatedAt': self.updated_at.isoformat() if self.updated_at else None,
         }
 
 
@@ -149,8 +167,8 @@ class Chat(db.Model):
             'matchId': self.match_id,
             'userId': self.user_id,
             'message': self.message,
-            'createdAt': self.created_at,
-            'updatedAt': self.updated_at
+            'createdAt': self.created_at.isoformat() if self.created_at else None,
+            'updatedAt': self.updated_at.isoformat() if self.updated_at else None,
         }
 
 

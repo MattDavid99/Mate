@@ -8,6 +8,23 @@ import chess
 friendrequest_routes = Blueprint('friend-request', __name__)
 
 
+@friendrequest_routes.route('/<int:friend_id>/add', methods=['POST'])
+@login_required
+def add_friend(friend_id):
+    """
+    Add a friend directly
+    """
+    friends = Friend(
+        user_id=current_user.id,
+        friend_id=friend_id
+    )
+
+    db.session.add(friends)
+    db.session.commit()
+
+    return jsonify({"friends": [friends.to_dict()]}), 200
+
+
 @friendrequest_routes.route('/<int:receiver_id>', methods=['POST'])
 @login_required
 def send_friend_request(receiver_id):
@@ -83,4 +100,4 @@ def get_friends():
 
     friends = User.query.get(current_user.id).added_friends
 
-    return jsonify({"friends": [friend.friend.username for friend in friends]}), 200
+    return jsonify({"friends": [friend.friend.to_dict_simple() for friend in friends]}), 200

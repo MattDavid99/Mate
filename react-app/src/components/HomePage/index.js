@@ -1,35 +1,36 @@
-import React, {useEffect} from 'react'
+import React, { useEffect, useState } from 'react'
 import "./HomePage.css"
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
-import { joinLobby, checkMatchStatus, createMatch } from '../../store/match';
+import { useHistory, Link } from 'react-router-dom';
+import { createMatch } from '../../store/match'
+import { socket } from '../../socket';
 
 function HomePage() {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const people = useSelector((state) => state.match.match)
-  console.log(people);
+  const user = useSelector((state) => state.session.user);
 
-  const startMatch = async () => {
-    await dispatch(joinLobby());
-
-    const intervalId = setInterval(async () => {
-      await dispatch(checkMatchStatus());
-    }, 5000);
-  };
+  const startNewMatch = () => {
+    socket.emit('new_match', { player_id: user.id });
+  }
 
   useEffect(() => {
-    if (people) {
-      dispatch(createMatch(people.whitePlayerId, people.blackPlayerId));
-      history.push(`/match/${people.id}`);
+    socket.on('new_match', (data) => {
+      const matchId = data.match[0].id;
+      history.push(`/match/${matchId}`)
+    })
+
+    return () => {
+      socket.off('new_match');
     }
-  }, [people]);
+  }, [])
+
 
   return (
     <div className='homepage-container'>
       <div className='homepage-startmatch'>
-        <button onClick={startMatch}>Start Match</button>
+        <button onClick={startNewMatch}>Start Match</button>
       </div>
     </div>
   );

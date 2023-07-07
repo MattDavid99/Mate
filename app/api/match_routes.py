@@ -1,89 +1,128 @@
 from flask import Blueprint, jsonify, request
 from flask_login import login_required, current_user
-from app.models import  db, Match, History, Lobby
+from app.models import  db, Match, History
 import chess
-
+from app.socket import socketio
+from flask_socketio import join_room, leave_room, emit
 
 match_routes = Blueprint('match', __name__)
 
-
-lobby = []
-
-
-@match_routes.route('/', methods=['POST'])
-@login_required
-def new_match():
+waiting_players = []
 
 
-    #---------------------------------------------------------------------------------------------------
-    """
-    Start a new chess match
-    """
+@socketio.on('connect')
+def on_connect():
+    print('User connected')
 
-    # grabbing the two user(id)'s that we need from the json body
-    white_player_id = request.json.get('white_player_id')
-    black_player_id = request.json.get('black_player_id')
-
-    if not white_player_id or not black_player_id:
-        return jsonify({"error": "White and Black player id's must be provided"}), 400
+@socketio.on('disconnect')
+def on_disconnect():
+    print('User disconnected')
 
 
-    board = chess.Board()
-    print("---------------------------------------------->",board)
-# r n b q k b n r
-# p p p p p p p p
-# . . . . . . . .
-# . . . . . . . .
-# . . . . . . . .
-# . . . . . . . .
-# P P P P P P P P
-# R N B Q K B N R
+@socketio.on('new_match')
+def new_match(data):
+    # Add the player to the waiting queue
+    waiting_players.append(data['player_id'])
 
-    match = Match(
-        white_player_id=white_player_id,
-        black_player_id=black_player_id,
-        status="In Progress",
-        board_state=board.fen()
-    )
+    # If there are at least 2 players in the queue
+    if len(waiting_players) >= 2:
+        white_player_id = waiting_players.pop(0)  # White player is the first who clicked "Start Match"
+        black_player_id = waiting_players.pop(0)  # Black player is the second one
 
-    try:
-        db.session.add(match)
-        db.session.commit()
+        # Error checking
+        if not white_player_id or not black_player_id:
+            return jsonify({"error": "White and Black player id's must be provided"}), 400
 
-    except Exception as e:
-        print(e)  # Or use a logging system
-        return jsonify({"error": "Database error at new_match: " + str(e)}), 500
+        # Initialize the board state
+        board = chess.Board()
+
+        # Create the match object
+        match = Match(
+            white_player_id=white_player_id,
+            black_player_id=black_player_id,
+            status="In Progress",
+            board_state=board.fen()
+        )
+
+        try:
+            db.session.add(match)
+            db.session.commit()
+
+            # Broadcast the new match event
+            emit('new_match', {"match": [match.to_dict()]}, broadcast=True)
+
+        except Exception as e:
+            print(e)  # Or use a logging system
+            return jsonify({"error": "Database error at new_match: " + str(e)}), 500
+
+        # Emit the match information
+        return {"match": [match.to_dict()]}, 201
+
+#     #---------------------------------------------------------------------------------------------------
+#     """
+#     Start a new chess match
+#     """
+#     # grabbing the two user(id)'s that we need from the json body
+#     white_player_id = data['white_player_id']
+#     black_player_id = data['black_player_id']
+
+#     if not white_player_id or not black_player_id:
+#         return jsonify({"error": "White and Black player id's must be provided"}), 400
 
 
-    # ⬇️ Returns
-#     {
-#     "match": [
-#         {
-#             "blackPlayerId": 2,
-#             "boardState": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-#             "chats": [],
-#             "createdAt": "Mon, 19 Jun 2023 07:59:56 GMT",
-#             "id": 2,
-#             "result": null,
-#             "status": "In Progress",
-#             "updatedAt": "Mon, 19 Jun 2023 07:59:56 GMT",
-#             "whitePlayerId": 1
-#         }
-#     ]
-# }
+#     board = chess.Board()
+#     print("---------------------------------------------->",board)
 
-    return {"match": [match.to_dict()]}, 201
+#     match = Match(
+#         white_player_id=white_player_id,
+#         black_player_id=black_player_id,
+#         status="In Progress",
+#         board_state=board.fen()
+#     )
+
+#     try:
+#         db.session.add(match)
+#         db.session.commit()
+#         emit('new_match', {"match": [match.to_dict()]}, broadcast=True)
+
+#     except Exception as e:
+#         print(e)  # Or use a logging system
+#         return jsonify({"error": "Database error at new_match: " + str(e)}), 500
+
+
+#     # ⬇️ Returns
+# #     {
+# #     "match": [
+# #         {
+# #             "blackPlayerId": 2,
+# #             "boardState": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+# #             "chats": [],
+# #             "createdAt": "Mon, 19 Jun 2023 07:59:56 GMT",
+# #             "id": 2,
+# #             "result": null,
+# #             "status": "In Progress",
+# #             "updatedAt": "Mon, 19 Jun 2023 07:59:56 GMT",
+# #             "whitePlayerId": 1
+# #         }
+# #     ]
+# # }
+#     # emit('match_created', {"match": [match.to_dict()]})
+#     emit('new_match', {"match": [match.to_dict()]}, broadcast=True)
+#     return {"match": [match.to_dict()]}, 201
 # -----------------------------------------------------------------------------------------------
 
 
-@match_routes.route('/<int:match_id>/move', methods=['POST'])
-@login_required
-def move(match_id):
+@socketio.on('move')
+def move(data):
     """
     Make a move in a chess match
     """
 
-    uci_move = request.json.get('move')
+    # match_id = data['match_id']
+    print("----------->",data)
+    match_id = data['room']
+    uci_move = data['move']
+    print("----------->",data)
 
     print("DEBUG: Got move:", uci_move)
 
@@ -101,12 +140,18 @@ def move(match_id):
 
     try:
         move = chess.Move.from_uci(uci_move)
+        emit('move', {"match": [match.to_dict()], "move": uci_move}, broadcast=True)
         print("DEBUG: Created move:", move)
     except:
         return jsonify({"error": "<--------- invalid move format in match_routes def move(match_id)"}), 404
 
     if move not in board.legal_moves:
-        return jsonify({"error": "Illegal move"}), 400
+        emit('error', {"error": "Illegal move", "move": uci_move, "match": [match.to_dict()]})
+        return
+
+    if board.is_check() and board.gives_check(move):
+        emit('error', {"error": "Illegal move - you are in check", "move": uci_move, "match": [match.to_dict()]})
+        return
 
     board.push(move)
     match.board_state = board.fen() # <<-- board.fen() handles the current state of the chess game
@@ -114,34 +159,6 @@ def move(match_id):
 
 
     print("---------------------->Current board\n",board)
-    # In postman I did:
-
-      # { "move": "e2e4" }   <---- White
-      # { "move": "e7e5" }   <---- Black
-      # { "move": "d1g4" }   <---- White
-      # { "move": "d7d6" }   <---- Black
-      # { "move": "g4d7" }   <---- White
-      # { "move": "d8d7" }   <---- Black   took the Queen, taking works
-      # { "move": "e1e2" }   <---- White
-      # { "move": "d6d5" }   <---- Black
-      # { "move": "a2a3" }   <---- White
-      # { "move": "d7g4" }   <---- Black
-      # { "move": "e2e1" }   <---- White
-      # { "move": "g4f3" }   <---- Black
-      # { "move": "a3a4" }   <---- White
-      # { "move": "c8g4" }   <---- Black
-      # { "move": "a4a5" }   <---- White
-      # { "move": "f3d1" }   <---- Black   # Checkmate #
-
-      # r n . . k b n r
-      # p p p . . p p p
-      # . . . . . . . .
-      # P . . p p . . .
-      # . . . . P . b .
-      # . . . . . . . .
-      # . P P P . P P P
-      # R N B q K B N R
-
 
 
     history = History(
@@ -170,7 +187,9 @@ def move(match_id):
         match.result = "Draw"
         db.session.commit()
 
-    return {"match": [match.to_dict()]}, 200
+    # emit('move_made', {"match": [match.to_dict()]})
+    emit('move', {"match": [match.to_dict()], "move": uci_move}, broadcast=True)  # Include move in the emitted data
+    return {"match": [match.to_dict()], "move": uci_move}, 200
 
 @match_routes.route('/<int:match_id>/resign', methods=['POST'])
 @login_required
@@ -206,7 +225,7 @@ def get_match(match_id):
     if not match:
         return jsonify({'error': 'error in def get_match() in match_routes, cannot get specific match'}), 404
 
-    return {'match', [match.to_dict()]}, 200
+    return {'match': [match.to_dict()]}, 200
 
 
 @match_routes.route('/<int:match_id>/reset', methods=['POST'])
@@ -233,74 +252,11 @@ def reset_match(match_id):
     return {"match": [match.to_dict()]}, 200
 
 
-@match_routes.route('/lobby', methods=['GET'])
-def get_lobby():
-    """
-    Get a list of all ongoing matches
-    """
-
-    matches_in_progress = Match.query.filter_by(status="In Progress").all()
-
-    if not matches_in_progress:
-        return jsonify({'error': 'No matches currently in progress'}), 404
-
-    matches_in_progress = [match.to_dict() for match in matches_in_progress]
-
-    return {'matches': matches_in_progress}, 200
-
-
-
-@match_routes.route('/lobby', methods=['POST'])
-def join_lobby():
-
-    current_user_id = current_user.id
-
-    if not current_user_id:
-        return jsonify({"error": "User must be logged in"}), 400
-
-    existing_lobby = Lobby.query.filter_by(user2_id=None).first()
-
-    if existing_lobby:
-        existing_lobby.user2_id = current_user_id
-        try:
-            db.session.commit()
-
-            board = chess.Board()
-            match = Match(
-                white_player_id=existing_lobby.user1_id,
-                black_player_id=current_user_id,
-                status="In Progress",
-                board_state=board.fen()
-            )
-            db.session.add(match)
-            db.session.commit()
-
-            db.session.delete(existing_lobby)
-            db.session.commit()
-
-            return jsonify({"success": "Match started"}), 200
-        except Exception as e:
-            print(e)
-            return jsonify({"error": "Database error at join_lobby: " + str(e)}), 500
-    else:
-        new_lobby = Lobby(user1_id=current_user_id)
-        try:
-            db.session.add(new_lobby)
-            db.session.commit()
-            return jsonify({"message": "Waiting for opponent"}), 200
-        except Exception as e:
-            print(e)
-            return jsonify({"error": "Database error at join_lobby: " + str(e)}), 500
-
-
-
-@match_routes.route('/status', methods=['GET'])
-def check_match_status():
-    current_user_id = current_user.id
-
-    match = Match.query.filter((Match.white_player_id == current_user_id) | (Match.black_player_id == current_user_id)).filter_by(status="In Progress").first()
-
-    if match:
-        return {"match": match.to_dict()}, 200
-    else:
-        return {"message": "Waiting for match"}, 200
+@socketio.on('load_match')
+def load_match(data):
+    match_id = data['room']
+    match = Match.query.get(match_id)
+    if not match:
+        return jsonify({"error": "No match found with the given ID"}), 404
+    emit('load_match', {"match": [match.to_dict()]}, broadcast=True)
+    return {"match": [match.to_dict()]}, 200

@@ -13,12 +13,18 @@ from .api.history_routes import history_routes
 from .api.chat_routes import chat_routes
 from .seeds import seed_commands
 from .config import Config
+from .socket_events import *
+from .socket import socketio
+
+
 
 app = Flask(__name__, static_folder='../react-app/build', static_url_path='/')
+
 
 # Setup login manager
 login = LoginManager(app)
 login.login_view = 'auth.unauthorized'
+
 
 
 @login.user_loader
@@ -29,6 +35,8 @@ def load_user(id):
 # Tell flask about our seed commands
 app.cli.add_command(seed_commands)
 
+
+
 app.config.from_object(Config)
 app.register_blueprint(user_routes, url_prefix='/api/users')
 app.register_blueprint(auth_routes, url_prefix='/api/auth')
@@ -36,8 +44,11 @@ app.register_blueprint(friendrequest_routes, url_prefix='/api/friend-request')
 app.register_blueprint(match_routes, url_prefix='/api/match')
 app.register_blueprint(history_routes, url_prefix='/api/history')
 app.register_blueprint(chat_routes, url_prefix='/api/chat')
+
+
 db.init_app(app)
 Migrate(app, db)
+socketio.init_app(app)
 
 # Application Security
 CORS(app)
@@ -97,3 +108,6 @@ def react_root(path):
 @app.errorhandler(404)
 def not_found(e):
     return app.send_static_file('index.html')
+
+if __name__ == '__main__':
+    socketio.run(app)

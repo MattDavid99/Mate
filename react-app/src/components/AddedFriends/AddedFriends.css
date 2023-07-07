@@ -1,0 +1,16 @@
+.added-friends-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 0 auto;
+  border: 1px solid #000;
+}
+
+.added-friends-ul {
+  list-style: none;
+}
+.added-friends-li {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 20px;
+}
