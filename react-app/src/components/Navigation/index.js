@@ -17,10 +17,11 @@ function Navigation({ isLoaded }){
   const [searchResults, setSearchResults] = useState([]);
 	const [isNavBarVisible, setIsNavBarVisible] = useState(true);
 	const [sentRequests, setSentRequests] = useState([]);
+	const [isLoading, setIsLoading] = useState(true);
 
 
 	useEffect(() => {
-    dispatch(getAllUsers());
+    dispatch(getAllUsers()).then(() => setIsLoading(false));
 }, [dispatch]);
 
 	useEffect(() => {
@@ -54,7 +55,7 @@ const handleSearch = (e) => {
 
 	setSearchText(e.target.value);
 
-	if (e.target.value === '') {
+	if (e.target.value === '' || isLoading) {
 		setSearchResults([])
 		return
 	}
