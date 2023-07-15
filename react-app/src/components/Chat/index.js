@@ -83,6 +83,9 @@ function Chat({ matchId }) {
 // -------------------------------------------------------------
 
   const handleEditMessage = (messageId) => {
+
+    if (editMessageText.trim() == "") return
+
     socket.emit('edit_message', {
       message_id: messageId,
       new_message: editMessageText
@@ -106,10 +109,13 @@ function Chat({ matchId }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (message.trim() == "") return
+
     socket.emit('send_message', {
       match_id: parseInt(matchId),
       user_id: user?.id,
-      message: message
+      message: message.trim()
     });
     setMessage('');
 

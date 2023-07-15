@@ -45,3 +45,7 @@
   margin-top: 20px;
   margin-left: 5px;
 }
+
+.chat-input.invalid {
+  color: red;
+}
