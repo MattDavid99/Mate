@@ -30,7 +30,7 @@ function LoginFormPage() {
   };
   const handleDemo2 = async (e) => {
     e.preventDefault();
-    let demoEmail = "matt@aa.io";
+    let demoEmail = "brit@aa.io";
     let demoPass = "password";
     await dispatch(login(demoEmail, demoPass));
   };
