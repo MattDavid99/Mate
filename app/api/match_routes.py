@@ -21,6 +21,7 @@ def on_disconnect():
 
 @socketio.on('new_match')
 def new_match(data):
+    print("Received new_match event", data)
     waiting_players.append(data['player_id'])
 
     if len(waiting_players) >= 2:

@@ -21,6 +21,7 @@ function HomePage() {
 
 
   const startNewMatch = () => {
+    console.log("Emitting new match event", user.id);
     setStartClicked(true)
     socket.emit('new_match', { player_id: user.id });
   }
