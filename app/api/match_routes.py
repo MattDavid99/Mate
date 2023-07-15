@@ -21,22 +21,17 @@ def on_disconnect():
 
 @socketio.on('new_match')
 def new_match(data):
-    # Add the player to the waiting queue
     waiting_players.append(data['player_id'])
 
-    # If there are at least 2 players in the queue
     if len(waiting_players) >= 2:
         white_player_id = waiting_players.pop(0)  # White player is the first who clicked "Start Match"
         black_player_id = waiting_players.pop(0)  # Black player is the second one
 
-        # Error checking
         if not white_player_id or not black_player_id:
             return jsonify({"error": "White and Black player id's must be provided"}), 400
 
-        # Initialize the board state
         board = chess.Board()
 
-        # Create the match object
         match = Match(
             white_player_id=white_player_id,
             black_player_id=black_player_id,
@@ -48,14 +43,12 @@ def new_match(data):
             db.session.add(match)
             db.session.commit()
 
-            # Broadcast the new match event
             emit('new_match', {"match": [match.to_dict()]}, broadcast=True)
 
         except Exception as e:
-            print(e)  # Or use a logging system
+            print(e)
             return jsonify({"error": "Database error at new_match: " + str(e)}), 500
 
-        # Emit the match information
         return {"match": [match.to_dict()]}, 201
 
 
