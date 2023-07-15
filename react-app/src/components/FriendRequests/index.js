@@ -19,7 +19,10 @@ function FriendRequests() {
   useEffect(() => {
     if (sessionUser){
       dispatch(fetchUserById(sessionUser.id));
+    } else {
+      history.push("/login")
     }
+
 }, [dispatch]);
 
 
