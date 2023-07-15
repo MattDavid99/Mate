@@ -94,6 +94,7 @@ function ChessBoard() {
   const { matchId } = useParams();
   const matchSelector = useSelector((state) => state.match.match)
   const user = useSelector((state) => state.session.user)
+  const history = useHistory()
 
   const dispatch = useDispatch()
   console.log(matchSelector);
@@ -126,6 +127,12 @@ function ChessBoard() {
  //     // Not this user's turn
  //   }
  // }
+
+ useEffect(() => {
+  if (!user) {
+    history.push("/login");
+  }
+}, [user, history]);
 
 
   useEffect(() => {
@@ -525,8 +532,9 @@ function ChessBoard() {
 
   return (
     <>
+    <div className='app-container'>
 
-      <Chat matchId={matchId}/>
+    <Chat matchId={matchId}/>
 
       {isCheckmate && <CheckMateModal winner={matchSelector.result} onClose={() => setIsCheckmate(false)} />}
       {isDraw && <DrawModal onClose={() => setIsDraw(false)} />}
@@ -552,8 +560,7 @@ function ChessBoard() {
           </div>
           <button onClick={handleResetMatch}>Reset Match</button>
         </div>
-
-
+       </div>
     </>
   )
 

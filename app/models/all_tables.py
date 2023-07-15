@@ -166,6 +166,7 @@ class Chat(db.Model):
             'id': self.id,
             'matchId': self.match_id,
             'userId': self.user_id,
+            'username': self.user.username if self.user else None,
             'message': self.message,
             'createdAt': self.created_at.isoformat() if self.created_at else None,
             'updatedAt': self.updated_at.isoformat() if self.updated_at else None,

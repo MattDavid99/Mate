@@ -1,0 +1,17 @@
+.open-modal-buttons {
+  position: relative;
+  top: 65px;
+  left: 70px;
+  background-color: #aaa8a8;
+  border-radius: 10px;
+  color: #000;
+  cursor: pointer;
+  font-weight: bold;
+  text-align: center;
+  transition: 200ms;
+  box-sizing: border-box;
+  border: 0;
+  font-size: 12px;
+  height: 30px;
+  width: 80px;
+}

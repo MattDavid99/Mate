@@ -58,58 +58,6 @@ def new_match(data):
         # Emit the match information
         return {"match": [match.to_dict()]}, 201
 
-#     #---------------------------------------------------------------------------------------------------
-#     """
-#     Start a new chess match
-#     """
-#     # grabbing the two user(id)'s that we need from the json body
-#     white_player_id = data['white_player_id']
-#     black_player_id = data['black_player_id']
-
-#     if not white_player_id or not black_player_id:
-#         return jsonify({"error": "White and Black player id's must be provided"}), 400
-
-
-#     board = chess.Board()
-#     print("---------------------------------------------->",board)
-
-#     match = Match(
-#         white_player_id=white_player_id,
-#         black_player_id=black_player_id,
-#         status="In Progress",
-#         board_state=board.fen()
-#     )
-
-#     try:
-#         db.session.add(match)
-#         db.session.commit()
-#         emit('new_match', {"match": [match.to_dict()]}, broadcast=True)
-
-#     except Exception as e:
-#         print(e)  # Or use a logging system
-#         return jsonify({"error": "Database error at new_match: " + str(e)}), 500
-
-
-#     # ⬇️ Returns
-# #     {
-# #     "match": [
-# #         {
-# #             "blackPlayerId": 2,
-# #             "boardState": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-# #             "chats": [],
-# #             "createdAt": "Mon, 19 Jun 2023 07:59:56 GMT",
-# #             "id": 2,
-# #             "result": null,
-# #             "status": "In Progress",
-# #             "updatedAt": "Mon, 19 Jun 2023 07:59:56 GMT",
-# #             "whitePlayerId": 1
-# #         }
-# #     ]
-# # }
-#     # emit('match_created', {"match": [match.to_dict()]})
-#     emit('new_match', {"match": [match.to_dict()]}, broadcast=True)
-#     return {"match": [match.to_dict()]}, 201
-# -----------------------------------------------------------------------------------------------
 
 
 @socketio.on('move')

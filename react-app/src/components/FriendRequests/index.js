@@ -3,6 +3,7 @@ import { fetchUserById } from '../../store/session';
 import { deleteFriend, getAllFriends, getFriendRequests, postDeclineFriendRequest, postAcceptFriendRequest, addFriend } from '../../store/friendrequest';
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from 'react-router-dom';
+import "./FriendRequests.css"
 
 function FriendRequests() {
 
@@ -56,7 +57,7 @@ function FriendRequests() {
 
 
   return (
-
+      <div className='added-friends-wrapper'>
       <div className='added-friends-container'>
        <h2 className='added-friends-h2'>Friend Requests</h2>
        {sessionUser && allFriendRequests && allFriendRequests.length > 0 ? (
@@ -65,14 +66,15 @@ function FriendRequests() {
             <li key={index} className='added-friends-li'>
               {request.sender && request.sender.firstName ? `${request.sender.firstName} wants to be your friend!` :
               'Someone wants to be your friend!'}
-              <button onClick={() => handleAcceptFriendRequest(request.id)}>Accept</button>
-              <button onClick={() => handleDeclineFriendRequest(request.id)}>Decline</button>
+              <button onClick={() => handleAcceptFriendRequest(request.id)} className='added-friends-button'>Accept</button>
+              <button onClick={() => handleDeclineFriendRequest(request.id)} className='added-friends-button'>Decline</button>
             </li>
             ))}
          </ul>
        ) : (
          <p className='added-friends-p'>No friend requests yet.</p>
        )}
+    </div>
     </div>
 )
 }

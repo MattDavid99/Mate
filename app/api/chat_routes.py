@@ -55,7 +55,6 @@ def handle_receive_message(data):
         db.session.add(chat)
         db.session.commit()
         emit('receive_message', chat.to_dict(), room=data['match_id'])
-        # Handle received message here, e.g. store it in a database or send it to other users
     else:
         print("Received incomplete message data:", data)
 
@@ -138,78 +137,3 @@ def get_chats(match_id):
         return jsonify({'error': 'No chats found for this match'}), 404
 
     return jsonify({'chats': [chat.to_dict() for chat in chats]}), 200
-
-# {
-#     "chats": [
-#         {
-#             "createdAt": "Mon, 19 Jun 2023 17:29:07 GMT",
-#             "id": 3,
-#             "matchId": 2,
-#             "message": "yo",
-#             "updatedAt": "Mon, 19 Jun 2023 17:29:07 GMT",
-#             "userId": 1
-#         },
-#         {
-#             "createdAt": "Mon, 19 Jun 2023 17:30:00 GMT",
-#             "id": 4,
-#             "matchId": 2,
-#             "message": "This is a test!!",
-#             "updatedAt": "Mon, 19 Jun 2023 17:30:00 GMT",
-#             "userId": 2
-#         },
-#         {
-#             "createdAt": "Mon, 19 Jun 2023 17:30:30 GMT",
-#             "id": 5,
-#             "matchId": 2,
-#             "message": "Hi there",
-#             "updatedAt": "Mon, 19 Jun 2023 17:30:30 GMT",
-#             "userId": 1
-#         }
-#     ]
-# }
-
-
-# @chat_routes.route('/<int:match_id>', methods=['POST'])
-# @login_required
-# def chat(match_id):
-#     """
-#     Chat during match
-#     """
-
-#     match = Match.query.get(match_id)
-
-#     if not match:
-#       return jsonify({'error': 'chat_routes def chat() match not found'}), 404
-
-
-#     if current_user.id not in [match.white_player_id, match.black_player_id]:
-#        return jsonify({'error': 'chat_routes def chat() current player is not in the specific match'}), 403
-
-#     message = request.json.get('message')
-
-#     if not message:
-#        return jsonify({'error': 'provide a message to hit this route'}), 400
-
-#     chat = Chat(
-#        match_id=match_id,
-#        user_id=current_user.id,
-#        message=message
-#     )
-
-#     db.session.add(chat)
-#     db.session.commit()
-
-#     #    {
-#     #     "chat": [
-#     #         {
-#     #             "createdAt": "Mon, 19 Jun 2023 17:29:07 GMT",
-#     #             "id": 3,
-#     #             "matchId": 2,
-#     #             "message": "yo",
-#     #             "updatedAt": "Mon, 19 Jun 2023 17:29:07 GMT",
-#     #             "userId": 1
-#     #         }
-#     #     ]
-#     #   }
-
-#     return {'chat': [chat.to_dict()]}, 201

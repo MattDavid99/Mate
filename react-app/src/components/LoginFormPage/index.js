@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { login } from "../../store/session";
 import { useDispatch, useSelector } from "react-redux";
-import { Redirect } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import './LoginForm.css';
 
 function LoginFormPage() {
@@ -10,6 +10,7 @@ function LoginFormPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState([]);
+  const history = useHistory()
 
   if (sessionUser) return <Redirect to="/" />;
 
@@ -21,35 +22,45 @@ function LoginFormPage() {
     }
   };
 
+  const handleNotAUser = async () => {
+    history.push("/signup")
+  }
+
+
   return (
     <>
-      <h1>Log In</h1>
-      <form onSubmit={handleSubmit}>
-        <ul>
+    <div className="auth-container">
+      <h1 className="auth-h1">Log In</h1>
+      <form onSubmit={handleSubmit} className="auth-form">
+        <ul className="auth-ul">
           {errors.map((error, idx) => (
-            <li key={idx}>{error}</li>
+            <li key={idx} className="auth-li">{error}</li>
           ))}
         </ul>
-        <label>
+        <label className="auth-label">
           Email
           <input
             type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            className="auth-input"
           />
         </label>
-        <label>
+        <label className="auth-label">
           Password
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            className="auth-input"
           />
         </label>
-        <button type="submit">Log In</button>
+        <button type="submit" className="auth-button">Log In</button>
+        <button onClick={handleNotAUser} className="auth-button">Not a user?</button>
       </form>
+      </div>
     </>
   );
 }

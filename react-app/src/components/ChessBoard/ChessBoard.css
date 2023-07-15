@@ -1,8 +1,16 @@
+.app-container {
+  display: flex;
+  justify-content: space-between;
+  background-color: #282727;
+}
+
 .chessboard-container {
   display: grid;
   place-content: center;
   height: 100vh;
   border: 1px solid #000;
+  flex: 1;
+  order: 2;
 }
 
 .chessboard {

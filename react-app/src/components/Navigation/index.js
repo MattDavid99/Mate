@@ -15,6 +15,8 @@ function Navigation({ isLoaded }){
 	// ------------------ Search
 	const [searchText, setSearchText] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+	const [isNavBarVisible, setIsNavBarVisible] = useState(true);
+	const [sentRequests, setSentRequests] = useState([]);
 
 
 	useEffect(() => {
@@ -66,7 +68,7 @@ const handleSearch = (e) => {
 
 	const handleAddFriend = async (userId) => {
 	  await dispatch(sendFriendRequest(userId));
-	  history.push("/added-friends");
+		setSentRequests(prev => [...prev, userId]);
 	}
 
 	useEffect(() => {
@@ -78,10 +80,15 @@ const handleSearch = (e) => {
 
 	return (
 		<>
+
+
+		{isNavBarVisible ? (
       <ul className="navBar">
+				<div className='navBar-contents'>
         <div className="logoSearch">
-          <li>
-            <NavLink exact to="/">Home</NavLink>
+				<button onClick={() => setIsNavBarVisible(!isNavBarVisible)} className='toggle-nav-button'>{isNavBarVisible ? "X" : "<"}</button>
+          <li className='nav-home'>
+            <NavLink exact to="/" className="nav-link">Home</NavLink>
           </li>
           {isLoaded && (
             <li className="searchArea">
@@ -97,37 +104,44 @@ const handleSearch = (e) => {
                 {searchResults.length > 0 && (
         						<ul className="search-results">
         						  {searchResults.map((i) => (
-        						    <li className="search-li" key={i.id}>
-        						      <NavLink
-        						        to={`/user/${i.id}`}
-        						        onClick={() => {
-        						          setSearchResults([]);
-        						          setSearchText("");
-        						        }}
-        						      >
-        						        <p className="search-title">{i.username}</p>
-        						      </NavLink>
-        						      {!sessionUser?.addedFriends?.includes(i.id) && (
-        						        <button type="button" onClick={() => handleAddFriend(i.id)}>Send Request</button>
-        						      )}
-        						    </li>
+												     <li className="search-li" key={i.id}>
+														 <div className="search-item-container">
+															 <strong
+																 onClick={() => {
+																	 setSearchResults([]);
+																	 setSearchText("");
+																 }}
+															 >
+																 <p className="search-title">{i.username}</p>
+															 </strong>
+															 <div>
+																 {!sessionUser?.addedFriends?.includes(i.id) && !sentRequests.includes(i.id) && (
+																	 <button type="button" onClick={() => handleAddFriend(i.id)} className='request-button'>Send Request</button>
+																 )}
+																 {sentRequests.includes(i.id) && (
+																	 <p className='request-p'>Sent</p>
+																 )}
+															 </div>
+														 </div>
+													 </li>
         						  ))}
         						</ul>
       						)}
-                <button type="submit" onClick={e => e.preventDefault()} className="search-button">
-								  Search
-								</button>
               </form>
             </li>
           )}
         </div>
         {isLoaded && (
-          <li>
+          <li className='profile-drop'>
             <ProfileButton user={sessionUser} />
           </li>
         )}
+				</div>
       </ul>
-    </>
+		) : (
+			<button onClick={() => setIsNavBarVisible(true)} className="open-nav-button">Menu</button>
+		)}
+		</>
 	);
 }
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { postChatMessage, sendMessage, fetchChats, receiveChatMessage, deleteMessage, editMessage } from "../../store/chat";
 import { socket } from '../../socket';
 import "./Chat.css"
@@ -8,6 +9,7 @@ function Chat({ matchId }) {
   const [message, setMessage] = useState('');
   const [editMessageId, setEditMessageId] = useState(null);
   const [editMessageText, setEditMessageText] = useState('');
+  const history = useHistory()
   const dispatch = useDispatch();
   const user = useSelector((state) => state.session.user);
   const chat = useSelector((state) => state.chat.chat);
@@ -37,6 +39,12 @@ function Chat({ matchId }) {
   ]
 
   */
+
+  useEffect(() => {
+    if (!user) {
+      history.push("/login");
+    }
+  }, [user, history]);
 
   // ChessBoard.js
   socket.on('connect', () => {
@@ -110,10 +118,11 @@ function Chat({ matchId }) {
 
   return (
    <div className='chat-container'>
+    <div className='chat-box'>
     <ul className='chat-messages'>
       {chat.map((message, index) => (
         <li key={index} className='chat-message'>
-          <strong>User {message.userId}:</strong>
+          <strong className='chat-username'>{message.username}:</strong>
           {editMessageId === message.id ? (
             <input
               value={editMessageText}
@@ -124,16 +133,17 @@ function Chat({ matchId }) {
           )}
           {message.userId === user?.id && (
             <>
-              <button onClick={() => handleEditButtonClick(message.id, message.message)}>Edit</button>
+              <button onClick={() => handleEditButtonClick(message.id, message.message)} className='chat-button'>Edit</button>
               {editMessageId === message.id && (
-                <button onClick={() => handleEditMessage(message.id)}>Save</button>
+                <button onClick={() => handleEditMessage(message.id)} className='chat-button'>Save</button>
               )}
-              <button onClick={() => handleDeleteMessage(message.id)}>Delete</button>
+              <button onClick={() => handleDeleteMessage(message.id)} className='chat-button'>Delete</button>
             </>
           )}
         </li>
       ))}
     </ul>
+    </div>
     <form onSubmit={handleSubmit} className='chat-form'>
       <input
         value={message}
