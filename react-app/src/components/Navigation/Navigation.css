@@ -5,8 +5,8 @@
   background: white;
   width: 300px;
   z-index: 1;
-  height: 200px;
-  overflow-y: scroll;
+  height: 250px;
+  overflow-y: auto;
   font-weight: bold;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -82,7 +82,7 @@
   /* background-color: #6d6666; */
   background-color: #282727;
   width: 400px;
-  height: 40vh;
+  height: 90vh;
   position: fixed;
   z-index: 100;
   right: 0;
