@@ -96,7 +96,7 @@ const handleSearch = (e) => {
                 <input
                   type="text"
                   name="search"
-                  placeholder="Search..."
+                  placeholder="Search for Friends..."
                   className="searchInput"
                   value={searchText}
                   onChange={handleSearch}

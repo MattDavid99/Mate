@@ -22,6 +22,20 @@ function LoginFormPage() {
     }
   };
 
+  const handleDemo1 = async (e) => {
+    e.preventDefault();
+    let demoEmail = "demo@aa.io";
+    let demoPass = "password";
+    await dispatch(login(demoEmail, demoPass));
+  };
+  const handleDemo2 = async (e) => {
+    e.preventDefault();
+    let demoEmail = "marnie@aa.io";
+    let demoPass = "password";
+    await dispatch(login(demoEmail, demoPass));
+  };
+
+
   const handleNotAUser = async () => {
     history.push("/signup")
   }
@@ -59,6 +73,8 @@ function LoginFormPage() {
         </label>
         <button type="submit" className="auth-button">Log In</button>
         <button onClick={handleNotAUser} className="auth-button">Not a user?</button>
+        <button onClick={handleDemo1} className="auth-button-demo">Demo Login #1</button>
+        <button onClick={handleDemo2} className="auth-button-demo">Demo Login #2</button>
       </form>
       </div>
     </>
