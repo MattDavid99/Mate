@@ -17,12 +17,14 @@ function Navigation({ isLoaded }){
   const [searchResults, setSearchResults] = useState([]);
 	const [isNavBarVisible, setIsNavBarVisible] = useState(true);
 	const [sentRequests, setSentRequests] = useState([]);
+	const [refresh, setRefresh] = useState(false);
 	// const [isLoading, setIsLoading] = useState(true);
 
 
 	useEffect(() => {
     dispatch(getAllUsers());
-}, [dispatch]);
+		setRefresh(false)
+}, [dispatch, refresh]);
 
 	useEffect(() => {
     console.log(allUsers);
@@ -64,6 +66,7 @@ const handleSearch = (e) => {
 		i.username.toLowerCase().includes(e.target.value.toLowerCase())
 	);
 
+	setRefresh(true)
 	setSearchResults(results);
 };
 
