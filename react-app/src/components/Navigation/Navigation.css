@@ -5,7 +5,7 @@
   background: white;
   width: 300px;
   z-index: 1;
-  height: 250px;
+  height: fit-content;
   overflow-y: auto;
   font-weight: bold;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;

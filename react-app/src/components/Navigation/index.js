@@ -67,6 +67,10 @@ const handleSearch = (e) => {
 	setSearchResults(results);
 };
 
+	const handleSearchSubmit = (e) => {
+		e.preventDefault();
+	};
+
 	const handleAddFriend = async (userId) => {
 	  await dispatch(sendFriendRequest(userId));
 		setSentRequests(prev => [...prev, userId]);
@@ -93,7 +97,7 @@ const handleSearch = (e) => {
           </li>
           {isLoaded && (
             <li className="searchArea">
-              <form className="searchForm">
+              <form className="searchForm" onSubmit={handleSearchSubmit}>
                 <input
                   type="text"
                   name="search"
