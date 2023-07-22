@@ -1,10 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux"
 import { postMove, postReset, createMatch, startMatch, makeMoves, loadExistingMatch, loadMatch, fetchMatch } from '../../store/match'
 import './ChessBoard.css'
-import Pieces from '../Pieces'
-import MatchRef from '../ref/ref'
 import CheckMateModal from '../CheckMateModal/CheckMateModal';
 import DrawModal from '../DrawModal/DrawModal';
 import { socket } from '../../socket';
