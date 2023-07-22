@@ -617,8 +617,8 @@
 
 
 // -------------------------------------------------------------------------- (King moving to dangerous square not working)
-import { Type } from "../ChessBoard";
-import { Team } from "../ChessBoard";
+// import { Type } from "../ChessBoard";
+// import { Team } from "../ChessBoard";
 
 export default class MatchRef {
 

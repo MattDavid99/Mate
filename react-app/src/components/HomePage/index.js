@@ -20,22 +20,41 @@ function HomePage() {
   }, [user, history]);
 
 
+  // const startNewMatch = () => {
+  //   console.log("Emitting new match event", user.id);
+  //   setStartClicked(true)
+  //   socket.emit('new_match', { player_id: user.id });
+  // }
+
+  // useEffect(() => {
+  //   socket.on('new_match', (data) => {
+  //     const matchId = data.match[0].id;
+  //     history.push(`/match/${matchId}`)
+  //   })
+
+  //   return () => {
+  //     socket.off('new_match');
+  //   }
+  // }, [])
+
   const startNewMatch = () => {
     console.log("Emitting new match event", user.id);
-    setStartClicked(true)
+    setStartClicked(true);
     socket.emit('new_match', { player_id: user.id });
-  }
 
-  useEffect(() => {
+    // Define the 'new_match' event listener here
     socket.on('new_match', (data) => {
-      const matchId = data.match[0].id;
-      history.push(`/match/${matchId}`)
-    })
+        const matchId = data.match[0].id;
+        history.push(`/match/${matchId}`);
+    });
+}
 
+useEffect(() => {
     return () => {
-      socket.off('new_match');
+        // Remove the 'new_match' event listener when the component unmounts
+        socket.off('new_match');
     }
-  }, [])
+}, []);
 
 
   return (
