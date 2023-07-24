@@ -7,7 +7,7 @@ from flask_socketio import join_room, leave_room, emit
 
 match_routes = Blueprint('match', __name__)
 
-waiting_players = []
+waiting_players = {}
 
 
 @socketio.on('connect')
@@ -64,22 +64,68 @@ def on_disconnect():
 #                 "black": black_player_id
 #             }}, 201
 
-@socketio.on('join')
-def on_join(data):
-    room = data['room']
-    join_room(room)
+# @socketio.on('join')
+# def on_join(data):
+#     room = data['room']
+#     join_room(room)
 
+# @socketio.on('new_match')
+# def new_match(data):
+#     print("Received new_match event", data)
+#     waiting_players.append(request.sid)  # store the socket session id instead of player id
+
+#     if len(waiting_players) >= 2:
+#         white_player_id = data['player_id'] if request.sid == waiting_players[0] else waiting_players[1]
+#         black_player_id = data['player_id'] if request.sid == waiting_players[1] else waiting_players[0]
+
+#         white_player_sid = waiting_players.pop(0)  # White player is the first who clicked "Start Match"
+#         black_player_sid = waiting_players.pop(0)  # Black player is the second one
+
+#         if not white_player_id or not black_player_id:
+#             return jsonify({"error": "White and Black player id's must be provided"}), 400
+
+#         board = chess.Board()
+
+#         match = Match(
+#             white_player_id=white_player_id,
+#             black_player_id=black_player_id,
+#             status="In Progress",
+#             board_state=board.fen()
+#         )
+
+#         try:
+#             db.session.add(match)
+#             db.session.commit()
+#             match_id = match.id  # Assuming `id` is a unique identifier for a match
+
+#             join_room(match_id, sid=white_player_sid)
+#             join_room(match_id, sid=black_player_sid)
+
+#             emit('new_match', {
+#                 "match": [match.to_dict()],
+#                 "players": {
+#                     "white": white_player_id,
+#                     "black": black_player_id
+#                 }}, room=match_id)
+
+#         except Exception as e:
+#             print(e)
+#             return jsonify({"error": "Database error at new_match: " + str(e)}), 500
+
+#         return {
+#             "match": [match.to_dict()],
+#             "players": {
+#                 "white": white_player_id,
+#                 "black": black_player_id
+#             }}, 201
 @socketio.on('new_match')
 def new_match(data):
-    print("Received new_match event", data)
-    waiting_players.append(request.sid)  # store the socket session id instead of player id
+    print("Received new_match event ==========>", data)
+    waiting_players[request.sid] = data['player_id']  # store the player id, using the socket session id as key
 
     if len(waiting_players) >= 2:
-        white_player_id = data['player_id'] if request.sid == waiting_players[0] else waiting_players[1]
-        black_player_id = data['player_id'] if request.sid == waiting_players[1] else waiting_players[0]
-
-        white_player_sid = waiting_players.pop(0)  # White player is the first who clicked "Start Match"
-        black_player_sid = waiting_players.pop(0)  # Black player is the second one
+        white_player_sid, white_player_id = waiting_players.popitem()  # pop the first player
+        black_player_sid, black_player_id = waiting_players.popitem()  # pop the second player
 
         if not white_player_id or not black_player_id:
             return jsonify({"error": "White and Black player id's must be provided"}), 400
@@ -98,15 +144,16 @@ def new_match(data):
             db.session.commit()
             match_id = match.id  # Assuming `id` is a unique identifier for a match
 
-            join_room(match_id, sid=white_player_sid)
-            join_room(match_id, sid=black_player_sid)
+            join_room(str(match_id), sid=white_player_sid)  # let white player join the room
+            join_room(str(match_id), sid=black_player_sid)  # let black player join the room
+
 
             emit('new_match', {
                 "match": [match.to_dict()],
                 "players": {
                     "white": white_player_id,
                     "black": black_player_id
-                }}, room=match_id)
+                }}, room=str(match_id))
 
         except Exception as e:
             print(e)
@@ -120,12 +167,18 @@ def new_match(data):
             }}, 201
 
 
-@socketio.on('move')
+@socketio.on('chess_move')
 def handle_move(data):
-    print("Received move event", data)
+    print("Received move event ============> MOVE", data)
 
     match_id = data['room']
     uci_move = data['move']
+    print(match_id, "<=== match_id", uci_move, "<=== uci_move")
+
+    if str(match_id) not in socketio.server.manager.rooms['/']:
+        # handle the error, e.g., by sending an error message back to the client
+        print(f"{match_id} sending error message to client")
+        return
 
     match = Match.query.get(match_id)
     if not match:
@@ -135,12 +188,13 @@ def handle_move(data):
     board = chess.Board(match.board_state)
     move = chess.Move.from_uci(uci_move)
 
-    if move not in board.legal_moves:
-        emit('error', {"error": "Illegal move"}, room=match_id)
-        return
+    # if move not in board.legal_moves:
+    #     emit('error', {"error": "Illegal move"}, room=match_id)
+    #     return
 
     board.push(move)
     match.board_state = board.fen()
+    print(board)
 
     if board.is_checkmate():
         match.status = "Finished"
@@ -153,7 +207,9 @@ def handle_move(data):
         match.status = "Finished"
         match.result = "Draw"
 
+
     db.session.commit()
+
 
     # Update match data to send to clients
     match_data = {
@@ -163,8 +219,9 @@ def handle_move(data):
         "result": match.result
     }
 
-    # Broadcast the updated match data to all clients in the match room
-    socketio.emit('move', match_data, room=match_id)
+    if request.sid in socketio.server.manager.rooms['/'][str(match_id)]:
+      print(f'Client {request.sid} is in match room {match_id}')
+      emit('chess_move', match_data, room=str(match_id))
 
 # @socketio.on('move')
 # def socket_move(data):
@@ -380,9 +437,13 @@ def reset_match(match_id):
 
 @socketio.on('load_match')
 def load_match(data):
-    match_id = data['room']
+    if 'match_id' not in data:
+        return {"error": "No match_id provided"}
+
+    match_id = data['match_id']
     match = Match.query.get(match_id)
     if not match:
-        return jsonify({"error": "No match found with the given ID"}), 404
+        return {"error": "No match found with the given ID"}
+
     emit('load_match', {"match": [match.to_dict()]}, broadcast=True)
-    return {"match": [match.to_dict()]}, 200
+    return {"match": [match.to_dict()]}

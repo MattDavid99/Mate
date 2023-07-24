@@ -20,41 +20,64 @@ function HomePage() {
   }, [user, history]);
 
 
-  // const startNewMatch = () => {
-  //   console.log("Emitting new match event", user.id);
-  //   setStartClicked(true)
-  //   socket.emit('new_match', { player_id: user.id });
-  // }
+//   const startNewMatch = () => {
+//     console.log("Emitting new match event", user.id);
+//     setStartClicked(true);
+//     socket.emit('new_match', { player_id: user.id });
 
-  // useEffect(() => {
-  //   socket.on('new_match', (data) => {
-  //     const matchId = data.match[0].id;
-  //     history.push(`/match/${matchId}`)
-  //   })
+//     // Define the 'new_match' event listener here
+//     socket.on('new_match', (data) => {
+//       console.log(data);
+//       const matchId = data.match[0].id;
+//       const whitePlayerId = data.players.white;
+//       const blackPlayerId = data.players.black;
 
-  //   return () => {
-  //     socket.off('new_match');
-  //   }
-  // }, [])
+//       // Determine the player color based on the user ID
+//       const playerColor = user.id === whitePlayerId ? "white" : "black";
 
-  const startNewMatch = () => {
-    console.log("Emitting new match event", user.id);
-    setStartClicked(true);
-    socket.emit('new_match', { player_id: user.id });
+//       history.push({
+//           pathname: `/match/${matchId}`,
+//           state: { playerColor: playerColor }
+//       });
+//   });
+// }
 
-    // Define the 'new_match' event listener here
-    socket.on('new_match', (data) => {
-        const matchId = data.match[0].id;
-        history.push(`/match/${matchId}`);
-    });
+// useEffect(() => {
+//     return () => {
+//         // Remove the 'new_match' event listener when the component unmounts
+//         socket.off('new_match');
+//     }
+// }, []);
+
+// ----------------------------------------------
+
+const startNewMatch = () => {
+  console.log("Emitting new match event", user.id);
+  setStartClicked(true);
+  socket.emit('new_match', { player_id: user.id });
 }
 
 useEffect(() => {
-    return () => {
-        // Remove the 'new_match' event listener when the component unmounts
-        socket.off('new_match');
-    }
+  const handleNewMatch = (data) => {
+      console.log(data);
+      const matchId = data.match[0].id;
+      const whitePlayerId = data.players.white;
+      const blackPlayerId = data.players.black;
+
+      // Determine the player color based on the user ID
+      const playerColor = user.id === whitePlayerId ? "white" : "black";
+
+      history.push(`/match/${matchId}`);
+  };
+
+  socket.on('new_match', handleNewMatch);
+
+  return () => {
+      // Remove the 'new_match' event listener when the component unmounts
+      socket.off('new_match', handleNewMatch);
+  }
 }, []);
+// ----------------------------------------------
 
 
   return (

@@ -53,13 +53,29 @@ const resetMatch = (match) => {
 
 
 
-export const loadExistingMatch = (match_id) => () => {
+export const loadExistingMatch = (match_id) => (dispatch) => {
   socket.emit('load_match', {match_id});
+
+  socket.on('load_match', (data) => {
+    dispatch(loadMatch(data.match[0]));
+  });
+
+  socket.on('error', (data) => {
+    console.error(data.error);
+  });
 }
 
 // @match_routes.route('/', methods=['POST'])
-export const createMatch = (white_player_id, black_player_id) => () => {
+export const createMatch = (white_player_id, black_player_id) => (dispatch) => {
   socket.emit('new_match', {white_player_id, black_player_id})
+
+  socket.on('new_match', (data) => {
+    dispatch(startMatch(data));
+  });
+
+  socket.on('error', (data) => {
+    console.error(data.error);
+  });
 }
 
 
@@ -69,17 +85,16 @@ export const createMatch = (white_player_id, black_player_id) => () => {
 // }
 
 export const postMove = (match_id, uci_move) => (dispatch) => {
-  socket.emit('move', {room: match_id, move: uci_move});
+  socket.emit('chess_move', {room: match_id, move: uci_move});
 
-  socket.on('move', (data) => {
-    dispatch(makeMoves(data));
+  socket.on('chess_move', (data) => {
+    dispatch(makeMoves(data.match[0]));
   });
 
   socket.on('error', (data) => {
     console.error(data.error);
   });
 };
-
 
 // @match_routes.route('/<int:match_id>/resign', methods=['POST'])
 export const postResign = (match_id) => async (dispatch) => {
