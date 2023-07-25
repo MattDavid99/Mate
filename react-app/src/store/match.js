@@ -30,6 +30,13 @@ export const makeMoves = (match) => {
   }
 }
 
+const getMatch = (match) => {
+  return {
+    type: GET_MATCH,
+    payload: match
+  }
+}
+
 const resignMatch = (match) => {
   return {
     type: RESIGN_MATCH,
@@ -37,12 +44,6 @@ const resignMatch = (match) => {
   }
 }
 
-const getMatch = (match) => {
-  return {
-    type: GET_MATCH,
-    payload: match
-  }
-}
 
 const resetMatch = (match) => {
   return {
@@ -122,14 +123,18 @@ export const fetchMatch = (match_id) => async (dispatch) => {
   })
 
   if (response.ok) {
-    const data = await response.json()
-    dispatch(getMatch(data.match))
-
+    const data = await response.json();
+    if (data.match && data.match.length > 0) {
+      dispatch(getMatch(data.match[0]));
+    } else {
+      // handle the case where data.match is undefined or an empty array
+      return "data.match[0] is NOT HERE, match.js redux"
+    }
   } else {
-    const data = await response.json()
+    const data = await response.json();
 
     if (data.errors) {
-      return data.errors
+      return data.errors;
     }
   }
 }

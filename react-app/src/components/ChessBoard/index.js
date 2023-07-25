@@ -18,6 +18,8 @@ function ChessBoard() {
   const [matchData, setMatchData] = useState(null);
   const [whitePlayer, setWhitePlayer] = useState()
   const [blackPlayer, setBlackPlayer] = useState()
+  const [currentTurn, setCurrentTurn] = useState('w');
+  const [loading, setLoading] = useState(true);
 
   const { matchId } = useParams();
   const matchSelector = useSelector((state) => state.match.match)
@@ -41,8 +43,13 @@ function ChessBoard() {
     updatedAt: '2023-07-24T21:41:06.086147'
   }
   */
-  console.log(matchData);
   console.log(user);
+
+  useEffect(() => {
+    if (!user) {
+      history.push("/login");
+    }
+  }, [user, history]);
 
   useEffect(() => {
     socket.emit('join', { room: matchId });
@@ -57,14 +64,15 @@ function ChessBoard() {
     console.log('Disconnected from the server');
   });
 
-  // useEffect(() => {
-  //   dispatch(fetchMatch(matchId));
-  // }, [dispatch, matchId]);
+  useEffect(() => {
+    dispatch(loadExistingMatch(matchId));
 
-  socket.on('chess_move', (data) => {
-    console.log('Move event received', data);
-    setMatchData(data.match[0]);  // data.match is an array with one object, so we take the first element
-  });
+  }, [dispatch, matchId]);
+
+  // socket.on('chess_move', (data) => {
+  //   console.log('Move event received', data);
+  //   setMatchData(data.boardState);  // data.match is an array with one object, so we take the first element
+  // });
 
   useEffect(() => {
     if (matchSelector && matchSelector.boardState) {
@@ -75,62 +83,42 @@ function ChessBoard() {
     }
   }, [matchSelector]);
 
-  useEffect(() => {
-    if (!user) {
-      history.push("/login");
-    }
-  }, [user, history]);
 
 
   useEffect(() => {
     console.log('Setting up chess_move event handler');
     const handler = (data) => {
       console.log('Move event received', data);
-      setMatchData(data.match[0]);
+      setFen(data.boardState);
+      setMatchData(data.boardState);
     };
     socket.on('chess_move', handler);
-
-    /*
-      data = data:
-         {
-           match: [
-             {
-               id: 58,
-               whitePlayerId: 7,
-               blackPlayerId: 1,
-               status: 'In Progress',
-               result: null,
-               boardState: 'rnbqkbnr/pppp1ppp/4p3/8/8/4P3/PPPP1PPP/RNBQKBNR w KQkq - 0 2',
-               chats: [],
-               createdAt: '2023-07-24T21:36:21.658334',
-               updatedAt: '2023-07-24T21:41:06.086147'
-             }
-           ],
-           boardState: 'rnbqkbnr/pppp1ppp/4p3/8/8/4P3/PPPP1PPP/RNBQKBNR w KQkq - 0 2',
-           status: 'In Progress',
-           result: null
-         }
-     */
 
     // cleanup function
     return () => {
       socket.off('chess_move', handler);
     };
-  }, []);
+}, [matchSelector, currentTurn]);
 
   const handleMove = ({ sourceSquare, targetSquare }) => {
 
-      let move = game.move({
-        from: sourceSquare,
-        to: targetSquare,
-        promotion: 'q' // Always promote to a queen for simplicity
-      });
+    let move = game.move({
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: "q", // always promote to a queen for simplicity's sake
+    });
 
+    let combinedMove = sourceSquare + targetSquare;
+    dispatch(postMove(matchId, combinedMove));
+    setCurrentTurn(game.turn());
+    console.log(currentTurn);
 
-      let combinedMove = sourceSquare + targetSquare;
-      dispatch(postMove(matchId, combinedMove));
   };
 
+  console.log(matchData);
+  console.log(whitePlayer);
+  console.log(blackPlayer);
+  console.log(fen);
 
 
   return (
@@ -145,7 +133,7 @@ function ChessBoard() {
 
         <div className='chessboard-container'>
           <div className='chessboard'>
-               <Chessboard
+              <Chessboard
                id="humanVsHuman"
                width={800}
                position={fen}

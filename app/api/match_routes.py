@@ -175,10 +175,6 @@ def handle_move(data):
     uci_move = data['move']
     print(match_id, "<=== match_id", uci_move, "<=== uci_move")
 
-    if str(match_id) not in socketio.server.manager.rooms['/']:
-        # handle the error, e.g., by sending an error message back to the client
-        print(f"{match_id} sending error message to client")
-        return
 
     match = Match.query.get(match_id)
     if not match:
@@ -219,9 +215,9 @@ def handle_move(data):
         "result": match.result
     }
 
-    if request.sid in socketio.server.manager.rooms['/'][str(match_id)]:
-      print(f'Client {request.sid} is in match room {match_id}')
-      emit('chess_move', match_data, room=str(match_id))
+
+    emit('chess_move', match_data, room=str(match_id))
+    return {"match": [match.to_dict()], "move": uci_move}, 200
 
 # @socketio.on('move')
 # def socket_move(data):
