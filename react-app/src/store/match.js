@@ -85,8 +85,8 @@ export const createMatch = (white_player_id, black_player_id) => (dispatch) => {
 //   socket.emit('move', {room: match_id, move: uci_move})
 // }
 
-export const postMove = (match_id, uci_move) => (dispatch) => {
-  socket.emit('chess_move', {room: match_id, move: uci_move});
+export const postMove = (match_id, uci_move, player_id) => (dispatch) => {
+  socket.emit('chess_move', {room: match_id, move: uci_move, player_id: player_id});
 
   socket.on('chess_move', (data) => {
     dispatch(makeMoves(data.match[0]));

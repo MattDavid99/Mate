@@ -119,6 +119,7 @@ class Match(db.Model):
     status = db.Column(db.String(100))
     result = db.Column(db.String(40))
     board_state = db.Column(db.Text)
+    current_turn = db.Column(db.String(1))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -137,6 +138,7 @@ class Match(db.Model):
             'status': self.status,
             'result': self.result,
             'boardState': self.board_state,
+            'currentTurn': self.current_turn,
             'chats': [chat.to_dict() for chat in self.chats],
             'createdAt': self.created_at.isoformat() if self.created_at else None,
             'updatedAt': self.updated_at.isoformat() if self.updated_at else None,

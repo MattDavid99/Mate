@@ -18,7 +18,7 @@ function ChessBoard() {
   const [matchData, setMatchData] = useState(null);
   const [whitePlayer, setWhitePlayer] = useState()
   const [blackPlayer, setBlackPlayer] = useState()
-  const [currentTurn, setCurrentTurn] = useState('w');
+  const [currentTurn, setCurrentTurn] = useState('w')
   const [loading, setLoading] = useState(true);
 
   const { matchId } = useParams();
@@ -38,6 +38,7 @@ function ChessBoard() {
     status: 'In Progress',
     result: null,
     boardState: 'rnbqkbnr/pppp1ppp/4p3/8/8/4P3/PPPP1PPP/RNBQKBNR w KQkq - 0 2',
+    currentTurn: null,
     chats: [],
     createdAt: '2023-07-24T21:36:21.658334',
     updatedAt: '2023-07-24T21:41:06.086147'
@@ -69,10 +70,6 @@ function ChessBoard() {
 
   }, [dispatch, matchId]);
 
-  // socket.on('chess_move', (data) => {
-  //   console.log('Move event received', data);
-  //   setMatchData(data.boardState);  // data.match is an array with one object, so we take the first element
-  // });
 
   useEffect(() => {
     if (matchSelector && matchSelector.boardState) {
@@ -91,6 +88,8 @@ function ChessBoard() {
       console.log('Move event received', data);
       setFen(data.boardState);
       setMatchData(data.boardState);
+      game.load(data.boardState);
+      setCurrentTurn(game.turn());
     };
     socket.on('chess_move', handler);
 
@@ -98,19 +97,25 @@ function ChessBoard() {
     return () => {
       socket.off('chess_move', handler);
     };
-}, [matchSelector, currentTurn]);
+}, [matchSelector]);
 
   const handleMove = ({ sourceSquare, targetSquare }) => {
 
-    let move = game.move({
-      from: sourceSquare,
-      to: targetSquare,
-      promotion: "q", // always promote to a queen for simplicity's sake
-    });
+    if((currentTurn === 'w' && user.id !== whitePlayer) ||
+    (currentTurn === 'b' && user.id !== blackPlayer)) {
+     alert("Not your turn");
+     return;
+    }
+
+    // let move = game.move({
+    //   from: sourceSquare,
+    //   to: targetSquare,
+    //   promotion: "q", // always promote to a queen for simplicity's sake
+    // });
 
     let combinedMove = sourceSquare + targetSquare;
-    dispatch(postMove(matchId, combinedMove));
-    setCurrentTurn(game.turn());
+    dispatch(postMove(matchId, combinedMove, user.id));
+    // setCurrentTurn(game.turn());
     console.log(currentTurn);
 
   };

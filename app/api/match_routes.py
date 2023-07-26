@@ -136,7 +136,8 @@ def new_match(data):
             white_player_id=white_player_id,
             black_player_id=black_player_id,
             status="In Progress",
-            board_state=board.fen()
+            board_state=board.fen(),
+            current_turn='w'
         )
 
         try:
@@ -154,6 +155,8 @@ def new_match(data):
                     "white": white_player_id,
                     "black": black_player_id
                 }}, room=str(match_id))
+
+            print(board)
 
         except Exception as e:
             print(e)
@@ -173,22 +176,31 @@ def handle_move(data):
 
     match_id = data['room']
     uci_move = data['move']
+    player_id = data['player_id']
     print(match_id, "<=== match_id", uci_move, "<=== uci_move")
 
 
     match = Match.query.get(match_id)
+
     if not match:
         emit('error', {"error": f"No match found with id {match_id}"}, room=match_id)
         return
 
+    if match.current_turn == 'w' and player_id != match.white_player_id or \
+      match.current_turn == 'b' and player_id != match.black_player_id:
+       emit('error', {"error": "Not your turn"}, room=match_id)
+       return
+
+
     board = chess.Board(match.board_state)
     move = chess.Move.from_uci(uci_move)
 
-    # if move not in board.legal_moves:
-    #     emit('error', {"error": "Illegal move"}, room=match_id)
-    #     return
+    if move not in board.legal_moves:
+        emit('error', {"error": "Illegal move"}, room=match_id)
+        return
 
     board.push(move)
+    match.current_turn = 'b' if match.current_turn == 'w' else 'w'
     match.board_state = board.fen()
     print(board)
 

@@ -1,8 +1,8 @@
-"""empty message
+"""changed match column
 
-Revision ID: cbb735e4fcd1
+Revision ID: aa4b847a79d4
 Revises: 
-Create Date: 2023-07-04 21:57:02.310651
+Create Date: 2023-07-25 13:15:02.934861
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'cbb735e4fcd1'
+revision = 'aa4b847a79d4'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -63,6 +63,7 @@ def upgrade():
     sa.Column('status', sa.String(length=100), nullable=True),
     sa.Column('result', sa.String(length=40), nullable=True),
     sa.Column('board_state', sa.Text(), nullable=True),
+    sa.Column('current_turn', sa.String(length=1), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['black_player_id'], ['users.id'], ),
