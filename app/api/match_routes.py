@@ -8,6 +8,7 @@ from flask_socketio import join_room, leave_room, emit
 match_routes = Blueprint('match', __name__)
 
 waiting_players = {}
+rematch_requests = {}
 
 
 @socketio.on('connect')
@@ -204,6 +205,16 @@ def handle_move(data):
     match.board_state = board.fen()
     print(board)
 
+
+    history = History(
+        match_id=match_id,
+        move=uci_move,
+        turn=match.current_turn,
+        total_moves=board.fullmove_number,
+        status=match.status
+    )
+    db.session.add(history)
+
     if board.is_checkmate():
         match.status = "Finished"
         if board.turn:
@@ -214,6 +225,12 @@ def handle_move(data):
     elif board.is_stalemate() or board.is_insufficient_material() or board.can_claim_draw():
         match.status = "Finished"
         match.result = "Draw"
+
+    if match.status == "Finished":
+        history_entries = History.query.filter_by(match_id=match_id).all()
+        for entry in history_entries:
+            entry.status = match.status
+            db.session.add(entry)
 
 
     db.session.commit()
@@ -230,6 +247,73 @@ def handle_move(data):
 
     emit('chess_move', match_data, room=str(match_id))
     return {"match": [match.to_dict()], "move": uci_move}, 200
+
+
+@socketio.on('rematch_request')
+def handle_rematch_request(data):
+    print("Received rematch_request event ==========>", data)
+
+    match_id = data['room']
+    player_id = data['player_id']
+
+    # If no rematch requests for the match, create a new list with the player
+    if match_id not in rematch_requests:
+        rematch_requests[match_id] = [player_id]
+    # Otherwise, add the player to the list of requests for the match
+    else:
+        rematch_requests[match_id].append(player_id)
+
+    match = Match.query.get(match_id)
+    if not match:
+        emit('error', {"error": f"No match found with id {match_id}"})
+        return
+
+    # Check if both players have requested a rematch
+    if match.white_player_id in rematch_requests[match_id] and match.black_player_id in rematch_requests[match_id]:
+        # Both players want a rematch, so create a new match
+        white_player_id = match.white_player_id
+        black_player_id = match.black_player_id
+
+        board = chess.Board()
+
+        new_match = Match(
+            white_player_id=white_player_id,
+            black_player_id=black_player_id,
+            status="In Progress",
+            board_state=board.fen(),
+            current_turn='w'
+        )
+
+        try:
+            db.session.add(new_match)
+            db.session.commit()
+            new_match_id = new_match.id  # Assuming `id` is a unique identifier for a match
+
+            emit('new_match', {
+                "match": [new_match.to_dict()],
+                "players": {
+                    "white": white_player_id,
+                    "black": black_player_id
+                }}, room=str(new_match_id))
+
+            print(board)
+
+        except Exception as e:
+            print(e)
+            return jsonify({"error": "Database error at rematch_request: " + str(e)}), 500
+
+        # Clear the rematch requests for this match_id
+        del rematch_requests[match_id]
+
+        return {
+            "match": [new_match.to_dict()],
+            "players": {
+                "white": white_player_id,
+                "black": black_player_id
+            }}, 201
+    else:
+        # Not all players have requested a rematch yet
+        return {"message": "Waiting for other player's rematch request"}, 200
 
 # @socketio.on('move')
 # def socket_move(data):
