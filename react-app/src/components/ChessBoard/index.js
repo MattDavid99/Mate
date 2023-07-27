@@ -10,6 +10,12 @@ import Chat from '../Chat';
 import Chess from "chess.js";
 import Chessboard from "chessboardjsx";
 
+const dropSound = new Audio('/assets/images/move-self.mp3');
+const captureSound = new Audio('/assets/images/capture.mp3');
+const castleSound = new Audio('/assets/images/castle.mp3');
+const checkSound = new Audio('/assets/images/move-check.mp3');
+const promoteSound = new Audio('/assets/images/promote.mp3');
+
 
 function ChessBoard() {
   const [fen, setFen] = useState("start");
@@ -24,11 +30,6 @@ function ChessBoard() {
   const [loading, setLoading] = useState(true);
   const [chessBoardSize, setChessBoardSize] = useState(Math.min(window.innerHeight - 200, 800));
 
-  const dropSound = new Audio('/assets/images/move-self.mp3');
-  const captureSound = new Audio('/assets/images/capture.mp3');
-  const castleSound = new Audio('/assets/images/castle.mp3');
-  const checkSound = new Audio('/assets/images/move-check.mp3');
-  const promoteSound = new Audio('/assets/images/promote.mp3');
 
   const { matchId } = useParams();
   const matchSelector = useSelector((state) => state.match.match)
@@ -155,10 +156,9 @@ function ChessBoard() {
       gameRef.current.load(data.boardState);
       setCurrentTurn(gameRef.current.turn());
 
-
       const move = gameRef.current.history({ verbose: true }).pop();
 
-      if (move.flags.includes('c') || move.flags.includes('e')) {
+      if (move && (move.flags.includes('c') || move.flags.includes('e'))) {
         captureSound.play();
       }
 
@@ -166,15 +166,15 @@ function ChessBoard() {
         checkSound.play();
       }
 
-      if (move.flags.includes('k') || move.flags.includes('q')) {
+      if (move && (move.flags.includes('k') || move.flags.includes('q'))) {
         castleSound.play();
       }
 
-      if (move.flags.includes('n') || move.flags.includes('b')) {
+      if (move && (move.flags.includes('n') || move.flags.includes('b'))) {
         dropSound.play();
       }
 
-      if (move.flags.includes("p")) {
+      if (move && (move.flags.includes("p"))) {
         promoteSound.play();
       }
 
