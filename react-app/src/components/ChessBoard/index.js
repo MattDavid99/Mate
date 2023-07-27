@@ -155,6 +155,30 @@ function ChessBoard() {
       gameRef.current.load(data.boardState);
       setCurrentTurn(gameRef.current.turn());
 
+
+      const move = gameRef.current.history({ verbose: true }).pop();
+
+      if (move.flags.includes('c') || move.flags.includes('e')) {
+        captureSound.play();
+      }
+
+      if (gameRef.current.in_check()) {
+        checkSound.play();
+      }
+
+      if (move.flags.includes('k') || move.flags.includes('q')) {
+        castleSound.play();
+      }
+
+      if (move.flags.includes('n') || move.flags.includes('b')) {
+        dropSound.play();
+      }
+
+      if (move.flags.includes("p")) {
+        promoteSound.play();
+      }
+
+
       if (gameRef.current.game_over()) {
 
         if (gameRef.current.in_checkmate()) {
