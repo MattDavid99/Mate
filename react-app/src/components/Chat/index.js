@@ -14,6 +14,8 @@ function Chat({ matchId }) {
   const user = useSelector((state) => state.session.user);
   const chat = useSelector((state) => state.chat.chat);
 
+  const notifySound = new Audio('/assets/images/notify.mp3');
+
   console.log("--------> Message",message);
   console.log("--------> User",user);
   console.log("--------> Chat",chat);
@@ -58,12 +60,13 @@ function Chat({ matchId }) {
       const messageData = Array.isArray(data) ? data[0] : data;
       dispatch(sendMessage(messageData));
       dispatch(fetchChats(matchId));
+      notifySound.play();
     });
 
     return () => {
       socket.off('new_message');
     }
-  }, [dispatch, matchId]);
+  }, [dispatch, matchId, notifySound]);
 
 // ----------------------------------------------(Editing and deleting chats)
   useEffect(() => {

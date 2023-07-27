@@ -24,6 +24,12 @@ function ChessBoard() {
   const [loading, setLoading] = useState(true);
   const [chessBoardSize, setChessBoardSize] = useState(Math.min(window.innerHeight - 200, 800));
 
+  const dropSound = new Audio('/assets/images/move-self.mp3');
+  const captureSound = new Audio('/assets/images/capture.mp3');
+  const castleSound = new Audio('/assets/images/castle.mp3');
+  const checkSound = new Audio('/assets/images/move-check.mp3');
+  const promoteSound = new Audio('/assets/images/promote.mp3');
+
   const { matchId } = useParams();
   const matchSelector = useSelector((state) => state.match.match)
   const user = useSelector((state) => state.session.user)
@@ -69,7 +75,6 @@ function ChessBoard() {
 
   socket.on('connect', () => {
     console.log('Connected to the server');
-    // socket.emit('join', { room: matchId });
   });
 
   socket.on('disconnect', () => {
@@ -95,17 +100,6 @@ function ChessBoard() {
 
   const handleMove = ({ sourceSquare, targetSquare }) => {
 
-    // if((currentTurn === 'w' && user.id !== whitePlayer) ||
-    // (currentTurn === 'b' && user.id !== blackPlayer)) {
-    //  alert("Not your turn");
-    //  return;
-    // }
-
-    // let combinedMove = sourceSquare + targetSquare;
-    // dispatch(postMove(matchId, combinedMove, user.id));
-    // console.log(currentTurn);
-    // ----------------------------------------------------------------------
-        // Make sure the user can only move their own pieces
       if((currentTurn === 'w' && user.id !== whitePlayer) ||
         (currentTurn === 'b' && user.id !== blackPlayer)) {
         alert("Not your turn");
@@ -115,21 +109,38 @@ function ChessBoard() {
       let move = {
         from: sourceSquare,
         to: targetSquare,
-        promotion: "q" // Always promote to queen
+        promotion: "q"
       }
 
       let moveResult = gameRef.current.move(move);
 
       if (moveResult === null) {
-        // Invalid move
         return;
+      }
+
+
+      if (moveResult.flags.includes('c') || moveResult.flags.includes('e')) {
+        captureSound.play();
+      }
+
+      if (gameRef.current.in_check()) {
+        checkSound.play();
+      }
+
+      if (moveResult.flags.includes('k') || moveResult.flags.includes('q')) {
+        castleSound.play();
+      }
+
+      if (moveResult.flags.includes('n') || moveResult.flags.includes('b')) {
+        dropSound.play();
       }
 
       let combinedMove = sourceSquare + targetSquare;
       if (moveResult.flags.includes("p")) {
-        // The flag "p" indicates a pawn promotion occurred
-        combinedMove += "q"; // Indicate queen promotion
+        combinedMove += "q";
+        promoteSound.play();
       }
+
       dispatch(postMove(matchId, combinedMove, user.id));
       console.log(currentTurn);
 
@@ -144,13 +155,11 @@ function ChessBoard() {
       gameRef.current.load(data.boardState);
       setCurrentTurn(gameRef.current.turn());
 
-      // Check if the game is over after the move
       if (gameRef.current.game_over()) {
-        // If it is a checkmate, set isCheckmate to true
+
         if (gameRef.current.in_checkmate()) {
           setIsCheckmate(true);
         }
-        // Similarly, you can handle draw cases here
         if (gameRef.current.in_draw()) {
           setIsDraw(true);
         }
@@ -158,7 +167,6 @@ function ChessBoard() {
     };
     socket.on('chess_move', handler);
 
-    // cleanup function
     return () => {
       socket.off('chess_move', handler);
     };
