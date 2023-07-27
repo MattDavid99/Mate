@@ -100,31 +100,50 @@ function ChessBoard() {
 
   const handleMove = ({ sourceSquare, targetSquare }) => {
 
-    if((currentTurn === 'w' && user.id !== whitePlayer) ||
-    (currentTurn === 'b' && user.id !== blackPlayer)) {
-    alert("Not your turn");
-    return;
-    }
+      if((currentTurn === 'w' && user.id !== whitePlayer) ||
+        (currentTurn === 'b' && user.id !== blackPlayer)) {
+        alert("Not your turn");
+        return;
+      }
 
-    let move = {
-      from: sourceSquare,
-      to: targetSquare,
-      promotion: "q"
-    }
+      let move = {
+        from: sourceSquare,
+        to: targetSquare,
+        promotion: "q"
+      }
 
-    let moveResult = gameRef.current.move(move);
+      let moveResult = gameRef.current.move(move);
 
-    if (moveResult === null) {
-      return;
-    }
+      if (moveResult === null) {
+        return;
+      }
 
-    let combinedMove = sourceSquare + targetSquare;
-    if (moveResult.flags.includes("p")) {
-      combinedMove += "q";
-    }
 
-    dispatch(postMove(matchId, combinedMove, user.id));
-    console.log(currentTurn);
+      if (moveResult.flags.includes('c') || moveResult.flags.includes('e')) {
+        captureSound.play();
+      }
+
+      if (gameRef.current.in_check()) {
+        checkSound.play();
+      }
+
+      if (moveResult.flags.includes('k') || moveResult.flags.includes('q')) {
+        castleSound.play();
+      }
+
+      if (moveResult.flags.includes('n') || moveResult.flags.includes('b')) {
+        dropSound.play();
+      }
+
+      let combinedMove = sourceSquare + targetSquare;
+      if (moveResult.flags.includes("p")) {
+        combinedMove += "q";
+        promoteSound.play();
+      }
+
+      dispatch(postMove(matchId, combinedMove, user.id));
+      console.log(currentTurn);
+
   };
 
   useEffect(() => {
@@ -135,32 +154,6 @@ function ChessBoard() {
       setMatchData(data.boardState);
       gameRef.current.load(data.boardState);
       setCurrentTurn(gameRef.current.turn());
-
-
-      let moveResult = gameRef.current.history({ verbose: true }).pop();
-
-      if (moveResult) {
-        if (moveResult.flags.includes('c') || moveResult.flags.includes('e')) {
-          captureSound.play();
-        }
-
-        if (gameRef.current.in_check()) {
-          checkSound.play();
-        }
-
-        if (moveResult.flags.includes('k') || moveResult.flags.includes('q')) {
-          castleSound.play();
-        }
-
-        if (moveResult.flags.includes('n') || moveResult.flags.includes('b')) {
-          dropSound.play();
-        }
-
-        if (moveResult.flags.includes("p")) {
-          promoteSound.play();
-        }
-      }
-
 
       if (gameRef.current.game_over()) {
 
