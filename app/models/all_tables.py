@@ -135,6 +135,8 @@ class Match(db.Model):
             'id': self.id,
             'whitePlayerId': self.white_player_id,
             'blackPlayerId': self.black_player_id,
+            'whitePlayerUsername': self.white_player.username,
+            'blackPlayerUsername': self.black_player.username,
             'status': self.status,
             'result': self.result,
             'boardState': self.board_state,

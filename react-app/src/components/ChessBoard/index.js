@@ -22,6 +22,7 @@ function ChessBoard() {
   const [rematchRequested, setRematchRequested] = useState(false);
   const [opponentRematch, setOpponentRematch] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [chessBoardSize, setChessBoardSize] = useState(Math.min(window.innerHeight - 200, 800));
 
   const { matchId } = useParams();
   const matchSelector = useSelector((state) => state.match.match)
@@ -33,6 +34,13 @@ function ChessBoard() {
   const gameRef = useRef(new Chess());
 
   console.log(matchSelector);
+
+  const currentUserIsWhite = user.id === whitePlayer;
+  const currentUserIsBlack = user.id === blackPlayer;
+
+  const whitePlayerName = matchSelector ? matchSelector.whitePlayerUsername : null;
+  const blackPlayerName = matchSelector ? matchSelector.blackPlayerUsername : null;
+
   /*
   matchSelector =   {
     id: 58,
@@ -161,6 +169,16 @@ function ChessBoard() {
   console.log(blackPlayer);
   console.log(fen);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setChessBoardSize(Math.min(window.innerHeight - 200, 800));
+    };
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
 
   return (
@@ -174,14 +192,19 @@ function ChessBoard() {
 
 
         <div className='chessboard-container'>
-          <div className='chessboard'>
-              <Chessboard
-               id="humanVsHuman"
-               width={800}
-               position={fen}
-               onDrop={handleMove}
-             />
-          </div>
+          <h3 className='chessboard-h3-top'>{currentUserIsWhite ? blackPlayerName : whitePlayerName}</h3>
+            <div className='chessboard'>
+              <div>
+                    <Chessboard
+                     id="humanVsHuman"
+                     width={chessBoardSize}
+                     position={fen}
+                     onDrop={handleMove}
+                     orientation={currentUserIsWhite ? "white" : "black"}
+                   />
+                </div>
+            </div>
+          <h3 className='chessboard-h3-bottom'>{currentUserIsWhite ? whitePlayerName : blackPlayerName}</h3>
         </div>
     </div>
     </>
