@@ -120,6 +120,7 @@ function Chat({ matchId }) {
       user_id: user?.id,
       message: message.trim()
     });
+    notifySound.play();
     setMessage('');
 
   };

@@ -122,11 +122,11 @@ def on_disconnect():
 @socketio.on('new_match')
 def new_match(data):
     print("Received new_match event ==========>", data)
-    waiting_players[request.sid] = data['player_id']  # store the player id, using the socket session id as key
+    waiting_players[request.sid] = data['player_id']
 
     if len(waiting_players) >= 2:
-        white_player_sid, white_player_id = waiting_players.popitem()  # pop the first player
-        black_player_sid, black_player_id = waiting_players.popitem()  # pop the second player
+        white_player_sid, white_player_id = waiting_players.popitem()
+        black_player_sid, black_player_id = waiting_players.popitem()
 
         if not white_player_id or not black_player_id:
             return jsonify({"error": "White and Black player id's must be provided"}), 400
@@ -144,10 +144,10 @@ def new_match(data):
         try:
             db.session.add(match)
             db.session.commit()
-            match_id = match.id  # Assuming `id` is a unique identifier for a match
+            match_id = match.id
 
-            join_room(str(match_id), sid=white_player_sid)  # let white player join the room
-            join_room(str(match_id), sid=black_player_sid)  # let black player join the room
+            join_room(str(match_id), sid=white_player_sid)
+            join_room(str(match_id), sid=black_player_sid)
 
 
             emit('new_match', {
