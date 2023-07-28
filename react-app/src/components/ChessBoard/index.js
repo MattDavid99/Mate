@@ -224,7 +224,7 @@ function ChessBoard() {
 
 
         <div className='chessboard-container'>
-          <h3 className='chessboard-h3-top'>{currentUserIsWhite ? blackPlayerName : whitePlayerName}</h3>
+        <h3 className={`chessboard-h3-top ${((currentTurn === 'b' && currentUserIsWhite) || (currentTurn === 'w' && currentUserIsBlack)) ? 'highlight' : ''}`}>{currentUserIsWhite ? blackPlayerName : whitePlayerName}</h3>
             <div className='chessboard'>
               <div>
                     <Chessboard
@@ -236,7 +236,7 @@ function ChessBoard() {
                    />
                 </div>
             </div>
-          <h3 className='chessboard-h3-bottom'>{currentUserIsWhite ? whitePlayerName : blackPlayerName}</h3>
+            <h3 className={`chessboard-h3-bottom ${((currentTurn === 'w' && currentUserIsWhite) || (currentTurn === 'b' && currentUserIsBlack)) ? 'highlight' : ''}`}>{currentUserIsWhite ? whitePlayerName : blackPlayerName}</h3>
         </div>
     </div>
     </>

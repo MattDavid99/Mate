@@ -104,3 +104,8 @@
   position: relative;
   right: 280px;
 }
+
+.highlight {
+  border: 3px solid rgb(229, 240, 16);
+  color: rgb(196, 206, 16);
+}
