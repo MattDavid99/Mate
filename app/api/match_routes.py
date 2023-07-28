@@ -5,6 +5,7 @@ import chess
 from app.socket import socketio
 from flask_socketio import join_room, leave_room, emit
 
+
 match_routes = Blueprint('match', __name__)
 
 waiting_players = {}
@@ -20,105 +21,6 @@ def on_disconnect():
     print('User disconnected')
 
 
-# @socketio.on('new_match')
-# def new_match(data):
-#     print("Received new_match event", data)
-#     waiting_players.append(data['player_id'])
-
-#     if len(waiting_players) >= 2:
-#         white_player_id = waiting_players.pop(0)  # White player is the first who clicked "Start Match"
-#         black_player_id = waiting_players.pop(0)  # Black player is the second one
-
-#         if not white_player_id or not black_player_id:
-#             return jsonify({"error": "White and Black player id's must be provided"}), 400
-
-#         board = chess.Board()
-
-#         match = Match(
-#             white_player_id=white_player_id,
-#             black_player_id=black_player_id,
-#             status="In Progress",
-#             board_state=board.fen()
-#         )
-
-#         try:
-#             db.session.add(match)
-#             db.session.commit()
-#             match_id = match.id  # Assuming `id` is a unique identifier for a match
-#             join_room(match_id)
-
-#             emit('new_match', {
-#                 "match": [match.to_dict()],
-#                 "players": {
-#                     "white": white_player_id,
-#                     "black": black_player_id
-#                 }}, broadcast=True,room=match_id)
-
-#         except Exception as e:
-#             print(e)
-#             return jsonify({"error": "Database error at new_match: " + str(e)}), 500
-
-#         return {
-#             "match": [match.to_dict()],
-#             "players": {
-#                 "white": white_player_id,
-#                 "black": black_player_id
-#             }}, 201
-
-# @socketio.on('join')
-# def on_join(data):
-#     room = data['room']
-#     join_room(room)
-
-# @socketio.on('new_match')
-# def new_match(data):
-#     print("Received new_match event", data)
-#     waiting_players.append(request.sid)  # store the socket session id instead of player id
-
-#     if len(waiting_players) >= 2:
-#         white_player_id = data['player_id'] if request.sid == waiting_players[0] else waiting_players[1]
-#         black_player_id = data['player_id'] if request.sid == waiting_players[1] else waiting_players[0]
-
-#         white_player_sid = waiting_players.pop(0)  # White player is the first who clicked "Start Match"
-#         black_player_sid = waiting_players.pop(0)  # Black player is the second one
-
-#         if not white_player_id or not black_player_id:
-#             return jsonify({"error": "White and Black player id's must be provided"}), 400
-
-#         board = chess.Board()
-
-#         match = Match(
-#             white_player_id=white_player_id,
-#             black_player_id=black_player_id,
-#             status="In Progress",
-#             board_state=board.fen()
-#         )
-
-#         try:
-#             db.session.add(match)
-#             db.session.commit()
-#             match_id = match.id  # Assuming `id` is a unique identifier for a match
-
-#             join_room(match_id, sid=white_player_sid)
-#             join_room(match_id, sid=black_player_sid)
-
-#             emit('new_match', {
-#                 "match": [match.to_dict()],
-#                 "players": {
-#                     "white": white_player_id,
-#                     "black": black_player_id
-#                 }}, room=match_id)
-
-#         except Exception as e:
-#             print(e)
-#             return jsonify({"error": "Database error at new_match: " + str(e)}), 500
-
-#         return {
-#             "match": [match.to_dict()],
-#             "players": {
-#                 "white": white_player_id,
-#                 "black": black_player_id
-#             }}, 201
 @socketio.on('new_match')
 def new_match(data):
     print("Received new_match event ==========>", data)
@@ -236,7 +138,6 @@ def handle_move(data):
     db.session.commit()
 
 
-    # Update match data to send to clients
     match_data = {
         "match": [match.to_dict()],
         "boardState": board.fen(),
@@ -256,10 +157,8 @@ def handle_rematch_request(data):
     match_id = data['room']
     player_id = data['player_id']
 
-    # If no rematch requests for the match, create a new list with the player
     if match_id not in rematch_requests:
         rematch_requests[match_id] = [player_id]
-    # Otherwise, add the player to the list of requests for the match
     else:
         rematch_requests[match_id].append(player_id)
 
@@ -268,9 +167,7 @@ def handle_rematch_request(data):
         emit('error', {"error": f"No match found with id {match_id}"})
         return
 
-    # Check if both players have requested a rematch
     if match.white_player_id in rematch_requests[match_id] and match.black_player_id in rematch_requests[match_id]:
-        # Both players want a rematch, so create a new match
         white_player_id = match.white_player_id
         black_player_id = match.black_player_id
 
@@ -287,7 +184,7 @@ def handle_rematch_request(data):
         try:
             db.session.add(new_match)
             db.session.commit()
-            new_match_id = new_match.id  # Assuming `id` is a unique identifier for a match
+            new_match_id = new_match.id
 
             emit('new_match', {
                 "match": [new_match.to_dict()],
@@ -302,7 +199,6 @@ def handle_rematch_request(data):
             print(e)
             return jsonify({"error": "Database error at rematch_request: " + str(e)}), 500
 
-        # Clear the rematch requests for this match_id
         del rematch_requests[match_id]
 
         return {
@@ -312,97 +208,9 @@ def handle_rematch_request(data):
                 "black": black_player_id
             }}, 201
     else:
-        # Not all players have requested a rematch yet
         return {"message": "Waiting for other player's rematch request"}, 200
 
-# @socketio.on('move')
-# def socket_move(data):
-#     """
-#     Make a move in a chess match
-#     """
 
-#     # match_id = data['match_id']
-#     print("============================>",data)
-#     match_id = data['room']
-#     uci_move = data['move']
-#     print("============================>",data)
-
-#     print("DEBUG: Got move:", uci_move)
-
-#     # if move is illegal
-#     if not uci_move:
-#         emit('error=================> line 73', {"error": "Illegal move", "move": uci_move, "match": [match.to_dict()]}, broadcast=True)
-#         return
-
-#     match = Match.query.get(match_id)
-#     print("DEBUG: Got match:", match)
-#     if not match:
-#         return jsonify({"error": "<--------- NO match found match_routes"}), 404
-
-#     board = chess.Board(match.board_state)
-#     print("DEBUG: Created board:", board)
-#     print("DEBUG: LEGAL MOVES========>:", board.legal_moves)
-#     print("DEBUG: TURRRRRN========>:", board.turn)
-
-#     try:
-#         move = chess.Move.from_uci(uci_move)
-#         print("DEBUG: Created move:", move)
-#     except:
-#         return jsonify({"error": "<--------- invalid move format in match_routes def move(match_id)"}), 404
-
-#     if move not in board.legal_moves:
-#         emit('error', {"error": "Illegal move", "move": uci_move, "match": [match.to_dict()]}, broadcast=True)
-#         return
-
-#     emit('move', {"match": [match.to_dict()], "move": uci_move, "turn": "white" if board.turn else "black"}, broadcast=True)
-
-#     print("DEBUG: Created board:", board)
-#     print("DEBUG: LEGAL MOVES========>:", board.legal_moves)
-#     print("DEBUG: TURRRRRN========>:", board.turn)
-
-
-#     board.push(move)
-#     match.board_state = board.fen() # <<-- board.fen() handles the current state of the chess game
-#     print("DEBUG: Updated board state:", match.board_state)
-#     db.session.add(match)  # Save the updated match state
-#     db.session.commit()
-
-#     emit('move', {"match": [match.to_dict()], "move": uci_move, "turn": "white" if board.turn else "black"}, broadcast=True)
-
-
-#     print("---------------------->Current board\n",board)
-
-
-#     history = History(
-#         match_id=match_id,
-#         move=uci_move,
-#         turn="white" if board.turn else "black",
-#         total_moves=board.fullmove_number,
-#         status=match.status
-#     )
-
-#     db.session.add(history)
-#     db.session.commit()
-
-
-#     if board.is_checkmate():
-
-#         winner = "black" if board.turn else "white"
-#         match.status = "Checkmate"
-#         print("???----------->>>,  Checkmate works")
-#         match.result = winner + " wins"
-#         db.session.commit()
-
-#     elif board.is_stalemate() or board.is_insufficient_material() or board.is_seventyfive_moves() or board.is_fivefold_repetition() or board.is_variant_draw():
-
-#         match.status = "Draw"
-#         match.result = "Draw"
-#         db.session.commit()
-
-#     # emit('move_made', {"match": [match.to_dict()]})
-#     emit('move', {"match": [match.to_dict()], "move": uci_move, "turn": "white" if board.turn else "black"}, broadcast=True) # Include move in the emitted data
-#     print('Emitted move event', {"match": [match.to_dict()], "move": uci_move})
-#     return {"match": [match.to_dict()], "move": uci_move}, 200
 
 
 
