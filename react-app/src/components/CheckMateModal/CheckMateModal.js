@@ -10,13 +10,18 @@ export default function CheckMateModal({ winner, onClose, onRematch }) {
     onClose();
     history.push("/");
   };
+  const handleRematch = () => {
+    window.alert("Feature coming soon!")
+  };
 
   return (
     <div className='modal'>
       <div className='modal-content'>
         <h1 className="modal-h1">{winner}</h1>
-        <button className="modal-button" onClick={handleClose}>Close</button>
-        <button className="modal-button" onClick={onRematch}>Rematch</button>
+        <div className="modal-button-container">
+          <button className="modal-button" onClick={handleClose}>Close</button>
+          <button className="modal-button" onClick={handleRematch}>Rematch</button>
+        </div>
       </div>
     </div>
   );

@@ -128,6 +128,7 @@ class Match(db.Model):
     black_player = relationship('User', back_populates='matches_as_black', foreign_keys=[black_player_id])
     chats = relationship('Chat', back_populates='match', foreign_keys='Chat.match_id')
     histories = relationship('History', back_populates='match', foreign_keys='History.match_id')
+    moves = relationship('Move', back_populates='match', order_by='Move.id')
 
 
     def to_dict(self):
@@ -254,4 +255,30 @@ class Lobby(db.Model):
             'id': self.id,
             'user1Id': self.user1_id,
             'user2Id': self.user2_id,
+        }
+
+
+class Move(db.Model):
+    __tablename__ = 'moves'
+
+    if environment == "production":
+        __table_args__ = {'schema': SCHEMA}
+
+    id = db.Column(db.Integer, primary_key=True)
+    match_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('matches.id')), nullable=False)
+    uci_move = db.Column(db.String(50), nullable=False)
+    turn = db.Column(db.String(1), nullable=False)
+    board_state = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    match = relationship('Match', back_populates='moves')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'matchId': self.match_id,
+            'uciMove': self.uci_move,
+            'turn': self.turn,
+            'boardState': self.board_state,
+            'createdAt': self.created_at.isoformat() if self.created_at else None,
         }

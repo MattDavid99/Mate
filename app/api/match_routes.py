@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_login import login_required, current_user
-from app.models import  db, Match, History
+from app.models import  db, Match, History, Move
 import chess
 from app.socket import socketio
 from flask_socketio import join_room, leave_room, emit
@@ -106,6 +106,15 @@ def handle_move(data):
     match.current_turn = 'b' if match.current_turn == 'w' else 'w'
     match.board_state = board.fen()
     print(board)
+
+    the_move = Move(
+        match_id=match_id,
+        uci_move=uci_move,
+        turn=match.current_turn,
+        board_state=board.fen()
+    )
+
+    db.session.add(the_move)
 
 
     history = History(
@@ -347,3 +356,14 @@ def load_match(data):
 
     emit('load_match', {"match": [match.to_dict()]}, broadcast=True)
     return {"match": [match.to_dict()]}
+
+
+
+@match_routes.route('/<int:match_id>/moves', methods=['GET'])
+def get_moves(match_id):
+
+    match = Match.query.get(match_id)
+    if match is None:
+        return jsonify({"error": "Match not found"}), 404
+    moves = Move.query.filter_by(match_id=match_id).all()
+    return jsonify([move.to_dict() for move in moves])

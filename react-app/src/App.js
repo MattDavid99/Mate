@@ -9,6 +9,7 @@ import ChessBoard from "./components/ChessBoard";
 import AddedFriends from "./components/AddedFriends";
 import HomePage from "./components/HomePage";
 import FriendRequests from "./components/FriendRequests";
+import MatchHistory from "./components/MatchHistory";
 
 function App() {
   const dispatch = useDispatch();
@@ -39,6 +40,9 @@ function App() {
           </Route>
           <Route path="/added-friends">
             <AddedFriends />
+          </Route>
+          <Route path="/:userId/history">
+            <MatchHistory />
           </Route>
         </Switch>
       )}
