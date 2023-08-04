@@ -43,7 +43,6 @@ useEffect(() => {
       const whitePlayerId = data.players.white;
       const blackPlayerId = data.players.black;
 
-      // Determine the player color based on the user ID
       const playerColor = user.id === whitePlayerId ? "white" : "black";
 
       history.push(`/match/${matchId}`);
@@ -52,11 +51,9 @@ useEffect(() => {
   socket.on('new_match', handleNewMatch);
 
   return () => {
-      // Remove the 'new_match' event listener when the component unmounts
       socket.off('new_match', handleNewMatch);
   }
 }, []);
-// ----------------------------------------------
 
 
   return (

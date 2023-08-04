@@ -37,18 +37,7 @@ function AddedFriends() {
 
 	useEffect(() => {
     console.log(sessionUser);
-		/*
-		sessionUser =  {
-    addedBy: [ 2 ],
-    addedFriends: [ 3 ],
-    email: 'marnie@aa.io',
-    firstName: 'Marnie',
-    id: 2,
-    lastName: 'david',
-    profilePicUrl: null,
-    username: 'marnie'
-  }
-		*/
+
 }, [dispatch,sessionUser]);
 
 

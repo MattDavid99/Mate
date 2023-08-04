@@ -127,7 +127,6 @@ export const fetchMatch = (match_id) => async (dispatch) => {
     if (data.match && data.match.length > 0) {
       dispatch(getMatch(data.match[0]));
     } else {
-      // handle the case where data.match is undefined or an empty array
       return "data.match[0] is NOT HERE, match.js redux"
     }
   } else {

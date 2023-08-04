@@ -2,7 +2,6 @@
 const ALL_USERS = "user/ALL_USERS";
 const USER_BY_ID = "user/USER_BY_ID";
 
-// action creators
 const allUsers = (users) => ({
 	type: ALL_USERS,
 	payload: users,
@@ -13,10 +12,8 @@ const userById = (user) => ({
   payload: user
 })
 
-// initial state
 
 
-// thunks
 export const getAllUsers = () => async (dispatch) => {
 	const response = await fetch("/api/users/", {
 		headers: {
@@ -56,7 +53,7 @@ export const getUserById = (user_id) => async (dispatch) => {
 };
 
 const initialState = { users: [], selectedUser: null };
-// reducer
+
 export default function userReducer(state = initialState, action) {
   console.log('Action received in reducer: ', action);
 	switch (action.type) {
