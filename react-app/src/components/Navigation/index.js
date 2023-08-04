@@ -91,7 +91,7 @@ const handleSearch = (e) => {
 
 
 		{isNavBarVisible ? (
-      <ul className="navBar">
+			<ul className="navBar">
 				<div className='navBar-contents'>
         <div className="logoSearch">
 				<button onClick={() => setIsNavBarVisible(!isNavBarVisible)} className='toggle-nav-button'>{isNavBarVisible ? "X" : "<"}</button>

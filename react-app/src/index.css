@@ -7,3 +7,10 @@
   overflow-x: hidden;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
+.the-logo {
+  height: 120px;
+  width: 150px;
+  position: fixed;
+  cursor: pointer;
+}
