@@ -18,7 +18,6 @@
   border-radius: 100px;
   box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
   position: relative;
-  left: 10px;
 }
 
 .history-chessboard-container {
@@ -43,11 +42,13 @@
 
 .history-h2 {
   position: absolute;
-  top: 100px;
+  top: 50px;
 }
 
 
 .history-match-button {
+  /* position: relative; */
+  /* left: 5px; */
   font-weight: bold;
   margin: 10px;
   align-self: center;
@@ -96,9 +97,11 @@
 
 .history-button-container {
   display: flex;
-  justify-content: space-around;
-  align-items: center;
-
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  padding: 0 10px;
 }
 
 .history-button {
@@ -110,4 +113,58 @@
   cursor: pointer;
   margin: 10px;
   bottom: 0px;
+}
+
+.history-column {
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  scrollbar-width: thin;
+  scrollbar-color: darkgrey transparent;
+}
+
+.history-column::-webkit-scrollbar {
+  width: 5px;
+}
+
+.history-column::-webkit-scrollbar-thumb {
+  background: rgb(0, 0, 0);
+  border-radius: 2px;
+}
+
+.history-h3-white {
+  color: #000;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.history-h3-black {
+  color: #000;
+  text-align: center;
+  margin: 10px 0;
+  position: relative;
+  right: 50px;
+}
+
+.history-match-date {
+  font-size: 0.75rem;
+  color: #323232;
+  text-align: center;
+}
+
+.history-scroll-container::-webkit-scrollbar {
+  width: 4.5px;
+}
+
+.history-scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 2px;
+}
+
+.history-scroll-container {
+  max-height: 500px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.5) transparent;
 }

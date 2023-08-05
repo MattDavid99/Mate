@@ -50,6 +50,7 @@ return (
   <div className='added-friends-container'>
     <h2 className='added-friends-h2'>Added Friends</h2>
     {sessionUser && allFriends.length > 0 ? (
+      <div className='added-friends-div'>
       <ul className='added-friends-ul'>
         {allFriends.map((friend, index) => (
           <li key={index} className='added-friends-li'>
@@ -58,6 +59,7 @@ return (
           </li>
         ))}
       </ul>
+      </div>
     ) : (
       <p className='added-friends-p'>No added friends yet.</p>
     )}

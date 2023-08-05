@@ -78,16 +78,37 @@ function MatchHistory() {
     return (
       <div className='history-wrapper'>
       <div className='history-container'>
-          <h2 className='history-h2'>Match History</h2>
-          {!viewingChessboard ? (
-              <div className='history-button-container'>
-                {userMatches.map(match => (
-                  <button className="history-match-button" key={match.id} onClick={() => handleMatchClick(match.id, match.boardState)}>
-                    {match.whitePlayerUsername} vs. {match.blackPlayerUsername}
-                  </button>
-                ))}
+        <h2 className='history-h2'>Match History</h2>
+        {!viewingChessboard ? (
+          <div className='history-button-container'>
+            <div className='history-column'>
+              <h3 className='history-h3-white'>As White</h3>
+              <div className='history-scroll-container'>
+                 {userMatches && userMatches
+                   .filter(match => match.whitePlayerId === user.id)
+                   .map(match => (
+                     <button className="history-match-button" key={match.id} onClick={() => handleMatchClick(match.id, match.boardState)}>
+                       <div>{match.whitePlayerUsername} vs. {match.blackPlayerUsername}</div>
+                       <div className='history-match-date'>{new Date(match.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(match.createdAt).toLocaleDateString()}</div>
+                     </button>
+                   ))}
               </div>
-            ) : (
+            </div>
+            <div className='history-column'>
+              <h3 className='history-h3-black'>As Black</h3>
+              <div className='history-scroll-container'>
+                  {userMatches && userMatches
+                    .filter(match => match.blackPlayerId === user.id)
+                    .map(match => (
+                      <button className="history-match-button" key={match.id} onClick={() => handleMatchClick(match.id, match.boardState)}>
+                        <div>{match.whitePlayerUsername} vs. {match.blackPlayerUsername}</div>
+                        <div className='history-match-date'>{new Date(match.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(match.createdAt).toLocaleDateString()}</div>
+                      </button>
+                    ))}
+                </div>
+            </div>
+          </div>
+        ) : (
             <>
               <div className='history-chessboard-container'>
                   <Chessboard position={currentBoardState} />

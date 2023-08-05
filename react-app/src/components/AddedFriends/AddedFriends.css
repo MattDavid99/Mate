@@ -23,6 +23,20 @@
   left: 10px;
 }
 
+.added-friends-container::-webkit-scrollbar {
+  width: 5px;
+}
+
+.added-friends-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.5); /* Black and 50% transparent */
+  border-radius: 2px;
+}
+
+.added-friends-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.5) transparent;
+}
+
 .added-friends-ul {
   list-style: none;
 }
@@ -80,4 +94,25 @@
   font-weight: bold;
   color: #000;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.added-friends-div {
+  max-height: 300px;
+  overflow-y: auto;
+  position: relative;
+  top: 20px;
+}
+
+.added-friends-div::-webkit-scrollbar {
+  width: 5px;
+}
+
+.added-friends-div::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.5); /* Black and 50% transparent */
+  border-radius: 2px;
+}
+
+.added-friends-div {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.5) transparent;
 }

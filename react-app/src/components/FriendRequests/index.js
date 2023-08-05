@@ -64,6 +64,7 @@ function FriendRequests() {
       <div className='added-friends-container'>
        <h2 className='added-friends-h2'>Friend Requests</h2>
        {sessionUser && allFriendRequests && allFriendRequests.length > 0 ? (
+        <div className='added-friends-div'>
          <ul className='added-friends-ul'>
            {allFriendRequests.map((request, index) => (
             <li key={index} className='added-friends-li'>
@@ -74,6 +75,7 @@ function FriendRequests() {
             </li>
             ))}
          </ul>
+         </div>
        ) : (
          <p className='added-friends-p'>No friend requests yet.</p>
        )}
