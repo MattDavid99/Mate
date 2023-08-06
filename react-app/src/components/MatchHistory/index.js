@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchUserMatches, fetchMoves } from '../../store/history';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import Chessboard from "chessboardjsx";
 import Chess from "chess.js";
 import "./MatchHistory.css"
 
 function MatchHistory() {
     const dispatch = useDispatch();
+    const history = useHistory();
     const userMatches = useSelector(state => state.history.userMatches);
-    const user = useSelector(state => state.session.user)
+    const user = useSelector(state => state.session.user);
     const matchMoves = useSelector(state => state.history.matchMoves);
-    const { userId } = useParams()
+    const { userId } = useParams();
 
     const [expandedMatchId, setExpandedMatchId] = useState(null);
     const [currentBoardState, setCurrentBoardState] = useState(null);
@@ -22,6 +23,13 @@ function MatchHistory() {
 
 
     const chess = new Chess();
+
+    useEffect(() => {
+      if (!user) {
+        history.push("/login");
+      }
+    }, [user, history]);
+
 
     useEffect(() => {
        dispatch(fetchUserMatches(userId));

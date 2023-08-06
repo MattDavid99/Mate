@@ -8,11 +8,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 100;
+  z-index: 999;
 }
 
 .modal-content {
-  background-color: rgb(196, 195, 195);
+  position: relative;
+  left: 100px;
+  bottom: 100px;
+  background-color: white;
   padding: 20px;
   border-radius: 5px;
   max-width: 500px;
@@ -21,7 +24,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 100;
+  z-index: 999;
 }
 
 .modal-h1 {
