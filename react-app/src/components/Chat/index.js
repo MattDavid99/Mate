@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import Draggable from "react-draggable"
 import { postChatMessage, sendMessage, fetchChats, receiveChatMessage, deleteMessage, editMessage } from "../../store/chat";
 import { socket } from '../../socket';
 import "./Chat.css"
@@ -13,6 +14,7 @@ function Chat({ matchId }) {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.session.user);
   const chat = useSelector((state) => state.chat.chat);
+  const chatEndRef = useRef(null);
 
   const notifySound = new Audio('/assets/images/notify.mp3');
 
@@ -47,6 +49,11 @@ function Chat({ matchId }) {
       history.push("/login");
     }
   }, [user, history]);
+
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chat]);
 
   // ChessBoard.js
   socket.on('connect', () => {
@@ -127,43 +134,46 @@ function Chat({ matchId }) {
 
 
   return (
-   <div className='chat-container'>
-    <div className='chat-box'>
-    <ul className='chat-messages'>
-      {chat.map((message, index) => (
-        <li key={index} className='chat-message'>
-          <strong className='chat-username'>{message.username}:</strong>
-          {editMessageId === message.id ? (
-            <input
-              value={editMessageText}
-              onChange={(e) => setEditMessageText(e.target.value)}
-            />
-          ) : (
-            message.message
-          )}
-          {message.userId === user?.id && (
-            <>
-              <button onClick={() => handleEditButtonClick(message.id, message.message)} className='chat-button'>Edit</button>
-              {editMessageId === message.id && (
-                <button onClick={() => handleEditMessage(message.id)} className='chat-button'>Save</button>
+    <Draggable handle=".chat-box" bounds="parent">
+    <div className="chat-container">
+      <div className="chat-box">
+        <ul className="chat-messages">
+          {chat.map((message, index) => (
+            <li key={index} className="chat-message">
+              <strong className="chat-username">{message.username}:</strong>
+              {editMessageId === message.id ? (
+                <input
+                  value={editMessageText}
+                  onChange={(e) => setEditMessageText(e.target.value)}
+                />
+              ) : (
+                message.message
               )}
-              <button onClick={() => handleDeleteMessage(message.id)} className='chat-button'>Delete</button>
-            </>
-          )}
-        </li>
-      ))}
-    </ul>
+              {message.userId === user?.id && (
+                <>
+                  <button onClick={() => handleEditButtonClick(message.id, message.message)} className="chat-button">Edit</button>
+                  {editMessageId === message.id && (
+                    <button onClick={() => handleEditMessage(message.id)} className="chat-button">Save</button>
+                  )}
+                  <button onClick={() => handleDeleteMessage(message.id)} className="chat-button">Delete</button>
+                </>
+              )}
+            </li>
+          ))}
+        </ul>
+        <div ref={chatEndRef} />
+      </div>
+      <form onSubmit={handleSubmit} className="chat-form">
+        <input
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Type a message..."
+          className="chat-input"
+        />
+        <button type="submit" className="chat-button">Send</button>
+      </form>
     </div>
-    <form onSubmit={handleSubmit} className='chat-form'>
-      <input
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Type a message..."
-        className='chat-input'
-      />
-      <button type="submit" className='chat-button'>Send</button>
-    </form>
-  </div>
+  </Draggable>
   );
 }
 
