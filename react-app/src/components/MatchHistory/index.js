@@ -111,7 +111,7 @@ function MatchHistory() {
         ) : (
             <>
               <div className='history-chessboard-container'>
-                  <Chessboard position={currentBoardState} />
+                  <Chessboard position={currentBoardState} className="custom-chessboard"/>
               </div>
               <div className='history-button-container'>
                   <button className='history-button' onClick={handleGoBackClick}><i class="fas fa-undo"></i></button>

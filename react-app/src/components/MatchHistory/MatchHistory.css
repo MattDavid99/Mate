@@ -5,12 +5,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: auto;
 }
 
 .history-container {
   flex-direction: column;
-  height: 800px;
-  width: 600px;
+  height: 650px;
+  width: 650px;
   background-color: #3a9d5b;
   display: flex;
   justify-content: center;
@@ -22,14 +23,15 @@
 
 .history-chessboard-container {
   width: 100%;
-  /* height: 100%; */
-  height: calc(100% - 140px);
+  height: 130%;
+  /* height: calc(100% - 140px); */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   position: relative;
-  top: 65px;
+  top: 25px;
+  transform: scale(.9);
 }
 
 .history-button-container {
@@ -42,7 +44,9 @@
 
 .history-h2 {
   position: absolute;
-  top: 50px;
+  top: 2px;
+  left: 235px;
+  margin-bottom: 20px;
 }
 
 
@@ -98,10 +102,13 @@
 .history-button-container {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: flex-start;
   width: 100%;
   padding: 0 10px;
+  transform: scale(1.1);
+  position: relative;
+  bottom: 35px;
 }
 
 .history-button {
@@ -116,12 +123,15 @@
 }
 
 .history-column {
-  width: 45%;
+  width: 30%;
   display: flex;
   flex-direction: column;
   align-items: center;
   scrollbar-width: thin;
   scrollbar-color: darkgrey transparent;
+  /* margin-top: 60px; */
+  position: relative;
+  top: 20px;
 }
 
 .history-column::-webkit-scrollbar {
@@ -163,8 +173,9 @@
 }
 
 .history-scroll-container {
-  max-height: 500px;
+  max-height: 450px;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.5) transparent;
+  margin-bottom: 10px;
 }
