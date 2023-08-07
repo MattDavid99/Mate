@@ -1,9 +1,20 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import session from './session'
+import matchReducer from "./match"
+import chatReducer from "./chat"
+import friendRequestReducer from "./friendrequest"
+import historyReducer from "./history"
+import userReducer from "./user"
+
 
 const rootReducer = combineReducers({
   session,
+  match: matchReducer,
+  chat: chatReducer,
+  friendrequest: friendRequestReducer,
+  history: historyReducer,
+  user: userReducer
 });
 
 

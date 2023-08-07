@@ -29,6 +29,14 @@ class Friend(db.Model):
     user = relationship('User', foreign_keys=[user_id], back_populates='added_friends')
     friend = relationship('User', foreign_keys=[friend_id], back_populates='added_by')
 
+    def to_dict(self):
+     return {
+         'userId': self.user_id,
+         'friendId': self.friend_id,
+         'user': self.user.to_dict_simple() if self.user else None,
+         'friend': self.friend.to_dict() if self.friend else None
+     }
+
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -82,8 +90,18 @@ class User(db.Model, UserMixin):
             'email': self.email,
             'username': self.username,
             'profilePicUrl': self.profile_pic_url,
-            'addedFriends': [friend.username for friend in self.added_friends],
-            'addedBy': [friend.username for friend in self.added_by]
+            'addedFriends': [friend.friend.id for friend in self.added_friends],
+            'addedBy': [friend.friend.id for friend in self.added_by]
+        }
+
+    def to_dict_simple(self):
+        return {
+            'id': self.id,
+            'firstName': self.first_name,
+            'lastName': self.last_name,
+            'email': self.email,
+            'username': self.username,
+            'profilePicUrl': self.profile_pic_url,
         }
 
 
@@ -100,6 +118,8 @@ class Match(db.Model):
     black_player_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), nullable=False)
     status = db.Column(db.String(100))
     result = db.Column(db.String(40))
+    board_state = db.Column(db.Text)
+    current_turn = db.Column(db.String(1))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -108,6 +128,7 @@ class Match(db.Model):
     black_player = relationship('User', back_populates='matches_as_black', foreign_keys=[black_player_id])
     chats = relationship('Chat', back_populates='match', foreign_keys='Chat.match_id')
     histories = relationship('History', back_populates='match', foreign_keys='History.match_id')
+    moves = relationship('Move', back_populates='match', order_by='Move.id')
 
 
     def to_dict(self):
@@ -115,11 +136,15 @@ class Match(db.Model):
             'id': self.id,
             'whitePlayerId': self.white_player_id,
             'blackPlayerId': self.black_player_id,
+            'whitePlayerUsername': self.white_player.username,
+            'blackPlayerUsername': self.black_player.username,
             'status': self.status,
             'result': self.result,
+            'boardState': self.board_state,
+            'currentTurn': self.current_turn,
             'chats': [chat.to_dict() for chat in self.chats],
-            'createdAt': self.created_at,
-            'updatedAt': self.updated_at
+            'createdAt': self.created_at.isoformat() if self.created_at else None,
+            'updatedAt': self.updated_at.isoformat() if self.updated_at else None,
         }
 
 
@@ -146,9 +171,10 @@ class Chat(db.Model):
             'id': self.id,
             'matchId': self.match_id,
             'userId': self.user_id,
+            'username': self.user.username if self.user else None,
             'message': self.message,
-            'createdAt': self.created_at,
-            'updatedAt': self.updated_at
+            'createdAt': self.created_at.isoformat() if self.created_at else None,
+            'updatedAt': self.updated_at.isoformat() if self.updated_at else None,
         }
 
 
@@ -164,6 +190,7 @@ class History(db.Model):
     move = db.Column(db.String(50))
     turn = db.Column(db.String(100))
     total_moves = db.Column(db.Integer)
+    status = db.Column(db.String(50), default='In progress...')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -176,7 +203,7 @@ class History(db.Model):
             'move': self.move,
             'turn': self.turn,
             'totalMoves': self.total_moves,
-            'match': [m.to_dict() for m in self.match],
+            'status': self.status,
             'createdAt': self.created_at,
             'updatedAt': self.updated_at
         }
@@ -202,9 +229,56 @@ class FriendRequest(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'senderId': self.sender_id,
-            'receiverId': self.receiver_id,
+            'sender': self.sender.to_dict_simple() if self.sender else None,
+            'receiver': self.receiver.to_dict_simple() if self.receiver else None,
             'status': self.status,
             'createdAt': self.created_at,
             'updatedAt': self.updated_at
+        }
+
+
+class Lobby(db.Model):
+    __tablename__ = 'lobbies'
+
+    if environment == "production":
+        __table_args__ = {'schema': SCHEMA}
+
+    id = db.Column(db.Integer, primary_key=True)
+    user1_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')))
+    user2_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')))
+
+    user1 = relationship('User', foreign_keys=[user1_id])
+    user2 = relationship('User', foreign_keys=[user2_id])
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user1Id': self.user1_id,
+            'user2Id': self.user2_id,
+        }
+
+
+class Move(db.Model):
+    __tablename__ = 'moves'
+
+    if environment == "production":
+        __table_args__ = {'schema': SCHEMA}
+
+    id = db.Column(db.Integer, primary_key=True)
+    match_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('matches.id')), nullable=False)
+    uci_move = db.Column(db.String(50), nullable=False)
+    turn = db.Column(db.String(1), nullable=False)
+    board_state = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    match = relationship('Match', back_populates='moves')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'matchId': self.match_id,
+            'uciMove': self.uci_move,
+            'turn': self.turn,
+            'boardState': self.board_state,
+            'createdAt': self.created_at.isoformat() if self.created_at else None,
         }
