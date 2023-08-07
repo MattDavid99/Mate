@@ -180,3 +180,7 @@
   scrollbar-color: rgba(0, 0, 0, 0.5) transparent;
   margin-bottom: 10px;
 }
+
+.custom-chessboard {
+  border: 5px solid #000;
+}
