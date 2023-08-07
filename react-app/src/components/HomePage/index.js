@@ -38,7 +38,6 @@ const matchHistory = () => {
 
 useEffect(() => {
   const handleNewMatch = (data) => {
-      console.log(data);
       const matchId = data.match[0].id;
       const whitePlayerId = data.players.white;
       const blackPlayerId = data.players.black;
