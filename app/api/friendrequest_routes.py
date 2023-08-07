@@ -33,6 +33,7 @@ def decline_friend_request(request_id):
 
     friend_request.status = 'Declined'
 
+    db.session.delete(friend_request)
     db.session.commit()
 
     return {'friend_requests': [friend_request.to_dict()]}

@@ -14,8 +14,6 @@ function FriendRequests() {
   const [refresh, setRefresh] = useState(false);
 
 
-
-
   useEffect(() => {
     if (sessionUser){
       dispatch(fetchUserById(sessionUser.id));
