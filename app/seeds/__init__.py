@@ -1,7 +1,7 @@
 from flask.cli import AppGroup
 from .users import seed_users, undo_users
-from .friend import seed_friends, undo_friends
-from .friend_request import seed_friend_request, undo_friend_request
+# from .friend import seed_friends, undo_friends
+# from .friend_request import seed_friend_request, undo_friend_request
 from .match import seed_match, undo_match
 from .chat import seed_chat, undo_chat
 from .history import seed_history, undo_history
@@ -24,12 +24,8 @@ def seed():
         undo_history()
         undo_chat()
         undo_match()
-        undo_friend_request()
-        undo_friends()
         undo_users()
     seed_users()
-    seed_friends()
-    seed_friend_request()
     seed_match()
     seed_chat()
     seed_history()
@@ -43,7 +39,5 @@ def undo():
     undo_history()
     undo_chat()
     undo_match()
-    undo_friend_request()
-    undo_friends()
     undo_users()
     # Add other undo functions here
