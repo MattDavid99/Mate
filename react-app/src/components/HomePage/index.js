@@ -58,6 +58,15 @@ useEffect(() => {
 
   return (
     <div className='homepage-container'>
+          <div className='chess-pieces-wrapper'>
+            <div className='chess-piece piece1'></div>
+            <div className='chess-piece piece2'></div>
+            <div className='chess-piece piece3'></div>
+            <div className='chess-piece piece4'></div>
+            <div className='chess-piece piece5'></div>
+            <div className='chess-piece piece6'></div>
+            <div className='chess-piece piece7'></div>
+          </div>
       <div className='homepage-startmatch'>
         {!startClicked &&
         <div className='homepage-span-container'>
