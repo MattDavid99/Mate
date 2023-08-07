@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { fetchUserById } from '../../store/session';
-import { deleteFriend, getAllFriends, getFriendRequests, postDeclineFriendRequest, postAcceptFriendRequest, addFriend } from '../../store/friendrequest';
+import { getAllFriends, getFriendRequests, postDeclineFriendRequest, postAcceptFriendRequest, addFriend } from '../../store/friendrequest';
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from 'react-router-dom';
 import "./FriendRequests.css"
