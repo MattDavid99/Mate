@@ -7,7 +7,7 @@
 
 **Client:** React, Redux, CSS, Sockets, Node.js
 
-**Server:** Python, Flask, Sockets, SQL Alchemy
+**Server:** Python, Flask, Sockets, SQL Alchemy, PostgreSQL
 
 
 
