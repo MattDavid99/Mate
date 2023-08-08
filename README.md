@@ -1,148 +1,71 @@
-# Flask React Project
+# Mate
 
-This is the starter for the Flask React project.
-
-## Getting started
-1. Clone this repository (only this branch)
-
-2. Install dependencies
-
-      ```bash
-      pipenv install -r requirements.txt
-      ```
-
-3. Create a **.env** file based on the example with proper settings for your
-   development environment
-
-4. Make sure the SQLite3 database connection URL is in the **.env** file
-
-5. This starter organizes all tables inside the `flask_schema` schema, defined
-   by the `SCHEMA` environment variable.  Replace the value for
-   `SCHEMA` with a unique name, **making sure you use the snake_case
-   convention**.
-
-6. Get into your pipenv, migrate your database, seed your database, and run your Flask app
-
-   ```bash
-   pipenv shell
-   ```
-
-   ```bash
-   flask db upgrade
-   ```
-
-   ```bash
-   flask seed all
-   ```
-
-   ```bash
-   flask run
-   ```
-
-7. To run the React App in development, checkout the [README](./react-app/README.md) inside the `react-app` directory.
+#### A full-stack chess application that allows user vs. user matches. Feel free to navigate through the website! The best way to enjoy is to queue up with a friend on separate devices and join a match together! Or, if testing on a single device, follow the guide below.
 
 
-## Deployment through Render.com
+## Features
+- Chess Matches
+- In-game chatting
+- Real-time chess moves rendered to each client
+- Viewing of previous matches
+- Added friends
+- Sending friend requests to other users
+- Draggable Chat-Box
+- Simplistic/Modern UI
 
-First, refer to your Render.com deployment articles for more detailed
-instructions about getting started with [Render.com], creating a production
-database, and deployment debugging tips.
 
-From the [Dashboard], click on the "New +" button in the navigation bar, and
-click on "Web Service" to create the application that will be deployed.
+## Navigating through the website
 
-Look for the name of the application you want to deploy, and click the "Connect"
-button to the right of the name.
+### *Match making*
+#### ( For testing on a single device ) : 
+- Log-In or Signup     
+- Open new tab. ( if testing, open a separate "incognito" tab )
+    - Log-In or Signup
+- Click "Join Queue" on each tab    
 
-Now, fill out the form to configure the build and start commands, as well as add
-the environment variables to properly deploy the application.
+![Image](https://cdn.discordapp.com/attachments/1016893880307814430/1138260467375149168/image.png)
 
-### Part A: Configure the Start and Build Commands
 
-Start by giving your application a name.
 
-Leave the root directory field blank. By default, Render will run commands from
-the root directory.
+### *Matches*
+#### ( Once in a match ) : 
+- Users can make moves and see the results on each screen in real time
+- Plug in some headphones or turn up the audio to hear the sounds
+- In-game chatting is always available
+- Users can feel free to drag the Chat-Box to wherever they like 
 
-Make sure the Environment field is set set to "Python 3", the Region is set to
-the location closest to you, and the Branch is set to "main".
+![Image](https://cdn.discordapp.com/attachments/1016893880307814430/1138255318741155950/image.png)
 
-Next, add your Build command. This is a script that should include everything
-that needs to happen _before_ starting the server.
+#### ( Checkmate or Draw ) : 
+- Once a checkmate or draw is reached, a modal will appear
+- Users will have the option to click "Rematch" or "Close" to go back to the main menu
 
-For your Flask project, enter the following command into the Build field, all in
-one line:
+![Image](https://media.discordapp.net/attachments/1016893880307814430/1138260568898289795/image.png)
 
-```shell
-# build command - enter all in one line
-npm install --prefix react-app &&
-npm run build --prefix react-app &&
-pip install -r requirements.txt &&
-pip install psycopg2 &&
-flask db upgrade &&
-flask seed all
-```
 
-This script will install dependencies for the frontend, and run the build
-command in the __package.json__ file for the frontend, which builds the React
-application. Then, it will install the dependencies needed for the Python
-backend, and run the migration and seed files.
+### *Match History*
+#### ( In the main menu ) : 
+- Users can view their past chess matches via "Match History"
+- Each match is ordered by date, matches as white on the left-side, matches as black on the right-side
+- Choose a match to review and click the arrows to view each move that was played
 
-Now, add your start command in the Start field:
+![Image](https://media.discordapp.net/attachments/1016893880307814430/1138261208626106368/image.png)
 
-```shell
-# start script
-gunicorn app:app
-```
 
-_If you are using websockets, use the following start command instead for increased performance:_
+### *Friend Requests*
+#### ( By clicking the upper-right "Menu" ) : 
+- Users can send friend-requests via the search bar
+- Every user that made an account with us exists in this search function
+- Users can view their received requests in the "Manage Request" tab
+- Users can either accept or decline the incoming friend request
 
-`gunicorn --worker-class eventlet -w 1 app:app`
+![Image](https://cdn.discordapp.com/attachments/1016893880307814430/1138261843547267172/image.png)
 
-### Part B: Add the Environment Variables
 
-Click on the "Advanced" button at the bottom of the form to configure the
-environment variables your application needs to access to run properly. In the
-development environment, you have been securing these variables in the __.env__
-file, which has been removed from source control. In this step, you will need to
-input the keys and values for the environment variables you need for production
-into the Render GUI.
+### *Added Friends*
+#### ( By clicking the upper-right "Menu" ) : 
+- Users can add friends by accepting incoming friend-requests
+- Users can view their friends in the "Added Friends" tab
+- Users can remove friends if they wish
 
-Click on "Add Environment Variable" to start adding all of the variables you
-need for the production environment.
-
-Add the following keys and values in the Render GUI form:
-
-- SECRET_KEY (click "Generate" to generate a secure secret for production)
-- FLASK_ENV production
-- FLASK_APP app
-- SCHEMA (your unique schema name, in snake_case)
-- REACT_APP_BASE_URL (use render.com url, located at top of page, similar to
-  https://this-application-name.onrender.com)
-
-In a new tab, navigate to your dashboard and click on your Postgres database
-instance.
-
-Add the following keys and values:
-
-- DATABASE_URL (copy value from Internal Database URL field)
-
-_Note: Add any other keys and values that may be present in your local __.env__
-file. As you work to further develop your project, you may need to add more
-environment variables to your local __.env__ file. Make sure you add these
-environment variables to the Render GUI as well for the next deployment._
-
-Next, choose "Yes" for the Auto-Deploy field. This will re-deploy your
-application every time you push to main.
-
-Now, you are finally ready to deploy! Click "Create Web Service" to deploy your
-project. The deployment process will likely take about 10-15 minutes if
-everything works as expected. You can monitor the logs to see your build and
-start commands being executed, and see any errors in the build process.
-
-When deployment is complete, open your deployed site and check to see if you
-successfully deployed your Flask application to Render! You can find the URL for
-your site just below the name of the Web Service at the top of the page.
-
-[Render.com]: https://render.com/
-[Dashboard]: https://dashboard.render.com/
+![Image](https://cdn.discordapp.com/attachments/1016893880307814430/1138262082089922660/image.png)
