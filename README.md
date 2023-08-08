@@ -1,6 +1,14 @@
-# Mate
 
-#### A full-stack chess application that allows user vs. user matches. Feel free to navigate through the website! The best way to enjoy is to queue up with a friend on separate devices and join a match together! Or, if testing on a single device, follow the guide below.
+# [Mate](https://mate-project.onrender.com)
+
+#### A full-stack chess application that allows user vs. user matches. Feel free to navigate through the website! Best way to enjoy is to queue up with a friend on separate devices and join a match together! Or, if testing on a single device, follow the guide below.
+
+## Tech Stack
+
+**Client:** React, Redux, CSS, Sockets, Node.js
+
+**Server:** Python, Flask, Sockets, SQL Alchemy
+
 
 
 ## Features
@@ -12,7 +20,6 @@
 - Sending friend requests to other users
 - Draggable Chat-Box
 - Simplistic/Modern UI
-
 
 ## Navigating through the website
 
@@ -69,3 +76,6 @@
 - Users can remove friends if they wish
 
 ![Image](https://cdn.discordapp.com/attachments/1016893880307814430/1138262082089922660/image.png)
+## Support
+
+For support, email mattdavid37@gmail.com
