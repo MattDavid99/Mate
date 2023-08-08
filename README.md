@@ -1,5 +1,5 @@
 
-# [Mate](https://mate-project.onrender.com){:target="_blank"}
+# [Mate](https://mate-project.onrender.com)
 
 #### A full-stack chess application that allows user vs. user matches. Feel free to navigate through the website! Best way to enjoy is to queue up with a friend on separate devices and join a match together! Or, if testing on a single device, follow the guide below.
 
