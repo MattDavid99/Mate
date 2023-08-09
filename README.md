@@ -76,6 +76,17 @@
 - Users can remove friends if they wish
 
 ![Image](https://cdn.discordapp.com/attachments/1138901705564622991/1138903677042688000/image.png)
+
+### *Challenge your Friends!*
+#### ( By clicking the upper-right "Menu" ) : 
+- Users can challenge their friends to a match
+- Users can view their friends in the "Added Friends" tab, then send a challenge to them
+- Users can view the incoming challenges in the "Challenges" tab
+- Users have the option to accept or clear the challenge
+- If the user accepts the new challenge, a new chess match will start between the challenger and receiver
+
+![Image](https://cdn.discordapp.com/attachments/1138901705564622991/1138904085488222318/image.png)
+
 ## Support
 
 For support, email mattdavid37@gmail.com
