@@ -8,13 +8,13 @@
   height: fit-content;
   overflow-y: auto;
   font-weight: bold;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 .profile-icon {
   padding: 5px;
   border-radius: 5px;
-  background-color: #41b166;
+  background-color: #e1e2bf;
   cursor: pointer;
   margin-top: 30px;
 }
@@ -70,7 +70,7 @@
   max-width: 300px;
   border-radius: 5px;
   padding: 5px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 .navBar {
@@ -84,7 +84,7 @@
   width: 400px;
   height: 90vh;
   position: fixed;
-  z-index: 100;
+  z-index: 100000;
   right: 0;
 }
 
@@ -98,7 +98,7 @@
   padding-bottom: 10px;
   font-size: 20px;
   text-decoration: none;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Roboto', sans-serif;
   color: #ffffff;
 }
 
@@ -116,12 +116,12 @@
   top: 0;
   right: 0;
   z-index: 101;
-  margin-right: 20px;
-  margin-top: 20px;
+  margin-right: 40px;
+  margin-top: 40px;
   border-radius: 50px;
   padding: 10px 15px;
-  background-color: #3a9d5b;
-  color: #dbdbdb;
+  background-color: #1c1f1c;
+  color: #fff;
   border: none;
   box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
   font-weight: bold;
@@ -129,7 +129,7 @@
 }
 
 .open-nav-button:hover {
-  background-color: #41b166;
+  background-color: #191a19;
 }
 
 .toggle-nav-button {
@@ -173,5 +173,5 @@
   color: #10c932;
   font-size: 12px;
   font-weight: bolder;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Roboto', sans-serif;
 }

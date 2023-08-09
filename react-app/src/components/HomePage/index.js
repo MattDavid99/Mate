@@ -67,6 +67,7 @@ useEffect(() => {
             <div className='chess-piece piece7'></div>
           </div>
       <div className='homepage-startmatch'>
+      <div className='homepage-logo'><img className="logo-img" src='../assets/images/crownblack2.png'/></div>
         {!startClicked &&
         <div className='homepage-span-container'>
           <span className='homepage-span'>Join Queue</span>

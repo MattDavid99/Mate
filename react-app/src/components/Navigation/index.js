@@ -94,7 +94,7 @@ const handleSearch = (e) => {
 			<ul className="navBar">
 				<div className='navBar-contents'>
         <div className="logoSearch">
-				<button onClick={() => setIsNavBarVisible(!isNavBarVisible)} className='toggle-nav-button'>{isNavBarVisible ? "X" : "<"}</button>
+				<button onClick={() => setIsNavBarVisible(!isNavBarVisible)} className='toggle-nav-button'>{isNavBarVisible ? <i class="fas fa-times"></i> : "<"}</button>
           <li className='nav-home'>
             <NavLink exact to="/" className="nav-link">Home</NavLink>
           </li>

@@ -10,7 +10,7 @@
   align-items: center;
 }
 
-.homepage-startmatch {
+/* .homepage-startmatch {
   height: 600px;
   width: 400px;
   background-color: #3a9d5b;
@@ -22,11 +22,29 @@
   position: relative;
   left: 10px;
   z-index: 1000;
+} */
+
+.homepage-startmatch {
+  height: 600px;
+  width: 650px;
+  background-color: #edeed1;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 10px;
+  position: relative;
+  left: 10px;
+  z-index: 1000;
+  padding-left: 50px;
+  padding-right: 50px;
 }
 
 .homepage-span {
   font-size: 20px;
   font-weight: 700;
+  color: #000;
+  font-family: 'Roboto', sans-serif;
 }
 
 .homepage-span-container {
@@ -34,20 +52,22 @@
   flex-direction: column;
   height: 300px;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-between;
   text-align: center;
   width: 100px;
   position: relative;
-  left: 90px;
+  left: 100px;
+  margin-top: 85px;
 }
 
 .homepage-button-container {
   display: flex;
   flex-direction: column;
   height: 300px;
-  justify-content: space-around;
+  justify-content: space-between;
   position: relative;
-  right: 60px;
+  right: 100px;
+  margin-top: 75px;
 }
 
 .homepage-grader {
@@ -59,6 +79,10 @@
   padding-left: 5px;
   padding-right: 5px;
   line-height: 1.7rem;
+  /* margin-left: px; */
+  font-weight: 600;
+  color: #000;
+  font-family: 'Roboto', sans-serif;
 }
 
 .homepage-p {
@@ -66,11 +90,24 @@
 }
 
 
+.homepage-logo {
+  position: absolute;
+  top: 0;
+  left: 32%;
+}
+
+.logo-img {
+  height: 200px;
+  width: 238px;
+}
+
+
 .homepage-button {
   font-weight: bold;
   margin: 10px;
   align-self: center;
-  background-color: #757474;
+  background-color: #e1e2bf;
+  font-family: 'Roboto', sans-serif;
   background-image: none;
   background-position: 0 90%;
   background-repeat: repeat no-repeat;
@@ -83,11 +120,10 @@
   color: #000000;
   cursor: pointer;
   display: inline-block;
-  font-family: Neucha, sans-serif;
   font-size: 1rem;
   line-height: 23px;
   outline: none;
-  padding: .45rem;
+  padding: .5rem;
   text-decoration: none;
   transition: all 235ms ease-in-out;
   border-bottom-left-radius: 15px 255px;
