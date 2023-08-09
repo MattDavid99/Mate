@@ -78,7 +78,7 @@ useEffect(() => {
         {startClicked ? (
           <div className='homepage-grader'>
             <p className='homepage-p'>...waiting</p>
-            <p>Open up a new icognito window, Log in as a different user, then click <strong>"Join Queue"</strong></p>
+            <p>Open up a new incognito window, Log in as a different user, then click <strong>"Join Queue"</strong></p>
           </div>
         ) : (
           <div className='homepage-button-container'>
