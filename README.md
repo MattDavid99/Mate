@@ -30,7 +30,7 @@
     - Log-In or Signup
 - Click "Join Queue" on each tab    
 
-![Image](https://cdn.discordapp.com/attachments/1016893880307814430/1138260467375149168/image.png)
+![Image](https://cdn.discordapp.com/attachments/1138901705564622991/1138902230775382067/image.png)
 
 
 
@@ -56,7 +56,7 @@
 - Each match is ordered by date, matches as white on the left-side, matches as black on the right-side
 - Choose a match to review and click the arrows to view each move that was played
 
-![Image](https://media.discordapp.net/attachments/1016893880307814430/1138261208626106368/image.png)
+![Image](https://cdn.discordapp.com/attachments/1138901705564622991/1138902794796015626/image.png)
 
 
 ### *Friend Requests*
@@ -66,7 +66,7 @@
 - Users can view their received requests in the "Manage Request" tab
 - Users can either accept or decline the incoming friend request
 
-![Image](https://cdn.discordapp.com/attachments/1016893880307814430/1138261843547267172/image.png)
+![Image](https://cdn.discordapp.com/attachments/1138901705564622991/1138903302684287157/image.png)
 
 
 ### *Added Friends*
@@ -75,7 +75,18 @@
 - Users can view their friends in the "Added Friends" tab
 - Users can remove friends if they wish
 
-![Image](https://cdn.discordapp.com/attachments/1016893880307814430/1138262082089922660/image.png)
+![Image](https://cdn.discordapp.com/attachments/1138901705564622991/1138903677042688000/image.png)
+
+### *Challenge your Friends!*
+#### ( By clicking the upper-right "Menu" ) : 
+- Users can challenge their friends to a match
+- Users can view their friends in the "Added Friends" tab, then send a challenge to them
+- Users can view the incoming challenges in the "Challenges" tab
+- Users have the option to accept or clear the challenge
+- If the user accepts the new challenge, a new chess match will start between the challenger and receiver
+
+![Image](https://cdn.discordapp.com/attachments/1138901705564622991/1138904085488222318/image.png)
+
 ## Support
 
 For support, email mattdavid37@gmail.com
