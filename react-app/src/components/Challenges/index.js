@@ -16,6 +16,11 @@ function Challenges() {
   const [challenges, setChallenges] = useState([]);
   const [filteredChallenges, setFilteredChallenges] = useState(theChallenges);
 
+  useEffect(() => {
+    if (!user) {
+      history.push("/login");
+    }
+  }, [user, history]);
 
   useEffect(() => {
     if (sessionUser) {

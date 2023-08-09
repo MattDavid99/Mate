@@ -9,6 +9,7 @@ function HomePage() {
   const dispatch = useDispatch();
   const history = useHistory();
   const [startClicked, setStartClicked] = useState(false);
+  const [waitingMessage, setWaitingMessage] = useState('...waiting');
 
   const user = useSelector((state) => state.session.user);
 
@@ -20,39 +21,51 @@ function HomePage() {
   }, [user, history]);
 
 
-const startNewMatch = () => {
-  console.log("Emitting new match event", user.id);
-  setStartClicked(true);
-  socket.emit('new_match', { player_id: user.id });
-}
-
-const playBot = () => {
-  return window.alert("Feature coming soon!")
-}
-
-const matchHistory = () => {
-  if (user){
-    history.push(`/${user.id}/history`)
+  const startNewMatch = () => {
+    console.log("Emitting new match event", user.id);
+    setStartClicked(true);
+    socket.emit('new_match', { player_id: user.id });
   }
-}
 
-useEffect(() => {
-  const handleNewMatch = (data) => {
-      const matchId = data.match[0].id;
-      const whitePlayerId = data.players.white;
-      const blackPlayerId = data.players.black;
-
-      const playerColor = user.id === whitePlayerId ? "white" : "black";
-
-      history.push(`/match/${matchId}`);
-  };
-
-  socket.on('new_match', handleNewMatch);
-
-  return () => {
-      socket.off('new_match', handleNewMatch);
+  const playBot = () => {
+    return window.alert("Feature coming soon!")
   }
-}, []);
+
+  const matchHistory = () => {
+    if (user){
+      history.push(`/${user.id}/history`)
+    }
+  }
+
+  useEffect(() => {
+    const handleNewMatch = (data) => {
+        const matchId = data.match[0].id;
+        const whitePlayerId = data.players.white;
+        const blackPlayerId = data.players.black;
+
+        const playerColor = user.id === whitePlayerId ? "white" : "black";
+
+        history.push(`/match/${matchId}`);
+    };
+
+    socket.on('new_match', handleNewMatch);
+
+    return () => {
+        socket.off('new_match', handleNewMatch);
+    }
+  }, []);
+
+
+  useEffect(() => {
+    if (startClicked) {
+      let dots = '...';
+      const intervalId = setInterval(() => {
+        dots = dots.length === 1 ? '...' : dots.slice(1);
+        setWaitingMessage(dots + 'waiting');
+      }, 500);
+      return () => clearInterval(intervalId);
+    }
+  }, [startClicked]);
 
 
   return (
@@ -77,8 +90,7 @@ useEffect(() => {
         }
         {startClicked ? (
           <div className='homepage-grader'>
-            <p className='homepage-p'>...waiting</p>
-            <p>Open up a new incognito window, Log in as a different user, then click <strong>"Join Queue"</strong></p>
+            <p className='homepage-p'><strong>{waitingMessage}</strong></p>
           </div>
         ) : (
           <div className='homepage-button-container'>

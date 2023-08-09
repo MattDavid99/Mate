@@ -83,6 +83,8 @@
   font-weight: 600;
   color: #000;
   font-family: 'Roboto', sans-serif;
+  position: relative;
+  left: 239px;
 }
 
 .homepage-p {
