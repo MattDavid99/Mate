@@ -30,7 +30,7 @@
     - Log-In or Signup
 - Click "Join Queue" on each tab    
 
-![Image](https://cdn.discordapp.com/attachments/1016893880307814430/1138260467375149168/image.png)
+![Image](https://cdn.discordapp.com/attachments/1138901705564622991/1138902230775382067/image.png)
 
 
 
