@@ -56,7 +56,7 @@
 - Each match is ordered by date, matches as white on the left-side, matches as black on the right-side
 - Choose a match to review and click the arrows to view each move that was played
 
-![Image](https://media.discordapp.net/attachments/1016893880307814430/1138261208626106368/image.png)
+![Image](https://cdn.discordapp.com/attachments/1138901705564622991/1138902794796015626/image.png)
 
 
 ### *Friend Requests*
@@ -66,7 +66,7 @@
 - Users can view their received requests in the "Manage Request" tab
 - Users can either accept or decline the incoming friend request
 
-![Image](https://cdn.discordapp.com/attachments/1016893880307814430/1138261843547267172/image.png)
+![Image](https://cdn.discordapp.com/attachments/1138901705564622991/1138903302684287157/image.png)
 
 
 ### *Added Friends*
@@ -75,7 +75,7 @@
 - Users can view their friends in the "Added Friends" tab
 - Users can remove friends if they wish
 
-![Image](https://cdn.discordapp.com/attachments/1016893880307814430/1138262082089922660/image.png)
+![Image](https://cdn.discordapp.com/attachments/1138901705564622991/1138903677042688000/image.png)
 ## Support
 
 For support, email mattdavid37@gmail.com
