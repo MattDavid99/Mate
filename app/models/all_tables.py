@@ -63,6 +63,19 @@ class User(db.Model, UserMixin):
         primaryjoin='User.id==Friend.friend_id',
         back_populates='friend'
     )
+
+    challenges_sent = relationship(
+        'Challenge',
+        primaryjoin='User.id==Challenge.challenger_id',
+        back_populates='challenger'
+    )
+    challenges_received = relationship(
+        'Challenge',
+        primaryjoin='User.id==Challenge.receiver_id',
+        back_populates='receiver'
+    )
+
+
     matches_as_white = relationship('Match', back_populates='white_player', foreign_keys='Match.white_player_id')
     matches_as_black = relationship('Match', back_populates='black_player', foreign_keys='Match.black_player_id')
     chats = relationship('Chat', back_populates='user', foreign_keys='Chat.user_id')
@@ -281,4 +294,31 @@ class Move(db.Model):
             'turn': self.turn,
             'boardState': self.board_state,
             'createdAt': self.created_at.isoformat() if self.created_at else None,
+        }
+
+
+class Challenge(db.Model):
+    __tablename__ = 'challenges'
+
+    if environment == "production":
+        __table_args__ = {'schema': SCHEMA}
+
+    id = db.Column(db.Integer, primary_key=True)
+    challenger_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), nullable=False)
+    status = db.Column(db.String(100), default='pending')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    challenger = relationship('User', back_populates='challenges_sent', foreign_keys=[challenger_id])
+    receiver = relationship('User', back_populates='challenges_received', foreign_keys=[receiver_id])
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'challenger': self.challenger.to_dict_simple() if self.challenger else None,
+            'receiver': self.receiver.to_dict_simple() if self.receiver else None,
+            'status': self.status,
+            'createdAt': self.created_at,
+            'updatedAt': self.updated_at
         }

@@ -52,6 +52,7 @@ function ProfileButton({ user }) {
             <li className="profile-li">{user.email}</li>
             <li className="profile-li"><NavLink exact to="/added-friends" className="profile-link">Added Friends</NavLink></li>
             <li className="profile-li"><NavLink exact to="/friend-requests" className="profile-link">Manage Request</NavLink></li>
+            <li className="profile-li"><NavLink exact to="/challenges" className="profile-link">Challenges</NavLink></li>
             <li className="profile-li">
               <button onClick={handleLogout} className="profile-logout">Log Out</button>
             </li>

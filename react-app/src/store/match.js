@@ -6,7 +6,38 @@ const RESIGN_MATCH = "match/RESIGN_MATCH";
 const GET_MATCH = "match/GET_MATCH";
 const RESET_MATCH = "match/RESET_MATCH";
 const LOAD_MATCH = "match/LOAD_MATCH";
+const GET_CHALLENGES = "match/GET_CHALLENGES";
+const SEND_CHALLENGE = "match/SEND_CHALLENGE";
+const DECLINE_CHALLENGE = "match/DECLINE_CHALLENGE";
+const ACCEPT_CHALLENGE = 'challenges/ACCEPT_CHALLENGE';
 
+
+export const getChallenges = (challenges) => {
+  return {
+    type: GET_CHALLENGES,
+    payload: challenges
+  }
+};
+
+export const acceptTheChallenge = (challengeId) => ({
+  type: ACCEPT_CHALLENGE,
+  challengeId
+});
+
+
+export const sendChallenge = (message) => {
+  return {
+    type: SEND_CHALLENGE,
+    payload: message
+  }
+};
+
+export const declineChallenge = (message) => {
+  return {
+    type: DECLINE_CHALLENGE,
+    payload: message
+  }
+};
 
 
 export const loadMatch = (match) => {
@@ -53,6 +84,62 @@ const resetMatch = (match) => {
 };
 
 
+export const acceptChallenge = (challenge_id) => (dispatch) => {
+  socket.emit('accept_challenge', { challenge_id });
+
+  socket.on('new_match', (data) => {
+    dispatch(startMatch(data));
+  });
+
+  socket.on('error', (data) => {
+    console.error(data.error);
+  });
+};
+
+
+export const fetchChallenges = () => async (dispatch) => {
+  const response = await fetch('/api/match/challenges', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    dispatch(getChallenges(data.challenges));
+    return data;
+  }
+}
+
+export const postChallenge = (receiver_id) => async (dispatch) => {
+  const response = await fetch(`/api/match/challenge/${receiver_id}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    dispatch(sendChallenge(data.message));
+  }
+}
+
+export const postDeclineChallenge = (challenge_id) => async (dispatch) => {
+  const response = await fetch(`/api/match/${challenge_id}/decline`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    dispatch(declineChallenge(data.message));
+  }
+}
+
 
 export const loadExistingMatch = (match_id) => (dispatch) => {
   socket.emit('load_match', {match_id});
@@ -78,12 +165,6 @@ export const createMatch = (white_player_id, black_player_id) => (dispatch) => {
     console.error(data.error);
   });
 }
-
-
-// @match_routes.route('/<int:match_id>/move', methods=['POST'])
-// export const postMove = (match_id, uci_move) => () => {
-//   socket.emit('move', {room: match_id, move: uci_move})
-// }
 
 export const postMove = (match_id, uci_move, player_id) => (dispatch) => {
   socket.emit('chess_move', {room: match_id, move: uci_move, player_id: player_id});
@@ -154,7 +235,7 @@ export const postReset = (match_id) => async (dispatch) => {
 }
 
 
-const initialState = { match: null };
+const initialState = { match: null, challenges: [], message: null };
 
 export default function matchReducer(state = initialState, action) {
 	switch (action.type) {
@@ -195,6 +276,24 @@ export default function matchReducer(state = initialState, action) {
         match: action.payload
       }
 
+    case GET_CHALLENGES:
+      return {
+        ...state,
+        challenges: action.payload
+      }
+
+    case ACCEPT_CHALLENGE:
+      return {
+        ...state,
+        challenges: state.challenges.filter(ch => ch.id !== action.challengeId)
+      };
+
+    case SEND_CHALLENGE:
+    case DECLINE_CHALLENGE:
+      return {
+        ...state,
+        message: action.payload
+      }
 
 		default:
 			return state;

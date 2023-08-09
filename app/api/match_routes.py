@@ -1,24 +1,30 @@
 from flask import Blueprint, jsonify, request
 from flask_login import login_required, current_user
-from app.models import  db, Match, History, Move
+from app.models import  db, Match, History, Move, User, Challenge
 import chess
 from app.socket import socketio
 from flask_socketio import join_room, leave_room, emit
+from collections import defaultdict
+from datetime import datetime
 
 
 match_routes = Blueprint('match', __name__)
 
-waiting_players = {}
 rematch_requests = {}
+waiting_players = {}
+user_sockets = {}
 
 
 @socketio.on('connect')
-def on_connect():
-    print('User connected')
+def handle_connect():
+    user_id = request.args.get('user_id')
+    if user_id:
+        user_sockets[user_id] = request.sid
 
 @socketio.on('disconnect')
 def on_disconnect():
     print('User disconnected')
+
 
 
 @socketio.on('new_match')
@@ -367,3 +373,102 @@ def get_moves(match_id):
         return jsonify({"error": "Match not found"}), 404
     moves = Move.query.filter_by(match_id=match_id).all()
     return jsonify([move.to_dict() for move in moves])
+
+
+@match_routes.route('/challenges', methods=['GET'])
+@login_required
+def get_challenges():
+    """
+    Get all challenges of the current user
+    """
+    challenges = Challenge.query.filter_by(receiver_id=current_user.id).all()
+
+    return jsonify({"challenges": [challenge.to_dict() for challenge in challenges]}), 200
+
+@match_routes.route('/challenge/<int:receiver_id>', methods=['POST'])
+@login_required
+def send_challenge(receiver_id):
+    """
+    Send a challenge to a friend
+    """
+
+    challenge = Challenge(
+        challenger_id=current_user.id,
+        receiver_id=receiver_id,
+        status='Sent',
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
+    )
+
+    db.session.add(challenge)
+    db.session.commit()
+
+    return jsonify({'message': 'Challenge sent'}), 201
+
+@match_routes.route('/<int:challenge_id>/decline', methods=['POST'])
+@login_required
+def decline_challenge(challenge_id):
+    """
+    Decline a challenge
+    """
+    challenge = Challenge.query.get(challenge_id)
+
+    if challenge is None or challenge.receiver_id != current_user.id:
+        return jsonify({'error': 'error at match_routes def decline_challenge()'})
+
+    challenge.status = 'Declined'
+
+    db.session.delete(challenge)
+    db.session.commit()
+
+    return {'message': 'Challenge declined'}
+
+
+# @socketio.on('accept_challenge')
+# def accept_challenge(data):
+#     print("DATATAATATAT====>", data)
+#     challenge_id = data['challenge_id']
+#     challenge = Challenge.query.get(challenge_id)
+#     challenge.status = 'Accepted'
+#     db.session.commit()
+
+#     white_player_id = challenge.receiver_id
+#     black_player_id = challenge.challenger_id
+
+#     board = chess.Board()
+
+#     match = Match(
+#         white_player_id=white_player_id,
+#         black_player_id=black_player_id,
+#         status="In Progress",
+#         board_state=board.fen(),
+#         current_turn='w'
+#     )
+
+#     try:
+#         db.session.add(match)
+#         db.session.commit()
+#         match_id = match.id
+
+#         white_socket = user_sockets.get(str(white_player_id))
+#         black_socket = user_sockets.get(str(black_player_id))
+
+#         if white_socket:
+#             join_room(str(match_id), sid=white_socket)
+#         if black_socket:
+#             join_room(str(match_id), sid=black_socket)
+
+#         new_match_data = {
+#             "match": [match.to_dict()],
+#             "match_id": match_id,
+#             "players": {
+#                 "white": white_player_id,
+#                 "black": black_player_id
+#             }
+#         }
+
+#         emit('new_match', new_match_data, room=str(match_id))
+
+#     except Exception as e:
+#         print(e)
+#         return jsonify({"error": "Database error at accept_challenge: " + str(e)}), 500
