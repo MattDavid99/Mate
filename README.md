@@ -1,7 +1,7 @@
 
 # [Mate](https://mate-project.onrender.com)
 
-#### A full-stack chess application that allows user vs. user matches. Feel free to navigate through the website! Best way to enjoy is to queue up with a friend on separate devices and join a match together! Or, if testing on a single device, follow the guide below.
+#### A full-stack chess application that allows user vs. user matches. Feel free to navigate through the website! Best way to enjoy is to queue up with a friend on separate devices and join a game together! Or, if testing on a single device, follow the guide below.
 
 ## Tech Stack
 
@@ -18,6 +18,7 @@
 - Viewing of previous matches
 - Added friends
 - Sending friend requests to other users
+- Challenging friends to a match
 - Draggable Chat-Box
 - Simplistic/Modern UI
 
@@ -26,7 +27,7 @@
 ### *Match making*
 #### ( For testing on a single device ) : 
 - Log-In or Signup     
-- Open new tab. ( if testing, open a separate "incognito" tab )
+- Open a new tab. ( if testing, open a separate "incognito" tab )
     - Log-In or Signup
 - Click "Join Queue" on each tab    
 
@@ -53,7 +54,7 @@
 ### *Match History*
 #### ( In the main menu ) : 
 - Users can view their past chess matches via "Match History"
-- Each match is ordered by date, matches as white on the left-side, matches as black on the right-side
+- Each match is ordered by date, matches as white on the left side, matches as black on the right-side
 - Choose a match to review and click the arrows to view each move that was played
 
 ![Image](https://cdn.discordapp.com/attachments/1138901705564622991/1138902794796015626/image.png)
@@ -61,7 +62,7 @@
 
 ### *Friend Requests*
 #### ( By clicking the upper-right "Menu" ) : 
-- Users can send friend-requests via the search bar
+- Users can send friend requests via the search bar
 - Every user that made an account with us exists in this search function
 - Users can view their received requests in the "Manage Request" tab
 - Users can either accept or decline the incoming friend request
