@@ -22,6 +22,8 @@ def seed_users():
         first_name="Mom", last_name="dav", username='mom', email='mom@aa.io', password='password')
     dad = User(
         first_name="Dad", last_name="dav", username='dad', email='dad@aa.io', password='password')
+    jess = User(
+        first_name="Jess", last_name="dav", username='jess', email='jess@aa.io', password='password')
 
 
     db.session.add(demo)
@@ -33,6 +35,7 @@ def seed_users():
     db.session.add(brit)
     db.session.add(mom)
     db.session.add(dad)
+    db.session.add(jess)
 
     db.session.commit()
 
