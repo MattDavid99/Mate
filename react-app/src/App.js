@@ -11,6 +11,7 @@ import HomePage from "./components/HomePage";
 import FriendRequests from "./components/FriendRequests";
 import MatchHistory from "./components/MatchHistory";
 import Challenges from "./components/Challenges";
+import About from "./components/About";
 
 function App() {
   const dispatch = useDispatch();
@@ -53,6 +54,9 @@ function App() {
           </Route>
           <Route path="/challenges">
             <Challenges />
+          </Route>
+          <Route path="/about">
+            <About />
           </Route>
         </Switch>
       )}

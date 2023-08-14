@@ -98,6 +98,9 @@ const handleSearch = (e) => {
           <li className='nav-home'>
             <NavLink exact to="/" className="nav-link">Home</NavLink>
           </li>
+          <li className='nav-about'>
+            <NavLink exact to="/about" className="nav-link">About</NavLink>
+          </li>
           {isLoaded && (
             <li className="searchArea">
               <form className="searchForm" onSubmit={handleSearchSubmit}>

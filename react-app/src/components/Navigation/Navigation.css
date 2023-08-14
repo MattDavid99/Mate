@@ -102,6 +102,12 @@
   color: #ffffff;
 }
 
+.nav-about {
+  margin-top: 20px;
+  position: relative;
+  top: 8px;
+}
+
 .searchInput {
   border-radius: 5px;
   height: 30px;
