@@ -4,10 +4,23 @@
 #### A full-stack chess application that allows user vs. user matches. Feel free to navigate through the website! Best way to enjoy is to queue up with a friend on separate devices and join a game together! Or, if testing on a single device, follow the guide below.
 
 ## Tech Stack
-
-**Client:** React, Redux, CSS, Sockets, Node.js
-
-**Server:** Python, Flask, Sockets, SQL Alchemy, PostgreSQL
+| Technology | Use Case                                             | 
+| ---------- | ---------------------------------------------------- |
+| Python     | Used for backend logic                               |
+| JavaScript | Frontend interactivity                               |
+| HTML       | Markup language for web development                  |
+| CSS        | Stylesheet language for web development              |
+| React      | Javascript library for building user interfaces      |
+| Redux      | Javascript library for managing application state    |
+| Flask      | Python web framework                                 |
+| Socket.io  | Connections to facilitate real-time communication    |
+| Git        | Version control system                               |
+| Postgres   | Relational database management system                |
+| SQLAlchemy | SQL toolkit and Object-Relational Mapping (ORM)      |
+| Sqlite     | Lightweight in-process library                       |
+| Node.js    | Javascript runtime environment                       |
+| Npm        | Package manager                                      |
+| Render     | Cloud platform for deployment and scaling            |
 
 
 
