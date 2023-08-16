@@ -88,6 +88,33 @@
 
 ![Image](https://cdn.discordapp.com/attachments/1138901705564622991/1138904085488222318/image.png)
 
+
+## Run it locally
+
+1. Clone the repository to your local machine:
+
+```bash
+git clone git@github.com:MattDavid99/Mate.git
+```
+
+2. Navigate to the root directory of the project and install the dependencies:
+```
+cd Mate
+pip install -r requirements.txt
+```
+
+3. Go into the shell to start the backend server:
+```
+pipenv shell
+flask run
+```
+
+4. Open a new terminal window, navigate to the frontend folder, and start the frontend application:
+```
+cd react-app
+npm start
+```
+
 ## Support
 
 For support, email mattdavid37@gmail.com
