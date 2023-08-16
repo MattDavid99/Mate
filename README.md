@@ -19,8 +19,6 @@
 | SQLAlchemy | SQL toolkit and Object-Relational Mapping (ORM)      |
 | Sqlite     | Lightweight in-process library                       |
 | Node.js    | Javascript runtime environment                       |
-| Npm        | Package manager                                      |
-| Render     | Cloud platform for deployment and scaling            |
 
 
 
