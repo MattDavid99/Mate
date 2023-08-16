@@ -1,11 +1,12 @@
 from flask import Blueprint, jsonify, request
 from flask_login import login_required, current_user
-from app.models import  db, Match, History, Move, User, Challenge
+from app.models import  db, Match, History, Move, User, Challenge, Lobby
 import chess
 from app.socket import socketio
 from flask_socketio import join_room, leave_room, emit
 from collections import defaultdict
 from datetime import datetime
+import random
 
 
 match_routes = Blueprint('match', __name__)
@@ -26,15 +27,20 @@ def on_disconnect():
     print('User disconnected')
 
 
-
 @socketio.on('new_match')
 def new_match(data):
     print("Received new_match event ==========>", data)
     waiting_players[request.sid] = data['player_id']
 
     if len(waiting_players) >= 2:
-        white_player_sid, white_player_id = waiting_players.popitem()
-        black_player_sid, black_player_id = waiting_players.popitem()
+        # white_player_sid, white_player_id = waiting_players.popitem()
+        # black_player_sid, black_player_id = waiting_players.popitem()
+
+        (white_player_sid, white_player_id), (black_player_sid, black_player_id) = random.sample(waiting_players.items(), 2)
+
+        del waiting_players[white_player_sid]
+        del waiting_players[black_player_sid]
+
 
         if not white_player_id or not black_player_id:
             return jsonify({"error": "White and Black player id's must be provided"}), 400
@@ -78,6 +84,75 @@ def new_match(data):
                 "black": black_player_id
             }}, 201
 
+# @socketio.on('new_match')
+# def new_match(data):
+#     print("Received new_match event ==========>", data)
+#     user_id = data['player_id']
+#     waiting_player = Lobby(user1_id=user_id)
+
+#     try:
+#         db.session.add(waiting_player)
+#         db.session.commit()
+
+#         waiting_lobbies = Lobby.query.filter_by(user2_id=None).all()
+
+#         print("Number of waiting lobbies:", len(waiting_lobbies))
+#         print("Waiting lobbies:", waiting_lobbies)
+
+#         if len(waiting_lobbies) >= 2:
+
+#             print("Condition met: waiting lobbies >= 2")
+#             lobby1 = random.choice(waiting_lobbies)
+#             lobby2 = random.choice([lobby for lobby in waiting_lobbies if lobby.id != lobby1.id])
+#             print("Selected lobbies:", lobby1, lobby2)
+
+#             white_player_id = lobby1.user1_id
+#             black_player_id = lobby2.user1_id
+#             white_player_sid = user_sockets[white_player_id]
+#             black_player_sid = user_sockets[black_player_id]
+
+#             print("white_player_sid:", white_player_sid, "black_player_sid:", black_player_sid)
+
+#             # Updating the Lobby to include the second player
+#             lobby1.user2_id = black_player_id
+#             db.session.commit()
+
+#             board = chess.Board()
+
+#             match = Match(
+#                 white_player_id=white_player_id,
+#                 black_player_id=black_player_id,
+#                 status="In Progress",
+#                 board_state=board.fen(),
+#                 current_turn='w'
+#             )
+
+#             db.session.add(match)
+#             db.session.commit()
+#             match_id = match.id
+
+#             join_room(str(match_id), sid=white_player_sid)
+#             join_room(str(match_id), sid=black_player_sid)
+
+#             emit('new_match', {
+#                 "match": [match.to_dict()],
+#                 "players": {
+#                     "white": white_player_id,
+#                     "black": black_player_id
+#                 }}, room=str(match_id))
+
+#             print(board)
+
+#             return {
+#                 "match": [match.to_dict()],
+#                 "players": {
+#                     "white": white_player_id,
+#                     "black": black_player_id
+#                 }}, 201
+
+#     except Exception as e:
+#         print(e)
+#         return jsonify({"error": "Database error at new_match: " + str(e)}), 500
 
 @socketio.on('chess_move')
 def handle_move(data):
