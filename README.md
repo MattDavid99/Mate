@@ -4,10 +4,23 @@
 #### A full-stack chess application that allows user vs. user matches. Feel free to navigate through the website! Best way to enjoy is to queue up with a friend on separate devices and join a game together! Or, if testing on a single device, follow the guide below.
 
 ## Tech Stack
-
-**Client:** React, Redux, CSS, Sockets, Node.js
-
-**Server:** Python, Flask, Sockets, SQL Alchemy, PostgreSQL
+| Technology | Use Case                                             | 
+| ---------- | ---------------------------------------------------- |
+| Python     | Used for backend logic                               |
+| JavaScript | Frontend interactivity                               |
+| HTML       | Markup language for web development                  |
+| CSS        | Stylesheet language for web development              |
+| React      | Javascript library for building user interfaces      |
+| Redux      | Javascript library for managing application state    |
+| Flask      | Python web framework                                 |
+| Socket.io  | Connections to facilitate real-time communication    |
+| Git        | Version control system                               |
+| Postgres   | Relational database management system                |
+| SQLAlchemy | SQL toolkit and Object-Relational Mapping (ORM)      |
+| Sqlite     | Lightweight in-process library                       |
+| Node.js    | Javascript runtime environment                       |
+| Npm        | Package manager                                      |
+| Render     | Cloud platform for deployment and scaling            |
 
 
 
@@ -87,6 +100,33 @@
 - If the user accepts the new challenge, a new chess match will start between the challenger and receiver
 
 ![Image](https://cdn.discordapp.com/attachments/1138901705564622991/1138904085488222318/image.png)
+
+
+## Run it locally
+
+1. Clone the repository to your local machine:
+
+```bash
+git clone git@github.com:MattDavid99/Mate.git
+```
+
+2. Navigate to the root directory of the project and install the dependencies:
+```
+cd Mate
+pip install -r requirements.txt
+```
+
+3. Go into the shell to start the backend server:
+```
+pipenv shell
+flask run
+```
+
+4. Open a new terminal window, navigate to the frontend folder, and start the frontend application:
+```
+cd react-app
+npm start
+```
 
 ## Support
 
