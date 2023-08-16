@@ -37,7 +37,6 @@ function ChessBoard() {
   const history = useHistory()
 
   const dispatch = useDispatch()
-  // let game = new Chess();
   const gameRef = useRef(new Chess());
 
   console.log(matchSelector);
