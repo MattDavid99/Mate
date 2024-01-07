@@ -5,15 +5,6 @@ from sqlalchemy import ForeignKey, ForeignKeyConstraint
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
-
-# Friends = db.Table(
-#     'friends',
-#     db.Column('user_id', db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), primary_key=True),
-#     db.Column('friend_id', db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), primary_key=True),
-#     ForeignKeyConstraint(['user_id'], [add_prefix_for_prod('users.id')], ondelete='CASCADE'),
-#     ForeignKeyConstraint(['friend_id'], [add_prefix_for_prod('users.id')], ondelete='CASCADE')
-# )
-
 class Friend(db.Model):
     __tablename__ = 'friends'
 

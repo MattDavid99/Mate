@@ -77,40 +77,6 @@ export const fetchMoves = (match_id) => async (dispatch) => {
 
   if (response.ok) {
     const data = await response.json()
-    /*
-    data =   Array(7) [
-    {
-      boardState: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1',
-      createdAt: '2023-08-01T16:52:00.179551',
-      id: 1,
-      matchId: 2,
-      turn: 'b',
-      uciMove: 'e2e4'
-    }, {
-      boardState: 'rnbqkbnr/ppppppp1/7p/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2',
-      createdAt: '2023-08-01T16:52:02.632204',
-      id: 2,
-      matchId: 2,
-      turn: 'w',
-      uciMove: 'h7h6'
-    },
-    {
-      boardState: 'rnbqkbnr/ppppppp1/7p/7Q/4P3/8/PPPP1PPP/RNB1KBNR b KQkq - 1 2',
-      createdAt: '2023-08-01T16:52:06.034164',
-      id: 3,
-      matchId: 2,
-      turn: 'b',
-      uciMove: 'd1h5'
-    },
-    {
-      boardState: 'rnbqkbnr/1pppppp1/p6p/7Q/4P3/8/PPPP1PPP/RNB1KBNR w KQkq - 0 3',
-      createdAt: '2023-08-01T16:52:09.317573',
-      id: 4,
-      matchId: 2,
-      turn: 'w',
-      uciMove: 'a7a6'
-    },
-    */
     dispatch(getMoves(data))
 
   } else {
@@ -126,7 +92,7 @@ export const fetchMoves = (match_id) => async (dispatch) => {
 const initialState = { matchHistory: [], userMatches: [], matchMoves: [] };
 
 export default function historyReducer(state = initialState, action) {
-	switch (action.type) {
+  switch (action.type) {
 
     case GET_MATCH_HISTORY:
       return {
@@ -146,7 +112,7 @@ export default function historyReducer(state = initialState, action) {
         matchMoves: action.payload
       }
 
-		default:
-			return state;
-	}
+    default:
+      return state;
+  }
 }

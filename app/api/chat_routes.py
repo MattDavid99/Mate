@@ -18,11 +18,8 @@ def on_connect():
 def on_disconnect():
     print('User disconnected')
 
-
-
 @socketio.on('send_message')
 def handle_send_message(data):
-  print("----------------->", data)
 
   if 'match_id' in data and 'user_id' in data and 'message' in data:
     chat = Chat(
@@ -37,8 +34,6 @@ def handle_send_message(data):
     emit('new_message', chat.to_dict(), broadcast=True)
   else:
     print("Received incomplete message data:", data)
-
-
 
 @socketio.on('receive_message')
 def handle_receive_message(data):
@@ -58,7 +53,6 @@ def handle_receive_message(data):
     else:
         print("Received incomplete message data:", data)
 
-# ------------------------------------------------------------ (edit and delete for chat)
 @socketio.on('edit_message')
 def handle_edit_message(data):
     if 'message_id' in data and 'new_message' in data:
@@ -80,9 +74,6 @@ def handle_delete_message(data):
             emit('message_deleted', {'message_id': data['message_id']}, broadcast=True)
         else:
             print("Chat message not found:", data['message_id'])
-
-
-
 
 @chat_routes.route('/<int:message_id>', methods=['PUT'])
 @login_required
@@ -112,9 +103,6 @@ def delete_message(message_id):
         return {'message_id': message_id}
     else:
         return jsonify({'error': 'Message not found or user not authorized'}), 404
-
-# ------------------------------------------------------------------------------------------
-
 
 @chat_routes.route('/<int:match_id>', methods=['GET'])
 @login_required

@@ -5,9 +5,7 @@ from datetime import datetime
 from sqlalchemy import or_, and_
 import chess
 
-
 friendrequest_routes = Blueprint('friend-request', __name__)
-
 
 @friendrequest_routes.route('/requests', methods=['GET'])
 @login_required
@@ -55,14 +53,12 @@ def add_friend(friend_id):
 
     return jsonify({"friends": [friends.to_dict()]}), 200
 
-
 @friendrequest_routes.route('/<int:receiver_id>', methods=['POST'])
 @login_required
 def send_friend_request(receiver_id):
     """
     Send a friend request
     """
-
     friend_request = FriendRequest(
         sender_id = current_user.id,
         receiver_id = receiver_id,
@@ -76,7 +72,6 @@ def send_friend_request(receiver_id):
 
     return jsonify({'message': 'Friend request sent'}), 201
 
-
 @friendrequest_routes.route('/<int:request_id>/accept', methods=['POST'])
 @login_required
 def accept_friend_request(request_id):
@@ -88,7 +83,6 @@ def accept_friend_request(request_id):
 
     if friend_request is None or friend_request.receiver_id != current_user.id:
         return jsonify({'error': 'error at friendrequest_routes def accept_friend_request()'})
-
 
     friend1 = Friend(
         user_id=friend_request.sender_id,

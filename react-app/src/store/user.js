@@ -8,8 +8,8 @@ const allUsers = (users) => ({
 });
 
 const userById = (user) => ({
-  type: USER_BY_ID,
-  payload: user
+	type: USER_BY_ID,
+	payload: user
 })
 
 
@@ -22,7 +22,7 @@ export const getAllUsers = () => async (dispatch) => {
 	});
 	if (response.ok) {
 		const data = await response.json();
-    console.log('Data from API: ', data);
+		console.log('Data from API: ', data);
 		if (data.errors) {
 			console.log(data.errors);
 		}
@@ -40,7 +40,7 @@ export const getUserById = (user_id) => async (dispatch) => {
 
 	if (response.ok) {
 		const data = await response.json();
-    console.log(data);
+		console.log(data);
 		dispatch(userById(data))
 	} else if (response.status < 500) {
 		const data = await response.json();
@@ -55,19 +55,19 @@ export const getUserById = (user_id) => async (dispatch) => {
 const initialState = { users: [], selectedUser: null };
 
 export default function userReducer(state = initialState, action) {
-  console.log('Action received in reducer: ', action);
+	console.log('Action received in reducer: ', action);
 	switch (action.type) {
 		case ALL_USERS:
 			return {
-        ...state,
-        users: [...action.payload]
-      };
+				...state,
+				users: [...action.payload]
+			};
 
 		case USER_BY_ID:
 			return {
-        ...state,
-        selectedUser: action.payload
-      }
+				...state,
+				selectedUser: action.payload
+			}
 		default:
 			return state;
 	}
