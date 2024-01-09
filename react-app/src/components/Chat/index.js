@@ -18,36 +18,8 @@ function Chat({ matchId }) {
 
   const notifySound = new Audio('/assets/images/notify.mp3');
 
-  console.log("--------> Message",message);
-  console.log("--------> User",user);
-  console.log("--------> Chat",chat);
-  /*
-  chat =  '--------> Chat',
-  [
-    {
-      createdAt: 'Thu, 06 Jul 2023 17:53:06 GMT',
-      id: 3,
-      matchId: 4,
-      message: 'Hello',
-      updatedAt: 'Thu, 06 Jul 2023 17:53:06 GMT',
-      userId: 4
-    }, {
-      createdAt: 'Thu, 06 Jul 2023 17:53:07 GMT',
-      id: 4,
-      matchId: 4,
-      message: 'Hello',
-      updatedAt: 'Thu, 06 Jul 2023 17:53:07 GMT',
-      userId: 4
-    },
-
-  ]
-
-  */
-
   useEffect(() => {
-    if (!user) {
-      history.push("/login");
-    }
+    if (!user) history.push("/login");
   }, [user, history]);
 
 
@@ -55,11 +27,9 @@ function Chat({ matchId }) {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chat]);
 
-  // ChessBoard.js
   socket.on('connect', () => {
     console.log('Successfully connected to the server!');
   });
-
 
   useEffect(() => {
     socket.on('new_message', (data) => {
@@ -69,33 +39,26 @@ function Chat({ matchId }) {
       dispatch(fetchChats(matchId));
       notifySound.play();
     });
-
     return () => {
       socket.off('new_message');
     }
   }, [dispatch, matchId, notifySound]);
 
-// ----------------------------------------------(Editing and deleting chats)
   useEffect(() => {
     socket.on('message_edited', (data) => {
       dispatch(editMessage(data));
     });
-
     socket.on('message_deleted', (data) => {
       dispatch(deleteMessage(data.message_id));
     });
-
     return () => {
       socket.off('message_edited');
       socket.off('message_deleted');
     }
   }, [dispatch]);
-// -------------------------------------------------------------
 
   const handleEditMessage = (messageId) => {
-
     if (editMessageText.trim() == "") return
-
     socket.emit('edit_message', {
       message_id: messageId,
       new_message: editMessageText
@@ -115,11 +78,8 @@ function Chat({ matchId }) {
     setEditMessageText(currentMessageText);
   };
 
-
-
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (message.trim() == "") return
 
     socket.emit('send_message', {
