@@ -39,8 +39,6 @@ function ChessBoard() {
   const dispatch = useDispatch()
   const gameRef = useRef(new Chess());
 
-  console.log(matchSelector);
-
   const currentUserIsWhite = user.id === whitePlayer;
   const currentUserIsBlack = user.id === blackPlayer;
 
@@ -64,26 +62,22 @@ function ChessBoard() {
   console.log(user);
 
   useEffect(() => {
-    if (!user) {
-      history.push("/login");
-    }
+    if (!user) history.push("/login");
   }, [user, history]);
 
   useEffect(() => {
     socket.emit('join', { room: matchId });
   }, [matchId]);
-
+  
   socket.on('connect', () => {
     console.log('Connected to the server');
   });
-
   socket.on('disconnect', () => {
     console.log('Disconnected from the server');
   });
 
   useEffect(() => {
     dispatch(loadExistingMatch(matchId));
-
   }, [dispatch, matchId]);
 
 
@@ -99,13 +93,11 @@ function ChessBoard() {
 
 
   const handleMove = ({ sourceSquare, targetSquare }) => {
-
       if((currentTurn === 'w' && user.id !== whitePlayer) ||
         (currentTurn === 'b' && user.id !== blackPlayer)) {
         alert("Not your turn");
         return;
       }
-
       let move = {
         from: sourceSquare,
         to: targetSquare,
@@ -114,36 +106,18 @@ function ChessBoard() {
 
       let moveResult = gameRef.current.move(move);
 
-      if (moveResult === null) {
-        return;
-      }
-
-
-      if (moveResult.flags.includes('c') || moveResult.flags.includes('e')) {
-        captureSound.play();
-      }
-
-      if (gameRef.current.in_check()) {
-        checkSound.play();
-      }
-
-      if (moveResult.flags.includes('k') || moveResult.flags.includes('q')) {
-        castleSound.play();
-      }
-
-      if (moveResult.flags.includes('n') || moveResult.flags.includes('b')) {
-        dropSound.play();
-      }
-
+      if (moveResult === null) return;
+      if (moveResult.flags.includes('c') || moveResult.flags.includes('e')) captureSound.play();
+      if (gameRef.current.in_check()) checkSound.play();
+      if (moveResult.flags.includes('k') || moveResult.flags.includes('q')) castleSound.play();
+      if (moveResult.flags.includes('n') || moveResult.flags.includes('b')) dropSound.play();
+    
       let combinedMove = sourceSquare + targetSquare;
       if (moveResult.flags.includes("p")) {
         combinedMove += "q";
         promoteSound.play();
       }
-
       dispatch(postMove(matchId, combinedMove, user.id));
-      console.log(currentTurn);
-
   };
 
   useEffect(() => {
@@ -157,55 +131,29 @@ function ChessBoard() {
 
       const move = gameRef.current.history({ verbose: true }).pop();
 
-      if (move && (move.flags.includes('c') || move.flags.includes('e'))) {
-        captureSound.play();
-      }
-
-      if (gameRef.current.in_check()) {
-        checkSound.play();
-      }
-
-      if (move && (move.flags.includes('k') || move.flags.includes('q'))) {
-        castleSound.play();
-      }
-
-      if (move && (move.flags.includes('n') || move.flags.includes('b'))) {
-        dropSound.play();
-      }
-
-      if (move && (move.flags.includes("p"))) {
-        promoteSound.play();
-      }
-
-
+      if (move && (move.flags.includes('c') || move.flags.includes('e'))) captureSound.play();
+      if (gameRef.current.in_check()) checkSound.play();
+      if (move && (move.flags.includes('k') || move.flags.includes('q'))) castleSound.play();
+      if (move && (move.flags.includes('n') || move.flags.includes('b'))) dropSound.play();
+      if (move && (move.flags.includes("p"))) promoteSound.play();
+      
       if (gameRef.current.game_over()) {
-
-        if (gameRef.current.in_checkmate()) {
-          setIsCheckmate(true);
-        }
-        if (gameRef.current.in_draw()) {
-          setIsDraw(true);
-        }
+        if (gameRef.current.in_checkmate()) setIsCheckmate(true);
+        if (gameRef.current.in_draw()) setIsDraw(true);
       }
     };
+    
     socket.on('chess_move', handler);
-
     return () => {
       socket.off('chess_move', handler);
     };
 }, [matchSelector]);
-
-  console.log(matchData);
-  console.log(whitePlayer);
-  console.log(blackPlayer);
-  console.log(fen);
 
   useEffect(() => {
     const handleResize = () => {
       setChessBoardSize(Math.min(window.innerHeight - 200, 800));
     };
     window.addEventListener('resize', handleResize);
-
     return () => {
       window.removeEventListener('resize', handleResize);
     };
@@ -215,13 +163,9 @@ function ChessBoard() {
   return (
     <>
     <div className='app-container'>
-
     <Chat matchId={matchId}/>
-
       {isCheckmate && <CheckMateModal winner={matchSelector.result} onClose={() => setIsCheckmate(false)} />}
       {isDraw && <DrawModal onClose={() => setIsDraw(false)} />}
-
-
         <div className='chessboard-container'>
         <h3 className={`chessboard-h3-top ${((currentTurn === 'b' && currentUserIsWhite) || (currentTurn === 'w' && currentUserIsBlack)) ? 'highlight' : ''}`}>{currentUserIsWhite ? blackPlayerName : whitePlayerName}</h3>
             <div className='chessboard'>
@@ -244,26 +188,3 @@ function ChessBoard() {
 }
 
 export default ChessBoard
-
-
-// useEffect(() => {
-//   socket.on('move', (data) => {
-//     console.log('Move event received', data);
-//     // Load the game state from the server
-//     dispatch(makeMoves(data))
-//     game.load(data.match[0].boardState);
-//     // Update the FEN and make moves on the UI
-//     setFen(game.fen());
-//     setIsWhiteTurn(data.turn === "white");
-//     if (data.result) {
-//       if (data.result.includes("checkmate")) {
-//         setIsCheckmate(true);
-//       } else {
-//         setIsDraw(true);
-//       }
-//     }
-//   });
-//   return () => {
-//     socket.off('move');
-//   };
-// }, [dispatch]);
