@@ -45,21 +45,6 @@ function ChessBoard() {
   const whitePlayerName = matchSelector ? matchSelector.whitePlayerUsername : null;
   const blackPlayerName = matchSelector ? matchSelector.blackPlayerUsername : null;
 
-  /*
-  matchSelector =   {
-    id: 58,
-    whitePlayerId: 7,
-    blackPlayerId: 1,
-    status: 'In Progress',
-    result: null,
-    boardState: 'rnbqkbnr/pppp1ppp/4p3/8/8/4P3/PPPP1PPP/RNBQKBNR w KQkq - 0 2',
-    currentTurn: null,
-    chats: [],
-    createdAt: '2023-07-24T21:36:21.658334',
-    updatedAt: '2023-07-24T21:41:06.086147'
-  }
-  */
-  console.log(user);
 
   useEffect(() => {
     if (!user) history.push("/login");
