@@ -34,16 +34,13 @@ function AddedFriends() {
   }, [dispatch]);
 
   useEffect(() => {
-      console.log(allFriends);
+     console.log(allFriends);
   }, [allFriends])
 
 
-
-	useEffect(() => {
-    console.log(sessionUser);
-
+  useEffect(() => {
+     console.log(sessionUser);
   }, [dispatch,sessionUser]);
-
 
   const handleRemoveFriend = (friend_id) => {
     dispatch(deleteFriend(friend_id));
@@ -57,23 +54,17 @@ function AddedFriends() {
 
   useEffect(() => {
     const handleNewMatch = (data) => {
-      console.log(data);
         const matchId = data.match[0].id;
         const whitePlayerId = data.players.white;
         const blackPlayerId = data.players.black;
-
         const playerColor = user.id === whitePlayerId ? "white" : "black";
-
         history.push(`/match/${matchId}`);
     };
-
     socket.on('new_match', handleNewMatch);
-
     return () => {
         socket.off('new_match', handleNewMatch);
     }
   }, []);
-
 
 return (
      <div className='added-friends-wrapper'>
