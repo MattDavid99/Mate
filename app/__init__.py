@@ -17,25 +17,16 @@ from .socket_events import *
 from .socket import socketio
 
 
-
 app = Flask(__name__, static_folder='../react-app/build', static_url_path='/')
 
-
-# Setup login manager
 login = LoginManager(app)
 login.login_view = 'auth.unauthorized'
-
-
 
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
 
-
-# Tell flask about our seed commands
 app.cli.add_command(seed_commands)
-
-
 
 app.config.from_object(Config)
 app.register_blueprint(user_routes, url_prefix='/api/users')
@@ -45,20 +36,12 @@ app.register_blueprint(match_routes, url_prefix='/api/match')
 app.register_blueprint(history_routes, url_prefix='/api/history')
 app.register_blueprint(chat_routes, url_prefix='/api/chat')
 
-
 db.init_app(app)
 Migrate(app, db)
 socketio.init_app(app)
 
-# Application Security
 CORS(app)
 
-
-# Since we are deploying with Docker and Flask,
-# we won't be using a buildpack when we deploy to Heroku.
-# Therefore, we need to make sure that in production any
-# request made over http is redirected to https.
-# Well.........
 @app.before_request
 def https_redirect():
     if os.environ.get('FLASK_ENV') == 'production':
@@ -66,7 +49,6 @@ def https_redirect():
             url = request.url.replace('http://', 'https://', 1)
             code = 301
             return redirect(url, code=code)
-
 
 @app.after_request
 def inject_csrf_token(response):
@@ -90,7 +72,6 @@ def api_help():
                     app.view_functions[rule.endpoint].__doc__ ]
                     for rule in app.url_map.iter_rules() if rule.endpoint != 'static' }
     return route_list
-
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
