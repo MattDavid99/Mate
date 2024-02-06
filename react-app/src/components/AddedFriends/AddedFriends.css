@@ -28,7 +28,7 @@
 }
 
 .added-friends-container::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.5); /* Black and 50% transparent */
+  background: rgba(0, 0, 0, 0.5);
   border-radius: 2px;
 }
 
@@ -108,7 +108,7 @@
 }
 
 .added-friends-div::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.5); /* Black and 50% transparent */
+  background: rgba(0, 0, 0, 0.5);
   border-radius: 2px;
 }
 
