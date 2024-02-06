@@ -32,67 +32,25 @@ function Challenges() {
     setFilteredChallenges(theChallenges);
   }, [theChallenges]);
 
-  useEffect(() => {
-    console.log(theChallenges);
-    /*
-    theChallenges = [
-    {
-      challenger: {
-        email: 'brit@aa.io',
-        firstName: 'Brit',
-        id: 7,
-        lastName: 'lewis',
-        profilePicUrl: null,
-        username: 'brit'
-      },
-      createdAt: 'Tue, 08 Aug 2023 20:57:06 GMT',
-      id: 1,
-      receiver: {
-        email: 'demo@aa.io',
-        firstName: 'demo',
-        id: 1,
-        lastName: 'lition',
-        profilePicUrl: null,
-        username: 'Demo'
-      },
-      status: 'Sent',
-      updatedAt: 'Tue, 08 Aug 2023 20:57:06 GMT'
-    }
-  ]
-
-    */
-
-  }, [theChallenges])
-
-
   const handleDeclineChallenge = (challengeId) => {
     dispatch(postDeclineChallenge(challengeId));
     setFilteredChallenges(filteredChallenges.filter(ch => ch.id !== challengeId));
   };
 
   const handleAcceptChallenge = (challenge) => {
-    console.log(challenge);
     socket.emit('new_match', { player_id: user.id });
-
     dispatch(acceptTheChallenge(challenge.id));
   };
 
-
-
   useEffect(() => {
     const handleNewMatch = (data) => {
-      console.log(data);
         const matchId = data.match[0].id;
         const whitePlayerId = data.players.white;
         const blackPlayerId = data.players.black;
-
         const playerColor = user.id === whitePlayerId ? "white" : "black";
-
         history.push(`/match/${matchId}`);
     };
-
     socket.on('new_match', handleNewMatch);
-
     return () => {
         socket.off('new_match', handleNewMatch);
     }
