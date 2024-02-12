@@ -1,7 +1,6 @@
 .homepage-container {
   width: 100vw;
   height: 100vh;
-  /* background-color: #d8cfcf; */
   background-color: #282727;
   overflow-y: hidden;
   overflow-x: hidden;
@@ -9,20 +8,6 @@
   justify-content: center;
   align-items: center;
 }
-
-/* .homepage-startmatch {
-  height: 600px;
-  width: 400px;
-  background-color: #3a9d5b;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-radius: 100px;
-  box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
-  position: relative;
-  left: 10px;
-  z-index: 1000;
-} */
 
 .homepage-startmatch {
   height: 600px;
@@ -79,7 +64,6 @@
   padding-left: 5px;
   padding-right: 5px;
   line-height: 1.7rem;
-  /* margin-left: px; */
   font-weight: 600;
   color: #000;
   font-family: 'Roboto', sans-serif;
@@ -146,7 +130,6 @@
   box-shadow: rgba(0, 0, 0, .3) 2px 8px 4px -6px;
 }
 
-
 .chess-pieces-wrapper {
   position: absolute;
   top: 0;
@@ -166,7 +149,6 @@
   background-repeat: no-repeat;
   animation: falling 6s linear infinite;
 }
-
 
 .piece1 {
   background-image: url('../../pieceimages/whitebishop.png');
