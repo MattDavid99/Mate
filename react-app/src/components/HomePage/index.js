@@ -13,16 +13,13 @@ function HomePage() {
 
   const user = useSelector((state) => state.session.user);
 
-
   useEffect(() => {
     if (!user) {
       history.push("/login");
     }
   }, [user, history]);
 
-
   const startNewMatch = () => {
-    console.log("Emitting new match event", user.id);
     setStartClicked(true);
     socket.emit('new_match', { player_id: user.id });
   }
@@ -47,14 +44,11 @@ function HomePage() {
 
         history.push(`/match/${matchId}`);
     };
-
     socket.on('new_match', handleNewMatch);
-
     return () => {
         socket.off('new_match', handleNewMatch);
     }
   }, []);
-
 
   useEffect(() => {
     if (startClicked) {
@@ -66,7 +60,6 @@ function HomePage() {
       return () => clearInterval(intervalId);
     }
   }, [startClicked]);
-
 
   return (
     <div className='homepage-container'>
