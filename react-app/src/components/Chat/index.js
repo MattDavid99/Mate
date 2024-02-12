@@ -33,7 +33,6 @@ function Chat({ matchId }) {
 
   useEffect(() => {
     socket.on('new_message', (data) => {
-      console.log(data);
       const messageData = Array.isArray(data) ? data[0] : data;
       dispatch(sendMessage(messageData));
       dispatch(fetchChats(matchId));
@@ -81,7 +80,6 @@ function Chat({ matchId }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (message.trim() == "") return
-
     socket.emit('send_message', {
       match_id: parseInt(matchId),
       user_id: user?.id,
