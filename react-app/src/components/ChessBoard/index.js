@@ -65,7 +65,6 @@ function ChessBoard() {
     dispatch(loadExistingMatch(matchId));
   }, [dispatch, matchId]);
 
-
   useEffect(() => {
     if (matchSelector && matchSelector.boardState) {
       gameRef.current.load(matchSelector.boardState);
@@ -74,8 +73,6 @@ function ChessBoard() {
       setBlackPlayer(matchSelector.blackPlayerId)
     }
   }, [matchSelector]);
-
-
 
   const handleMove = ({ sourceSquare, targetSquare }) => {
       if((currentTurn === 'w' && user.id !== whitePlayer) ||
@@ -88,7 +85,6 @@ function ChessBoard() {
         to: targetSquare,
         promotion: "q"
       }
-
       let moveResult = gameRef.current.move(move);
 
       if (moveResult === null) return;
@@ -106,7 +102,6 @@ function ChessBoard() {
   };
 
   useEffect(() => {
-    console.log('Setting up chess_move event handler');
     const handler = (data) => {
       console.log('Move event received', data);
       setFen(data.boardState);
@@ -143,7 +138,6 @@ function ChessBoard() {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
-
 
   return (
     <>
