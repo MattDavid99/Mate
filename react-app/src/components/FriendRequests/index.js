@@ -13,35 +13,26 @@ function FriendRequests() {
   const history = useHistory()
   const [refresh, setRefresh] = useState(false);
 
-
   useEffect(() => {
     if (sessionUser){
       dispatch(fetchUserById(sessionUser.id));
     } else {
       history.push("/login")
     }
-
 }, [dispatch]);
-
-
 
   useEffect(() => {
     dispatch(getFriendRequests())
     setRefresh(false);
   }, [dispatch, refresh])
 
-
-
-	useEffect(() => {
+  useEffect(() => {
     console.log(sessionUser);
-
-}, [dispatch,sessionUser]);
+  }, [dispatch,sessionUser]);
 
   useEffect(() => {
     console.log(allFriendRequests);
   }, [allFriendRequests])
-
-
 
   const handleAcceptFriendRequest = async (requestId) => {
     await dispatch(postAcceptFriendRequest(requestId));
@@ -54,9 +45,7 @@ function FriendRequests() {
     await dispatch(getAllFriends());
     setRefresh(true);
   }
-
-
-
+	
   return (
       <div className='added-friends-wrapper'>
       <div className='added-friends-container'>
