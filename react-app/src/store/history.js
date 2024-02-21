@@ -1,4 +1,3 @@
-// constants
 const GET_MATCH_HISTORY = "history/GET_MATCH_HISTORY";
 const GET_USER_MATCHES = "history/GET_USER_MATCHES";
 const GET_MOVES = 'GET_MOVES';
@@ -24,7 +23,6 @@ const getMoves = (moves) => {
   }
 };
 
-// @history_routes.route('/<int:match_id>')
 export const getMatchHistory = (match_id) => async (dispatch) => {
   const response = await fetch(`/api/history/${match_id}`, {
     method: 'GET',
@@ -32,14 +30,11 @@ export const getMatchHistory = (match_id) => async (dispatch) => {
       'Content-Type': 'application/json'
     }
   })
-
   if (response.ok) {
     const data = await response.json()
     dispatch(getHistory(data.history))
-
   } else {
     const data = await response.json()
-
     if (data.errors) {
       return data.errors
     }
