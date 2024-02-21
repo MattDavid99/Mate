@@ -1,5 +1,5 @@
 import { socket } from "../socket";
-// constants
+
 const CREATE_MATCH = "match/CREATE_MATCH";
 const MAKE_MOVES = "match/MAKE_MOVES";
 const RESIGN_MATCH = "match/RESIGN_MATCH";
