@@ -7,8 +7,6 @@ const ADD_FRIEND = "friend-request/ADD_FRIEND";
 const GET_FRIEND_REQUESTS = "friend-request/GET_FRIEND_REQUESTS";
 const DECLINE_FRIEND_REQUEST = "friend-request/DECLINE_FRIEND_REQUEST";
 
-
-
 const getFriendRequestsAction = (friendRequests) => {
   return {
     type: GET_FRIEND_REQUESTS,
@@ -29,7 +27,6 @@ const addFriendAction = (friendId) => {
     payload: friendId,
   }
 };
-
 
 const sendFriendRequestAction = (friendRequest) => {
   return {
@@ -59,7 +56,6 @@ const getFriends = (friends) => {
   }
 }
 
-
 export const addFriend = (friend_id) => async (dispatch) => {
   const response = await fetch(`/api/friend-request/${friend_id}/add`, {
     method: 'POST',
@@ -77,8 +73,6 @@ export const addFriend = (friend_id) => async (dispatch) => {
     }
   }
 };
-
-
 
 export const sendFriendRequest = (receiver_id) => async (dispatch) => {
   const response = await fetch(`/api/friend-request/${receiver_id}`, {
@@ -99,8 +93,6 @@ export const sendFriendRequest = (receiver_id) => async (dispatch) => {
   }
 };
 
-
-// @friendrequest_routes.route('/<int:request_id>/accept', methods=['POST'])
 export const postAcceptFriendRequest = (request_id) => async (dispatch) => {
   try {
     const response = await fetch(`/api/friend-request/${request_id}/accept`, {
@@ -109,7 +101,6 @@ export const postAcceptFriendRequest = (request_id) => async (dispatch) => {
         'Content-Type': 'application/json'
       }
     })
-
     if (response.ok) {
       const data = await response.json()
       console.log(data);
@@ -128,8 +119,6 @@ export const postAcceptFriendRequest = (request_id) => async (dispatch) => {
 
 };
 
-
-// @friendrequest_routes.route('/<int:friend_id>/remove', methods=['DELETE'])
 export const deleteFriend = (friend_id) => async (dispatch) => {
   const response = await fetch(`/api/friend-request/${friend_id}/remove`, {
     method: 'DELETE',
@@ -137,23 +126,16 @@ export const deleteFriend = (friend_id) => async (dispatch) => {
       'Content-Type': 'application/json'
     }
   })
-
-
   if (response.ok) {
     dispatch(removeFriend(friend_id))
-
   } else {
-
     const data = await response.json()
-
     if (data.errors) {
       return data.errors
     }
   }
 }
 
-
-// @friendrequest_routes.route('/friends', methods=['GET'])
 export const getAllFriends = () => async (dispatch) => {
   const response = await fetch(`/api/friend-request/friends`, {
     method: 'GET',
@@ -161,11 +143,9 @@ export const getAllFriends = () => async (dispatch) => {
       'Content-Type': 'application/json'
     }
   })
-
   if (response.ok) {
     const data = await response.json()
     dispatch(getFriends(data.friends))
-
   } else {
     const data = await response.json()
 
@@ -174,7 +154,6 @@ export const getAllFriends = () => async (dispatch) => {
     }
   }
 }
-
 
 export const getFriendRequests = () => async (dispatch) => {
   const response = await fetch(`/api/friend-request/requests`, {
@@ -183,14 +162,11 @@ export const getFriendRequests = () => async (dispatch) => {
       'Content-Type': 'application/json'
     }
   })
-
   if (response.ok) {
     const data = await response.json()
     dispatch(getFriendRequestsAction(data.friend_requests))
-
   } else {
     const data = await response.json()
-
     if (data.errors) {
       return data.errors
     }
