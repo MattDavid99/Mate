@@ -1,5 +1,5 @@
 import { socket } from "../socket";
-// constants
+
 const SEND_MESSAGE = "chat/SEND_MESSAGE";
 const GET_CHATS = "chat/GET_CHATS"
 const EDIT_MESSAGE = "chat/EDIT_MESSAGE";
@@ -66,9 +66,6 @@ export const fetchChats = (match_id) => async (dispatch) => {
     }
   }
 }
-
-
-
 
 const initialState = { chat: [] };
 
