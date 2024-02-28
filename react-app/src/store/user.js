@@ -12,8 +12,6 @@ const userById = (user) => ({
 	payload: user
 })
 
-
-
 export const getAllUsers = () => async (dispatch) => {
 	const response = await fetch("/api/users/", {
 		headers: {
@@ -23,10 +21,7 @@ export const getAllUsers = () => async (dispatch) => {
 	if (response.ok) {
 		const data = await response.json();
 		console.log('Data from API: ', data);
-		if (data.errors) {
-			console.log(data.errors);
-		}
-
+		if (data.errors) console.log(data.errors);
 		dispatch(allUsers(data.users));
 	}
 };
@@ -37,7 +32,6 @@ export const getUserById = (user_id) => async (dispatch) => {
 			"Content-Type": "application/json",
 		}
 	});
-
 	if (response.ok) {
 		const data = await response.json();
 		console.log(data);
