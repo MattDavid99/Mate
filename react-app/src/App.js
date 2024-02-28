@@ -17,6 +17,7 @@ function App() {
   const dispatch = useDispatch();
   const history = useHistory()
   const [isLoaded, setIsLoaded] = useState(false);
+  
   useEffect(() => {
     dispatch(authenticate()).then(() => setIsLoaded(true));
   }, [dispatch]);
