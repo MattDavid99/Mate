@@ -67,10 +67,7 @@ export const logout = () => async (dispatch) => {
 			"Content-Type": "application/json",
 		},
 	});
-
-	if (response.ok) {
-		dispatch(removeUser());
-	}
+	if (response.ok) dispatch(removeUser());
 };
 
 export const signUp = (first_name, last_name, username, email, password) => async (dispatch) => {
