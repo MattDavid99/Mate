@@ -19,7 +19,7 @@ export function ModalProvider({ children }) {
 
   const contextValue = {
     modalRef, 
-    modalContent, // React component to render inside modal
+    modalContent, 
     setModalContent, // function to set the React component to render inside modal
     setOnModalClose, // function to set the callback function called when modal is closing
     closeModal // function to close the modal
