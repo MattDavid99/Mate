@@ -10,5 +10,4 @@ const ProtectedRoute = props => {
     </Route>
   )
 };
-
 export default ProtectedRoute;
