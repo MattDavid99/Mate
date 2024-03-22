@@ -12,14 +12,11 @@ function Navigation({ isLoaded }){
 	const dispatch = useDispatch()
 	const history = useHistory()
 
-	// ------------------ Search
 	const [searchText, setSearchText] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+  	const [searchResults, setSearchResults] = useState([]);
 	const [isNavBarVisible, setIsNavBarVisible] = useState(true);
 	const [sentRequests, setSentRequests] = useState([]);
 	const [refresh, setRefresh] = useState(false);
-	// const [isLoading, setIsLoading] = useState(true);
-
 
 	useEffect(() => {
     dispatch(getAllUsers());
