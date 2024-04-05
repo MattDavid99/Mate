@@ -153,7 +153,6 @@ export const loadExistingMatch = (match_id) => (dispatch) => {
   });
 }
 
-// @match_routes.route('/', methods=['POST'])
 export const createMatch = (white_player_id, black_player_id) => (dispatch) => {
   socket.emit('new_match', { white_player_id, black_player_id })
 
