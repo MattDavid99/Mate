@@ -216,7 +216,6 @@ export const fetchMatch = (match_id) => async (dispatch) => {
   }
 }
 
-// @match_routes.route('/<int:match_id>/reset', methods=['POST'])
 export const postReset = (match_id) => async (dispatch) => {
   const response = await fetch(`/api/match/${match_id}/reset`, {
     method: 'POST',
