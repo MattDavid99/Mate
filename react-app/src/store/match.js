@@ -177,7 +177,6 @@ export const postMove = (match_id, uci_move, player_id) => (dispatch) => {
   });
 };
 
-// @match_routes.route('/<int:match_id>/resign', methods=['POST'])
 export const postResign = (match_id) => async (dispatch) => {
   const response = await fetch(`/api/match/${match_id}/resign`, {
     method: 'POST',
