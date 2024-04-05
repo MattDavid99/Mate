@@ -191,14 +191,9 @@ export const postDeclineFriendRequest = (request_id) => async (dispatch) => {
       return data.errors
     }
   }
-
 };
 
-
-
-
 const initialState = { friendRequests: [], friends: [] };
-
 export default function friendRequestReducer(state = initialState, action) {
 	switch (action.type) {
 
