@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import './Modal.css';
 
 const ModalContext = React.createContext();
-
 export function ModalProvider({ children }) {
   const modalRef = useRef();
   const [modalContent, setModalContent] = useState(null);
