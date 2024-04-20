@@ -34,7 +34,6 @@ export function ModalProvider({ children }) {
 export function Modal() {
   const { modalRef, modalContent, closeModal } = useContext(ModalContext);
   if (!modalRef || !modalRef.current || !modalContent) return null;
-
   return ReactDOM.createPortal(
     <div id="modal">
       <div id="modal-background" onClick={closeModal} />
