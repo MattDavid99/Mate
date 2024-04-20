@@ -22,7 +22,6 @@ export function ModalProvider({ children }) {
     setOnModalClose, 
     closeModal 
   };
-
   return (
     <>
       <ModalContext.Provider value={contextValue}>
