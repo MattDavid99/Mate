@@ -16,7 +16,6 @@ export function ModalProvider({ children }) {
       onModalClose();
     }
   };
-
   const contextValue = {
     modalRef, 
     modalContent, 
