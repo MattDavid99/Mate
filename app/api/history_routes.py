@@ -3,9 +3,7 @@ from flask_login import login_required, current_user
 from app.models import Match, History
 import chess
 
-
 history_routes = Blueprint('history', __name__)
-
 
 @history_routes.route('/<int:user_id>/matches')
 @login_required
