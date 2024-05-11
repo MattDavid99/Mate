@@ -17,7 +17,6 @@ def get_friend_requests():
 
     return jsonify({"friend_requests": [request.to_dict() for request in friend_requests]}), 200
 
-
 @friendrequest_routes.route('/<int:request_id>/decline', methods=['POST'])
 @login_required
 def decline_friend_request(request_id):
