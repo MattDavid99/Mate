@@ -6,9 +6,7 @@ from app.socket import socketio
 from flask_socketio import join_room, leave_room, emit
 import chess
 
-
 chat_routes = Blueprint('chat', __name__)
-
 
 @socketio.on('connect')
 def on_connect():
