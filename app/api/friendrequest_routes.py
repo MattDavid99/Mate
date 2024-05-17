@@ -46,7 +46,6 @@ def add_friend(friend_id):
         user_id=current_user.id,
         friend_id=friend_id
     )
-
     db.session.add(friends)
     db.session.commit()
 
