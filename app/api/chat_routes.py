@@ -106,7 +106,6 @@ def get_chats(match_id):
     """
     Get all chats in a match
     """
-
     match = Match.query.get(match_id)
 
     if not match:
