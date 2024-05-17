@@ -25,7 +25,6 @@ def handle_send_message(data):
       user_id=data['user_id'],
       message=data['message']
     )
-
     db.session.add(chat)
     db.session.commit()
 
@@ -44,7 +43,6 @@ def handle_receive_message(data):
             user_id=data['user_id'],
             message=data['message']
         )
-
         db.session.add(chat)
         db.session.commit()
         emit('receive_message', chat.to_dict(), room=data['match_id'])
