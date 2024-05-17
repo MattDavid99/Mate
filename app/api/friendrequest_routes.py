@@ -109,7 +109,6 @@ def remove_friend(friend_id):
     """
     Remove a friend
     """
-
     friend1 = Friend.query.filter((Friend.user_id == current_user.id) & (Friend.friend_id == friend_id)).first()
     friend2 = Friend.query.filter((Friend.user_id == friend_id) & (Friend.friend_id == current_user.id)).first()
 
