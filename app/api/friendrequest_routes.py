@@ -123,7 +123,6 @@ def remove_friend(friend_id):
 
     return jsonify({'message': 'Friend removed'}), 200
 
-
 @friendrequest_routes.route('/friends', methods=['GET'])
 @login_required
 def get_friends():
