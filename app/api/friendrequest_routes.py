@@ -17,6 +17,7 @@ def get_friend_requests():
 
     return jsonify({"friend_requests": [request.to_dict() for request in friend_requests]}), 200
 
+
 @friendrequest_routes.route('/<int:request_id>/decline', methods=['POST'])
 @login_required
 def decline_friend_request(request_id):
@@ -76,6 +77,7 @@ def accept_friend_request(request_id):
     """
     Accept a friend request
     """
+    
     friend_request = FriendRequest.query.get(request_id)
 
     if friend_request is None or friend_request.receiver_id != current_user.id:
@@ -122,6 +124,7 @@ def remove_friend(friend_id):
     db.session.commit()
 
     return jsonify({'message': 'Friend removed'}), 200
+
 
 @friendrequest_routes.route('/friends', methods=['GET'])
 @login_required
