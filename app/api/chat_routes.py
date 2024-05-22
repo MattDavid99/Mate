@@ -25,10 +25,12 @@ def handle_send_message(data):
       user_id=data['user_id'],
       message=data['message']
     )
+      
     db.session.add(chat)
     db.session.commit()
 
     emit('new_message', chat.to_dict(), broadcast=True)
+      
   else:
     print("Received incomplete message data:", data)
 
@@ -43,9 +45,12 @@ def handle_receive_message(data):
             user_id=data['user_id'],
             message=data['message']
         )
+        
         db.session.add(chat)
         db.session.commit()
+        
         emit('receive_message', chat.to_dict(), room=data['match_id'])
+        
     else:
         print("Received incomplete message data:", data)
 
