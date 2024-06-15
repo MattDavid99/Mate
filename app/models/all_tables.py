@@ -42,7 +42,6 @@ class User(db.Model, UserMixin):
     hashed_password = db.Column(db.String(255), nullable=False)
     profile_pic_url = db.Column(db.String(800), nullable=True)
 
-
     added_friends = relationship(
         'Friend',
         primaryjoin='User.id==Friend.user_id',
