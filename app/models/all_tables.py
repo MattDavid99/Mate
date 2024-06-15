@@ -108,7 +108,6 @@ class User(db.Model, UserMixin):
 
 
 
-
 class Match(db.Model):
     __tablename__ = 'matches'
 
