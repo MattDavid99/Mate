@@ -28,7 +28,6 @@ class Friend(db.Model):
          'friend': self.friend.to_dict() if self.friend else None
      }
 
-
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
