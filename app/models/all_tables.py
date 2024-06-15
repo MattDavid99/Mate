@@ -71,7 +71,6 @@ class User(db.Model, UserMixin):
     sent_requests = relationship('FriendRequest', back_populates='sender', foreign_keys='FriendRequest.sender_id')
     received_requests = relationship('FriendRequest', back_populates='receiver', foreign_keys='FriendRequest.receiver_id')
 
-
     @property
     def password(self):
         return self.hashed_password
