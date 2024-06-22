@@ -23,7 +23,7 @@ def handle_connect():
 @socketio.on('disconnect')
 def on_disconnect():
     print('User disconnected')
-
+    
 
 @socketio.on('new_match')
 def new_match(data):
@@ -34,7 +34,6 @@ def new_match(data):
 
         del waiting_players[white_player_sid]
         del waiting_players[black_player_sid]
-
 
         if not white_player_id or not black_player_id:
             return jsonify({"error": "White and Black player id's must be provided"}), 400
