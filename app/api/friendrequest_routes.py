@@ -131,7 +131,6 @@ def get_friends():
     """
     Get all friends of the current user
     """
-
     friends = User.query.get(current_user.id).added_friends
 
     return jsonify({"friends": [friend.friend.to_dict_simple() for friend in friends]}), 200
