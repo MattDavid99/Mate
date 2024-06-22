@@ -316,7 +316,6 @@ def reset_match(match_id):
         return jsonify({"error": "Match not found or user not part of the match"}), 404
 
     board = chess.Board()
-
     match.board_state = board.fen()
     match.status = "In Progress"
     match.result = None
