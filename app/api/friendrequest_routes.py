@@ -16,7 +16,7 @@ def get_friend_requests():
     friend_requests = FriendRequest.query.filter_by(receiver_id=current_user.id).all()
 
     return jsonify({"friend_requests": [request.to_dict() for request in friend_requests]}), 200
-
+    
 
 @friendrequest_routes.route('/<int:request_id>/decline', methods=['POST'])
 @login_required
@@ -99,7 +99,6 @@ def accept_friend_request(request_id):
 
     db.session.delete(friend_request)
     db.session.commit()
-
 
     return {friend1.to_dict(), friend2.to_dict()}
 
