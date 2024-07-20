@@ -77,7 +77,6 @@ def accept_friend_request(request_id):
     """
     Accept a friend request
     """
-    
     friend_request = FriendRequest.query.get(request_id)
 
     if friend_request is None or friend_request.receiver_id != current_user.id:
