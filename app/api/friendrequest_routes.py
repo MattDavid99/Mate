@@ -89,7 +89,6 @@ def accept_friend_request(request_id):
         user_id=friend_request.receiver_id,
         friend_id=friend_request.sender_id
     )
-
     db.session.add(friend1)
     db.session.add(friend2)
 
