@@ -93,7 +93,6 @@ def accept_friend_request(request_id):
     db.session.add(friend2)
 
     friend_request.status = 'Accepted'
-
     db.session.delete(friend_request)
     db.session.commit()
 
