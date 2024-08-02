@@ -13,7 +13,6 @@ chat_routes = Blueprint('chat', __name__)
 def on_connect():
     print('User connected')
     
-#socket on disconnect
 @socketio.on('disconnect')
 def on_disconnect():
     print('User disconnected')
