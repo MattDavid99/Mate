@@ -11,6 +11,7 @@ def user_exists(form, field):
         raise ValidationError('Email address is already in use.')
 
 
+
 def username_exists(form, field):
     username = field.data
     user = User.query.filter(User.username == username).first()
@@ -18,10 +19,12 @@ def username_exists(form, field):
         raise ValidationError('Username is already in use.')
 
 
+
 def valid_email(form, field):
     email = field.data
     if len(email) < 5 or email != email.strip() or "@" not in email or "." not in email:
         raise ValidationError('Invalid email address.')
+
 
 
 class SignUpForm(FlaskForm):
