@@ -49,7 +49,6 @@ def handle_receive_message(data):
         
         db.session.add(chat)
         db.session.commit()
-        
         emit('receive_message', chat.to_dict(), room=data['match_id'])
         
     else:
