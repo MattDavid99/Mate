@@ -10,6 +10,7 @@ def user_exists(form, field):
     if not user:
         raise ValidationError('Email provided not found.')
 
+
 def password_matches(form, field):
     password = field.data
     email = form.data['email']
@@ -18,6 +19,7 @@ def password_matches(form, field):
         raise ValidationError('No such user exists.')
     if not user.check_password(password):
         raise ValidationError('Password was incorrect.')
+
 
 class LoginForm(FlaskForm):
     email = StringField('email', validators=[DataRequired(), user_exists])
