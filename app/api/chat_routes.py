@@ -8,7 +8,7 @@ import chess
 
 chat_routes = Blueprint('chat', __name__)
 
-#socket on connect
+
 @socketio.on('connect')
 def on_connect():
     print('User connected')
