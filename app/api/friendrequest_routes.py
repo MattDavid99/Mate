@@ -7,6 +7,7 @@ import chess
 
 friendrequest_routes = Blueprint('friend-request', __name__)
 
+
 @friendrequest_routes.route('/requests', methods=['GET'])
 @login_required
 def get_friend_requests():
