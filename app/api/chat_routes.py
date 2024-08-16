@@ -124,3 +124,4 @@ def get_chats(match_id):
         return jsonify({'error': 'No chats found for this match'}), 404
 
     return jsonify({'chats': [chat.to_dict() for chat in chats]}), 200
+
