@@ -67,6 +67,7 @@ def send_friend_request(receiver_id):
         created_at=datetime.utcnow(),
         updated_at=datetime.utcnow()
     )
+    
     db.session.add(friend_request)
     db.session.commit()
 
