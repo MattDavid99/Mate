@@ -84,7 +84,6 @@ def handle_move(data):
     player_id = data['player_id']
     print(match_id, "<=== match_id", uci_move, "<=== uci_move")
 
-
     match = Match.query.get(match_id)
 
     if not match:
