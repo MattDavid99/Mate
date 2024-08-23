@@ -95,7 +95,6 @@ def handle_move(data):
        emit('error', {"error": "Not your turn"}, room=match_id)
        return
 
-
     board = chess.Board(match.board_state)
     move = chess.Move.from_uci(uci_move)
 
