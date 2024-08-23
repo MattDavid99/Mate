@@ -10,6 +10,7 @@ import random
 
 match_routes = Blueprint('match', __name__)
 
+
 rematch_requests = {}
 waiting_players = {}
 user_sockets = {}
