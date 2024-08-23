@@ -368,6 +368,7 @@ def send_challenge(receiver_id):
         created_at=datetime.utcnow(),
         updated_at=datetime.utcnow()
     )
+    
 
     db.session.add(challenge)
     db.session.commit()
