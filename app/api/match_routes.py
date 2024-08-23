@@ -56,7 +56,6 @@ def new_match(data):
             join_room(str(match_id), sid=white_player_sid)
             join_room(str(match_id), sid=black_player_sid)
 
-
             emit('new_match', {
                 "match": [match.to_dict()],
                 "players": {
