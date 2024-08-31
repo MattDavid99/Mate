@@ -55,6 +55,7 @@ function Challenges() {
         socket.off('new_match', handleNewMatch);
     }
   }, [user]);
+  
 
   return (
     <div className='challenges-wrapper'>
