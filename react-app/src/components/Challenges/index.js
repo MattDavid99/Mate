@@ -57,8 +57,6 @@ function Challenges() {
     }
   }, [user]);
 
-  
-
   return (
     <div className='challenges-wrapper'>
       <div className='challenges-container'>
