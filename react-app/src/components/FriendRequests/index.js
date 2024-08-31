@@ -20,6 +20,7 @@ function FriendRequests() {
       history.push("/login")
     }
 }, [dispatch]);
+	
 
   useEffect(() => {
     dispatch(getFriendRequests())
