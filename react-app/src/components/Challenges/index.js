@@ -15,6 +15,7 @@ function Challenges() {
   const [refresh, setRefresh] = useState(false);
   const [challenges, setChallenges] = useState([]);
   const [filteredChallenges, setFilteredChallenges] = useState(theChallenges);
+  
 
   useEffect(() => {
     if (!user) {
