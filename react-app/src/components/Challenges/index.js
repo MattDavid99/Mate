@@ -56,6 +56,7 @@ function Challenges() {
         socket.off('new_match', handleNewMatch);
     }
   }, [user]);
+
   
 
   return (
