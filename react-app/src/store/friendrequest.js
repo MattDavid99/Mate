@@ -237,7 +237,6 @@ export default function friendRequestReducer(state = initialState, action) {
         friendRequests: state.friendRequests.filter((i) => i.id !== action.payload.id),
         friends: [...state.friends, action.payload]
       }
-
 		default:
 			return state;
 	}
