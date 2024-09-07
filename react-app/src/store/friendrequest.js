@@ -182,7 +182,6 @@ export const postDeclineFriendRequest = (request_id) => async (dispatch) => {
 
   if (response.ok) {
     dispatch(declineFriendRequestAction(request_id))
-
   } else {
     const data = await response.json()
 
