@@ -1,4 +1,3 @@
-// constants
 const ACCEPT_FRIEND_REQUEST = "friend-request/ACCEPT_FRIEND_REQUEST";
 const SEND_FRIEND_REQUEST = "friend-request/SEND_FRIEND_REQUEST";
 const REMOVE_FRIEND = "friend-request/REMOVE_FRIEND"
