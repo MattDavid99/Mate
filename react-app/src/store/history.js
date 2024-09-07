@@ -29,6 +29,7 @@ export const getMatchHistory = (match_id) => async (dispatch) => {
     headers: {
       'Content-Type': 'application/json'
     }
+    
   })
   if (response.ok) {
     const data = await response.json()
