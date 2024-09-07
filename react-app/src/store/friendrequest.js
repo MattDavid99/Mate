@@ -206,7 +206,6 @@ export default function friendRequestReducer(state = initialState, action) {
        ...state,
        friendRequests: state.friendRequests.filter((i) => i.id !== action.payload)
      }
-
      case ACCEPT_FRIEND_REQUEST:
       return {
         ...state,
