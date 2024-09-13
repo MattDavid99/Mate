@@ -350,7 +350,6 @@ def get_challenges():
     Get all challenges of the current user
     """
     challenges = Challenge.query.filter_by(receiver_id=current_user.id).all()
-
     return jsonify({"challenges": [challenge.to_dict() for challenge in challenges]}), 200
 
 @match_routes.route('/challenge/<int:receiver_id>', methods=['POST'])
