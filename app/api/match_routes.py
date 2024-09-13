@@ -314,7 +314,6 @@ def reset_match(match_id):
     match.board_state = board.fen()
     match.status = "In Progress"
     match.result = None
-
     db.session.commit()
 
     return {"match": [match.to_dict()]}, 200
