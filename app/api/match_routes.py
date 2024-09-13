@@ -281,7 +281,6 @@ def handle_resign(match_id):
 
     match.status = "Resigned"
     match.result = "White wins" if match.black_player_id == current_user_id else "Black wins"
-
     db.session.commit()
 
     return {"match": [match.to_dict()]}, 200
