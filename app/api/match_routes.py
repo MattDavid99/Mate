@@ -113,7 +113,6 @@ def handle_move(data):
         turn=match.current_turn,
         board_state=board.fen()
     )
-
     db.session.add(the_move)
 
     history = History(
