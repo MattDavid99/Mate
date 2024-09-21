@@ -161,7 +161,6 @@ function ChessBoard() {
     </div>
     </>
   )
-
 }
 
 export default ChessBoard
