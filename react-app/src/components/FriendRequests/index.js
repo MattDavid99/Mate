@@ -21,7 +21,6 @@ function FriendRequests() {
     }
 }, [dispatch]);
 	
-
   useEffect(() => {
     dispatch(getFriendRequests())
     setRefresh(false);
