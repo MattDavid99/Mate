@@ -46,7 +46,6 @@ function FriendRequests() {
     setRefresh(true);
   }
 	
-	
   return (
       <div className='added-friends-wrapper'>
       <div className='added-friends-container'>
