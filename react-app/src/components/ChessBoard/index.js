@@ -16,7 +16,6 @@ const castleSound = new Audio('/assets/images/castle.mp3');
 const checkSound = new Audio('/assets/images/move-check.mp3');
 const promoteSound = new Audio('/assets/images/promote.mp3');
 
-
 function ChessBoard() {
   const [fen, setFen] = useState("start");
   const [isCheckmate, setIsCheckmate] = useState(false)
