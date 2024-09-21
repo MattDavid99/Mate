@@ -44,7 +44,6 @@ function ChessBoard() {
   const whitePlayerName = matchSelector ? matchSelector.whitePlayerUsername : null;
   const blackPlayerName = matchSelector ? matchSelector.blackPlayerUsername : null;
 
-
   useEffect(() => {
     if (!user) history.push("/login");
   }, [user, history]);
