@@ -124,7 +124,6 @@ function ChessBoard() {
         if (gameRef.current.in_draw()) setIsDraw(true);
       }
     };
-    
     socket.on('chess_move', handler);
     return () => {
       socket.off('chess_move', handler);
