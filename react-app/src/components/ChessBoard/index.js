@@ -138,6 +138,7 @@ function ChessBoard() {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
+    
   }, []);
 
   return (
