@@ -17,6 +17,7 @@ const captureSound = new Audio('/assets/images/capture.mp3');
 const castleSound = new Audio('/assets/images/castle.mp3');
 
 const checkSound = new Audio('/assets/images/move-check.mp3');
+
 const promoteSound = new Audio('/assets/images/promote.mp3');
 
 function ChessBoard() {
