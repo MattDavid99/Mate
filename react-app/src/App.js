@@ -26,6 +26,7 @@ function App() {
     history.push('/');
   }
 
+  
   return (
     <>
       <Navigation isLoaded={isLoaded} />
